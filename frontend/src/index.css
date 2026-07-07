@@ -1,0 +1,223 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand: #86e64a;
+  --color-brand-soft: #eafbdd;
+  --color-forest: #103e2d;
+  --color-forest-2: #0a2c20;
+  --color-canvas: #f8f9f7;
+  --color-card: #ffffff;
+  --color-line: #ececec;
+  --color-ink: #111111;
+  --color-sub: #777777;
+  --color-danger: #e5484d;
+  --color-danger-soft: #fdeeee;
+  --color-warn: #e8930c;
+  --color-warn-soft: #fdf3e3;
+
+  --radius-card: 20px;
+  --radius-btn: 14px;
+
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-lift: 0 10px 30px rgba(16, 62, 45, 0.1);
+}
+
+html,
+body {
+  min-height: 100dvh;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* React Flow theme overrides */
+.react-flow__attribution {
+  background: transparent;
+}
+.react-flow__edge-text {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 600;
+  fill: var(--color-sub);
+}
+.react-flow__controls {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+.react-flow__controls-button {
+  border-bottom: 1px solid var(--color-line);
+}
+
+/* ---------- Marketing animations ---------- */
+
+/* Serif accent for display headlines */
+.font-accent {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Hero backdrop: faint grid + radial fade */
+.hero-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(16, 62, 45, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(16, 62, 45, 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 40%, transparent 100%);
+}
+
+/* Staggered entrance: fade + rise + unblur */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+.rise {
+  animation: rise-in 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Primary CTA shine sweep */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.55) 50%, transparent 60%);
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+}
+.btn-shine:hover::after {
+  transform: translateX(120%);
+}
+
+/* Equalizer bars in the hero stage */
+@keyframes equalize {
+  0%,
+  100% {
+    transform: scaleY(0.45);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+.eq-bar {
+  transform-origin: bottom;
+  animation: equalize 2.6s ease-in-out infinite;
+}
+
+/* Scanning row shimmer */
+@keyframes scan-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(200%);
+  }
+}
+.scan-sweep {
+  animation: scan-sweep 2.2s ease-in-out infinite;
+}
+
+
+@keyframes beam-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+.beam-path {
+  stroke-dasharray: 6 6;
+  animation: beam-dash 1.2s linear infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+.pulse-ring {
+  animation: pulse-ring 2.4s ease-out infinite;
+}
+
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.float-y {
+  animation: float-y 5s ease-in-out infinite;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee 28s linear infinite;
+}
+
+@keyframes ticker-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.ticker-in {
+  animation: ticker-in 0.4s ease-out;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s ease-out;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
