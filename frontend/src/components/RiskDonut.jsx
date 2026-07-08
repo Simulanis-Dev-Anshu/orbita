@@ -5,11 +5,11 @@ export default function RiskDonut() {
   const total = riskDistribution.reduce((sum, d) => sum + d.value, 0)
 
   return (
-    <section aria-label="Risk distribution" className="rounded-card bg-card p-5 shadow-soft sm:p-6">
+    <section aria-label="Risk distribution" className="card-hover flex h-full flex-col rounded-card bg-card p-5 shadow-soft sm:p-6">
       <h2 className="text-base font-semibold">Risk distribution</h2>
       <p className="text-sm text-sub">Across {total} discovered agents</p>
 
-      <div className="relative mx-auto mt-2 h-44 w-44">
+      <div className="relative mx-auto my-auto h-44 w-44 py-0.5">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -42,7 +42,7 @@ export default function RiskDonut() {
         </div>
       </div>
 
-      <ul className="mt-3 grid grid-cols-2 gap-2">
+      <ul className="mt-auto grid grid-cols-2 gap-2 pt-3">
         {riskDistribution.map((d) => (
           <li key={d.name} className="flex items-center gap-2 text-sm">
             <span className="h-2.5 w-2.5 rounded-full" style={{ background: d.color }} aria-hidden="true" />

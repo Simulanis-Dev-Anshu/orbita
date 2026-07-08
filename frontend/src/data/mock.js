@@ -1,4 +1,4 @@
-// Mock data for the AgentLens dashboard — replace with FastAPI calls later.
+// Mock data for the Orbita dashboard — replace with FastAPI calls later.
 
 export const kpis = {
   totalAgents: 147,
@@ -294,6 +294,24 @@ export const dpdpChecklist = [
   { id: 'dp-5', label: 'Consent-purpose mapping for agents', status: 'fail', detail: '4 agents access consented data for new purposes' },
 ]
 
+// Readiness % per framework over the last 6 months
+export const complianceTrend = [
+  { month: 'Feb', dpdp: 48, soc2: 38, iso: 50, euai: 12 },
+  { month: 'Mar', dpdp: 55, soc2: 42, iso: 54, euai: 18 },
+  { month: 'Apr', dpdp: 61, soc2: 47, iso: 58, euai: 24 },
+  { month: 'May', dpdp: 67, soc2: 53, iso: 63, euai: 30 },
+  { month: 'Jun', dpdp: 73, soc2: 58, iso: 67, euai: 36 },
+  { month: 'Jul', dpdp: 78, soc2: 64, iso: 71, euai: 42 },
+]
+
+// Upcoming audit / regulatory deadlines
+export const auditCalendar = [
+  { id: 'ac-1', name: 'EU AI Act GPAI obligations apply', date: 'Aug 2, 2026', days: 25 },
+  { id: 'ac-2', name: 'SOC 2 Type II observation window closes', date: 'Aug 15, 2026', days: 38 },
+  { id: 'ac-3', name: 'DPDP quarterly processor register due', date: 'Sep 30, 2026', days: 84 },
+  { id: 'ac-4', name: 'ISO 27001 surveillance audit', date: 'Oct 12, 2026', days: 96 },
+]
+
 export const connectors = [
   { id: 'cn-1', name: 'Google Workspace', category: 'Identity & OAuth', status: 'connected', agents: 61, lastSync: '2 min ago' },
   { id: 'cn-2', name: 'Microsoft 365', category: 'Identity & OAuth', status: 'connected', agents: 34, lastSync: '43 min ago' },
@@ -351,3 +369,92 @@ export const benchmark = {
   riskPercentile: 68,
   peerGroup: 'Indian mid-market SaaS · 200–500 employees',
 }
+
+// Sparkline history for the KPI cards (last 8 weeks)
+export const kpiTrends = {
+  totalAgents: [98, 104, 111, 118, 124, 131, 139, 147],
+  orphaned: [3, 4, 4, 6, 5, 7, 7, 8],
+  highRisk: [14, 15, 17, 16, 19, 20, 21, 23],
+  connectedSources: [7, 8, 8, 9, 10, 11, 12, 12],
+}
+
+// Header bell dropdown
+export const notifications = [
+  {
+    id: 'nt-1',
+    title: 'Permission drift detected',
+    detail: 'Payroll Sync Agent expanded to payroll.rw without approval',
+    time: '12 min ago',
+    severity: 'critical',
+    unread: true,
+  },
+  {
+    id: 'nt-2',
+    title: 'Orphaned agent still executing',
+    detail: 'Customer Data Enricher owner was deactivated in Workspace',
+    time: '1 hr ago',
+    severity: 'critical',
+    unread: true,
+  },
+  {
+    id: 'nt-3',
+    title: 'New agent discovered',
+    detail: 'Unknown Zapier workflow on rohan@ credentials',
+    time: '3 hrs ago',
+    severity: 'high',
+    unread: true,
+  },
+  {
+    id: 'nt-4',
+    title: 'Weekly scan completed',
+    detail: '147 agents inventoried · 12 new since last week',
+    time: 'Yesterday',
+    severity: 'info',
+    unread: false,
+  },
+]
+
+// Agents per platform — dashboard bar chart
+export const platformBreakdown = [
+  { platform: 'Zapier', agents: 38, highRisk: 7 },
+  { platform: 'Custom GPT', agents: 29, highRisk: 4 },
+  { platform: 'n8n', agents: 24, highRisk: 5 },
+  { platform: 'Make', agents: 19, highRisk: 3 },
+  { platform: 'MCP', agents: 16, highRisk: 2 },
+  { platform: 'Claude', agents: 12, highRisk: 1 },
+  { platform: 'GitHub', agents: 9, highRisk: 1 },
+]
+
+// Fleet actions over the last 24 hours (2-hour buckets)
+export const fleetActivity = [
+  { hour: '00', actions: 410, anomalies: 4 },
+  { hour: '02', actions: 396, anomalies: 6 },
+  { hour: '04', actions: 388, anomalies: 2 },
+  { hour: '06', actions: 402, anomalies: 1 },
+  { hour: '08', actions: 545, anomalies: 3 },
+  { hour: '10', actions: 688, anomalies: 5 },
+  { hour: '12', actions: 654, anomalies: 4 },
+  { hour: '14', actions: 702, anomalies: 9 },
+  { hour: '16', actions: 671, anomalies: 6 },
+  { hour: '18', actions: 563, anomalies: 3 },
+  { hour: '20', actions: 471, anomalies: 2 },
+  { hour: '22', actions: 428, anomalies: 3 },
+]
+
+// Which data scopes the fleet can reach — exposure bars
+export const scopeExposure = [
+  { scope: 'Gmail', agents: 41, pii: true },
+  { scope: 'Google Sheets', agents: 33, pii: true },
+  { scope: 'Slack', agents: 27, pii: false },
+  { scope: 'Notion', agents: 21, pii: false },
+  { scope: 'Postgres', agents: 14, pii: true },
+  { scope: 'Zoho Payroll', agents: 6, pii: true },
+]
+
+// Sentinel Copilot page — live signals sidebar
+export const copilotSignals = [
+  { id: 'cs-1', label: 'OAuth grants watched', value: '312', trend: '+9 today' },
+  { id: 'cs-2', label: 'DNS egress events / hr', value: '1.4k', trend: 'normal' },
+  { id: 'cs-3', label: 'Behavioral classifications', value: '147', trend: '3 flagged' },
+  { id: 'cs-4', label: 'Policy checks tonight', value: '96', trend: '2 failed' },
+]

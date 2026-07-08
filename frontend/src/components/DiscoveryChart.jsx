@@ -17,7 +17,7 @@ export default function DiscoveryChart() {
   const [range, setRange] = useState(ranges[0])
 
   return (
-    <section aria-label="Discovery analytics" className="rounded-card bg-card p-5 shadow-soft sm:p-6">
+    <section aria-label="Discovery analytics" className="card-hover flex h-full flex-col rounded-card bg-card p-5 shadow-soft sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold">Agent discovery trend</h2>
@@ -35,7 +35,7 @@ export default function DiscoveryChart() {
         </select>
       </div>
 
-      <div className="mt-4 h-64 sm:h-72">
+      <div className="mt-4 min-h-64 flex-1 sm:min-h-72">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={discoveryTrend} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
             <defs>

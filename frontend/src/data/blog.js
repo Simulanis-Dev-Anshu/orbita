@@ -9,14 +9,14 @@ export const posts = [
     tag: 'Research',
     date: 'Jul 6, 2026',
     readTime: '6 min',
-    author: 'AgentLens Research',
+    author: 'Orbita Research',
     content: [
       { t: 'p', v: 'Model Context Protocol (MCP) has become the connective tissue between AI agents and enterprise systems. Every major AI platform adopted it, and your employees are already running MCP servers you have never heard of — connected to Postgres, GitHub, and your CRM.' },
       { t: 'h', v: 'Why security teams call it "the new shadow IT"' },
       { t: 'p', v: 'A 2026 industry survey found that only 24.4% of organizations have full visibility into which AI agents are communicating with each other. The remaining three quarters have agent-to-MCP connections that no one has mapped, scoped, or approved.' },
       { t: 'ul', v: ['Rogue MCP servers spun up on employee laptops with production credentials', 'Sensitive data leakage through MCP tool responses containing PII', 'Prompt injection via compromised data sources flowing back into agents'] },
       { t: 'h', v: 'What discovery looks like' },
-      { t: 'p', v: 'AgentLens treats MCP servers as first-class nodes in the identity graph: every server is tied to the human who launched it, the credentials it holds, and the data scopes it can reach. Orphaned MCP servers — running after their creator left — get flagged the same way orphaned agents do.' },
+      { t: 'p', v: 'Orbita treats MCP servers as first-class nodes in the identity graph: every server is tied to the human who launched it, the credentials it holds, and the data scopes it can reach. Orphaned MCP servers — running after their creator left — get flagged the same way orphaned agents do.' },
       { t: 'p', v: 'If you cannot list your MCP servers today, that is the first thing our free discovery scan will show you.' },
     ],
   },
@@ -28,7 +28,7 @@ export const posts = [
     tag: 'Compliance',
     date: 'Jun 28, 2026',
     readTime: '5 min',
-    author: 'AgentLens Research',
+    author: 'Orbita Research',
     content: [
       { t: 'p', v: 'India\'s Digital Personal Data Protection Act treats every AI agent that touches personal data as part of your processing chain. That has three consequences most compliance teams have not priced in.' },
       { t: 'h', v: '1. The 72-hour clock' },
@@ -36,7 +36,7 @@ export const posts = [
       { t: 'h', v: '2. Cross-border transfers' },
       { t: 'p', v: 'Section 16 lets the government restrict transfers to notified territories. An employee\'s Zapier workflow that pipes customer records to a US LLM API is a cross-border transfer — one that needs to appear in your transfer inventory.' },
       { t: 'h', v: '3. The processor register' },
-      { t: 'p', v: 'Every external AI service your agents call is effectively a data processor. Auditors increasingly ask for a register of them. AgentLens generates this register automatically from the live agent inventory.' },
+      { t: 'p', v: 'Every external AI service your agents call is effectively a data processor. Auditors increasingly ask for a register of them. Orbita generates this register automatically from the live agent inventory.' },
     ],
   },
   {
@@ -47,7 +47,7 @@ export const posts = [
     tag: 'Security',
     date: 'Jun 15, 2026',
     readTime: '4 min',
-    author: 'AgentLens Research',
+    author: 'Orbita Research',
     content: [
       { t: 'p', v: 'In every discovery scan we run, orphaned agents are the finding that makes CISOs sit up: automations still executing on credentials of people who left months ago.' },
       { t: 'h', v: 'Why offboarding misses them' },
@@ -65,7 +65,7 @@ export const posts = [
     tag: 'Engineering',
     date: 'Jun 2, 2026',
     readTime: '7 min',
-    author: 'AgentLens Research',
+    author: 'Orbita Research',
     content: [
       { t: 'p', v: 'API keys and OAuth grants tell you an integration exists. They do not tell you whether the thing behind them is a person or an autonomous agent. Behavior does.' },
       { t: 'h', v: 'The three tells' },

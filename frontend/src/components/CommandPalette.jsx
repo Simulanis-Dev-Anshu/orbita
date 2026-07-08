@@ -15,6 +15,7 @@ import { useAgents } from '../context/AgentsContext.jsx'
 
 const pages = [
   { label: 'Dashboard', to: '/app', icon: LayoutDashboard },
+  { label: 'Sentinel Copilot', to: '/app/copilot', icon: Sparkles },
   { label: 'Agent Graph', to: '/app/graph', icon: Waypoints },
   { label: 'Inventory', to: '/app/inventory', icon: Bot },
   { label: 'Alerts', to: '/app/alerts', icon: BellRing },
@@ -155,7 +156,7 @@ export default function CommandPalette({ open, onClose }) {
           </p>
           <button
             type="button"
-            onClick={() => go('/app', { ask: q || 'Help me find a risky agent' })}
+            onClick={() => go('/app/copilot', { ask: q || 'Help me find a risky agent' })}
             className="flex w-full cursor-pointer items-center gap-3 rounded-xl bg-brand-soft/60 px-3 py-3 text-left transition-colors hover:bg-brand-soft"
           >
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-forest">

@@ -45,7 +45,7 @@ export default function AgentsTable({ rows, limit, title = 'Recently discovered 
   }, [base, filter, sortDesc])
 
   return (
-    <section aria-label={title} className="rounded-card bg-card p-5 shadow-soft sm:p-6">
+    <section aria-label={title} className="flex h-full flex-col rounded-card bg-card p-5 shadow-soft sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-base font-semibold">{title}</h2>
         <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ export default function AgentsTable({ rows, limit, title = 'Recently discovered 
         </div>
       </div>
 
-      <div className="mt-4 overflow-x-auto">
+      <div className="mt-4 flex-1 overflow-x-auto">
         <table className="w-full min-w-[640px] border-collapse text-left text-sm">
           <thead>
             <tr className="border-b border-line text-xs text-sub uppercase tracking-wide">

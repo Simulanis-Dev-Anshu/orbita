@@ -34,7 +34,7 @@ export default function AuthPage({ mode }) {
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand">
             <Radar size={20} className="text-forest" aria-hidden="true" />
           </span>
-          <span className="text-lg font-semibold">AgentLens</span>
+          <span className="text-lg font-semibold">Orbita</span>
         </Link>
 
         <div className="relative">
@@ -65,7 +65,7 @@ export default function AuthPage({ mode }) {
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-forest">
               <Radar size={20} className="text-brand" aria-hidden="true" />
             </span>
-            <span className="text-lg font-semibold">AgentLens</span>
+            <span className="text-lg font-semibold">Orbita</span>
           </Link>
 
           <h1 className="mt-8 text-2xl font-bold tracking-tight lg:mt-0">
@@ -180,7 +180,7 @@ export default function AuthPage({ mode }) {
               </>
             ) : (
               <>
-                New to AgentLens?{' '}
+                New to Orbita?{' '}
                 <Link to="/signup" className="font-semibold text-forest hover:underline">
                   Start free
                 </Link>

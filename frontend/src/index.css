@@ -208,6 +208,226 @@ body {
   transform: translateY(0);
 }
 
+/* ---------- App micro-interactions ---------- */
+
+/* Dropdown/popover entrance */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.pop-in {
+  animation: pop-in 0.18s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  transform-origin: top right;
+}
+
+/* Staggered card entrance — set --i per card */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.card-in {
+  animation: card-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+/* Hover lift for dashboard cards */
+.card-hover {
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lift);
+}
+
+/* Bell swing on hover */
+@keyframes bell-swing {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(12deg); }
+  40% { transform: rotate(-10deg); }
+  60% { transform: rotate(6deg); }
+  80% { transform: rotate(-4deg); }
+}
+.bell-btn:hover svg {
+  animation: bell-swing 0.6s ease-in-out;
+  transform-origin: top center;
+}
+
+/* Horizontal bar grow-in — set --i per bar */
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.grow-x {
+  transform-origin: left;
+  animation: grow-x 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 90ms + 0.2s);
+}
+
+/* Copilot typing indicator */
+@keyframes typing-bounce {
+  0%, 80%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  40% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+.typing-dot {
+  animation: typing-bounce 1.1s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* Chat message entrance */
+@keyframes msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.msg-in {
+  animation: msg-in 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* ---------- Radar loader + hero dashboard ---------- */
+
+/* Rotating radar sweep beam */
+@keyframes radar-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.radar-beam {
+  animation: radar-spin 2.4s linear infinite;
+}
+
+/* Radar blip: appears as the beam passes, fades out */
+@keyframes radar-blip {
+  0%, 8% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  12% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+  20%, 55% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  75%, 100% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+.radar-blip {
+  animation: radar-blip 2.4s ease-out infinite;
+}
+
+/* Self-drawing chart line (pair with pathLength={1}) */
+@keyframes draw-line {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.draw-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw-line 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.4s forwards;
+}
+
+/* Area fill fades in after the line finishes drawing */
+@keyframes area-fade {
+  to {
+    opacity: 1;
+  }
+}
+.area-fade {
+  opacity: 0;
+  animation: area-fade 0.9s ease-out 1.7s forwards;
+}
+
+/* New feed row slides in from the top */
+@keyframes feed-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.feed-in {
+  animation: feed-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Loader label ellipsis */
+@keyframes loading-dots {
+  0%, 20% { content: ''; }
+  40% { content: '.'; }
+  60% { content: '..'; }
+  80%, 100% { content: '...'; }
+}
+.loading-dots::after {
+  content: '';
+  display: inline-block;
+  width: 1.2em;
+  text-align: left;
+  animation: loading-dots 1.6s steps(1) infinite;
+}
+
+/* ---------- Security-loop flow diagram ---------- */
+
+/* Dotted pixel grid backdrop */
+.pixel-grid {
+  background-image: radial-gradient(rgba(134, 230, 74, 0.11) 1.5px, transparent 1.6px);
+  background-size: 22px 22px;
+}
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+.pixel-twinkle {
+  background-image: radial-gradient(rgba(134, 230, 74, 0.22) 1.5px, transparent 1.6px);
+  background-size: 44px 44px;
+  background-position: 11px 11px;
+  animation: twinkle 4.5s ease-in-out infinite;
+}
+
+/* Soft breathing pulse for "live" dots */
+@keyframes live-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(134, 230, 74, 0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(134, 230, 74, 0); }
+}
+.live-dot {
+  animation: live-pulse 2s ease-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;

@@ -5,7 +5,7 @@ export default function BenchmarkCard() {
   return (
     <section
       aria-label="Peer benchmark"
-      className="rounded-card bg-card p-5 shadow-soft sm:p-6"
+      className="card-hover rounded-card bg-card p-5 shadow-soft sm:p-6"
     >
       <div className="flex items-center gap-3">
         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-forest">
@@ -17,7 +17,7 @@ export default function BenchmarkCard() {
         </div>
       </div>
 
-      <div className="mt-4 space-y-3">
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <div className="rounded-2xl bg-canvas p-4">
           <p className="text-2xl font-bold tracking-tight text-danger">
             {benchmark.orphanedVsPeers}×

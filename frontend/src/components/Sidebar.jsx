@@ -10,11 +10,13 @@ import {
   Settings,
   LifeBuoy,
   ChevronDown,
+  Sparkles,
   X,
 } from 'lucide-react'
 
 const mainNav = [
   { to: '/app', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/app/copilot', label: 'Sentinel Copilot', icon: Sparkles },
   { to: '/app/graph', label: 'Agent Graph', icon: Waypoints },
   { to: '/app/inventory', label: 'Inventory', icon: Bot },
   { to: '/app/alerts', label: 'Alerts', icon: BellRing, badge: 5 },
@@ -87,7 +89,7 @@ export default function Sidebar({ open, onClose }) {
                 <Radar size={20} className="text-brand" aria-hidden="true" />
               </span>
               <span className="text-lg font-semibold tracking-tight">
-                Agent<span className="text-forest">Lens</span>
+                Orb<span className="text-forest">ita</span>
               </span>
             </div>
             <button

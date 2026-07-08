@@ -52,7 +52,7 @@ export default function Blog() {
       <h1 className="text-4xl font-bold tracking-tight">The Shadow Ledger</h1>
       <p className="mt-3 max-w-xl text-sm leading-relaxed text-sub sm:text-base">
         Research and field notes on shadow AI, agent governance and DPDP compliance — from the
-        AgentLens discovery team.
+        Orbita discovery team.
       </p>
       <div className="mt-10 grid gap-5 md:grid-cols-2">
         <PostCard post={featured} featured />

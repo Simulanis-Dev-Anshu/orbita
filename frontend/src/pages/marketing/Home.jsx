@@ -22,6 +22,8 @@ import {
   EyeOff,
 } from 'lucide-react'
 import useReveal from '../../hooks/useReveal.js'
+import useCountUp from '../../hooks/useCountUp.js'
+import RadarLoader from '../../components/RadarLoader.jsx'
 import { posts } from '../../data/blog.js'
 
 /* ---------- Live discovery hero animation ---------- */
@@ -34,24 +36,58 @@ const tickerItems = [
   { name: 'Sales Outreach GPT', team: 'Sales', risk: 74 },
 ]
 
-const feedRows = [
-  { name: 'Zapier Invoice Bot', platform: 'Zapier', risk: 87, scanning: true },
+const feedPool = [
+  { name: 'Zapier Invoice Bot', platform: 'Zapier', risk: 87 },
   { name: 'Postgres MCP Server', platform: 'MCP', risk: 71 },
   { name: 'Sales Outreach GPT', platform: 'Custom GPT', risk: 74 },
   { name: 'GitHub PR Reviewer', platform: 'GitHub App', risk: 22 },
+  { name: 'Payroll Sync Agent', platform: 'Make', risk: 92 },
+  { name: 'HR Onboarding Flow', platform: 'n8n', risk: 58 },
+  { name: 'Customer Data Enricher', platform: 'n8n', risk: 81 },
 ]
 
-const eqBars = [38, 62, 45, 78, 52, 88, 60, 95, 70, 82, 58, 90]
+// Weekly discoveries → smooth SVG path (viewBox 320×120)
+const weekly = [12, 19, 15, 27, 22, 31, 26, 38]
+const chartPts = weekly.map((v, i) => [
+  (i / (weekly.length - 1)) * 320,
+  112 - (v / Math.max(...weekly)) * 96,
+])
+
+function smoothPath(pts) {
+  let d = `M ${pts[0][0]},${pts[0][1]}`
+  for (let i = 1; i < pts.length - 1; i++) {
+    const xc = (pts[i][0] + pts[i + 1][0]) / 2
+    const yc = (pts[i][1] + pts[i + 1][1]) / 2
+    d += ` Q ${pts[i][0]},${pts[i][1]} ${xc},${yc}`
+  }
+  d += ` T ${pts[pts.length - 1][0]},${pts[pts.length - 1][1]}`
+  return d
+}
+
+const linePath = smoothPath(chartPts)
+const areaPath = `${linePath} L 320,120 L 0,120 Z`
+const lastPt = chartPts[chartPts.length - 1]
+
+function HeroKpi({ value, label, className }) {
+  const count = useCountUp(value, 1600)
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5 backdrop-blur transition-colors duration-300 hover:border-brand/40">
+      <p className={`text-2xl font-bold tracking-tight tabular-nums ${className}`}>{count}</p>
+      <p className="mt-0.5 text-[10px] font-medium text-white/50 sm:text-[11px]">{label}</p>
+    </div>
+  )
+}
 
 function HeroStage() {
   const [tick, setTick] = useState(0)
 
   useEffect(() => {
-    const id = setInterval(() => setTick((t) => (t + 1) % tickerItems.length), 2600)
+    const id = setInterval(() => setTick((t) => (t + 1) % (tickerItems.length * feedPool.length)), 2600)
     return () => clearInterval(id)
   }, [])
 
-  const item = tickerItems[tick]
+  const item = tickerItems[tick % tickerItems.length]
+  const feedRows = Array.from({ length: 4 }, (_, i) => feedPool[(tick + i) % feedPool.length])
 
   return (
     <div className="rise relative mx-auto mt-14 max-w-5xl sm:mt-16" style={{ animationDelay: '0.45s' }}>
@@ -68,7 +104,7 @@ function HeroStage() {
             <span className="h-2.5 w-2.5 rounded-full bg-brand/70" />
           </span>
           <span className="rounded-md bg-white/5 px-3 py-1 text-[10px] font-medium text-white/50">
-            app.agentlens.io — live discovery
+            app.orbita.io — live discovery
           </span>
           <span className="ml-auto hidden items-center gap-1.5 text-[10px] font-semibold text-brand md:flex">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand" aria-hidden="true" />
@@ -77,19 +113,12 @@ function HeroStage() {
         </div>
 
         <div className="grid gap-4 p-5 sm:p-7 lg:grid-cols-[1.25fr_1fr]">
-          {/* Left: KPIs + live chart */}
+          {/* Left: KPIs + self-drawing discovery chart */}
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-3 gap-3">
-              {[
-                ['147', 'Total agents', 'text-brand'],
-                ['8', 'Orphaned', 'text-danger'],
-                ['23', 'High-risk', 'text-warn'],
-              ].map(([n, l, c]) => (
-                <div key={l} className="rounded-2xl border border-white/10 bg-white/5 p-3.5 backdrop-blur">
-                  <p className={`text-2xl font-bold tracking-tight tabular-nums ${c}`}>{n}</p>
-                  <p className="mt-0.5 text-[10px] font-medium text-white/50 sm:text-[11px]">{l}</p>
-                </div>
-              ))}
+              <HeroKpi value={147} label="Total agents" className="text-brand" />
+              <HeroKpi value={8} label="Orphaned" className="text-danger" />
+              <HeroKpi value={23} label="High-risk" className="text-warn" />
             </div>
 
             <div className="flex-1 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
@@ -99,38 +128,77 @@ function HeroStage() {
                   +38 this week
                 </span>
               </div>
-              <div className="mt-4 flex h-28 items-end gap-1.5 sm:h-32" aria-hidden="true">
-                {eqBars.map((h, i) => (
-                  <span
-                    key={i}
-                    className="eq-bar flex-1 rounded-t-md bg-gradient-to-t from-brand/30 to-brand"
-                    style={{
-                      height: `${h}%`,
-                      animationDelay: `${i * 0.18}s`,
-                      animationDuration: `${2.2 + (i % 4) * 0.35}s`,
-                    }}
+              <div className="relative mt-4 h-28 sm:h-32" aria-hidden="true">
+                <svg viewBox="0 0 320 120" preserveAspectRatio="none" className="h-full w-full">
+                  <defs>
+                    <linearGradient id="heroArea" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#86E64A" stopOpacity="0.35" />
+                      <stop offset="100%" stopColor="#86E64A" stopOpacity="0.02" />
+                    </linearGradient>
+                  </defs>
+                  {/* Grid */}
+                  {[30, 65, 100].map((y) => (
+                    <line
+                      key={y}
+                      x1="0"
+                      x2="320"
+                      y1={y}
+                      y2={y}
+                      stroke="rgba(255,255,255,0.08)"
+                      strokeDasharray="4 5"
+                    />
+                  ))}
+                  <path d={areaPath} fill="url(#heroArea)" className="area-fade" />
+                  <path
+                    d={linePath}
+                    fill="none"
+                    stroke="#86E64A"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    pathLength="1"
+                    className="draw-line"
+                    vectorEffect="non-scaling-stroke"
                   />
+                </svg>
+                {/* Pulsing end dot */}
+                <span
+                  className="live-dot absolute h-2 w-2 rounded-full bg-brand"
+                  style={{
+                    left: `calc(${(lastPt[0] / 320) * 100}% - 4px)`,
+                    top: `calc(${(lastPt[1] / 120) * 100}% - 4px)`,
+                  }}
+                />
+              </div>
+              <div className="mt-1.5 flex justify-between text-[9px] font-medium text-white/30">
+                {weekly.map((_, i) => (
+                  <span key={i}>W{i + 1}</span>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Right: discovery feed */}
+          {/* Right: radar + cycling discovery feed */}
           <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-            <div className="flex items-center justify-between">
-              <p className="text-[11px] font-semibold text-white/70">Discovery feed</p>
+            <div className="flex items-center gap-3">
+              <RadarLoader size={40} label="" dark />
+              <div className="flex-1">
+                <p className="text-[11px] font-semibold text-white/70">Discovery feed</p>
+                <p className="text-[10px] text-white/40">Sweeping 12 connected sources</p>
+              </div>
               <span className="flex items-center gap-1.5 text-[10px] font-bold text-brand">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand" aria-hidden="true" />
+                <span className="live-dot h-1.5 w-1.5 rounded-full bg-brand" aria-hidden="true" />
                 LIVE
               </span>
             </div>
             <ul className="mt-3 space-y-2">
-              {feedRows.map((r) => (
+              {feedRows.map((r, i) => (
                 <li
                   key={r.name}
-                  className="relative flex items-center gap-2.5 overflow-hidden rounded-xl bg-white/5 px-3 py-2.5"
+                  className={`relative flex items-center gap-2.5 overflow-hidden rounded-xl bg-white/5 px-3 py-2.5 ${
+                    i === 0 ? 'feed-in border border-brand/25' : ''
+                  }`}
                 >
-                  {r.scanning && (
+                  {i === 0 && (
                     <span
                       className="scan-sweep absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-brand/15 to-transparent"
                       aria-hidden="true"
@@ -143,7 +211,9 @@ function HeroStage() {
                     <span className="block truncate text-[11px] font-semibold text-white sm:text-xs">
                       {r.name}
                     </span>
-                    <span className="block text-[10px] text-white/40">{r.platform}</span>
+                    <span className="block text-[10px] text-white/40">
+                      {i === 0 ? 'just discovered' : r.platform}
+                    </span>
                   </span>
                   <span
                     className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
@@ -387,15 +457,234 @@ const testimonials = [
     who: 'CISO, Indian fintech · 400 employees',
   },
   {
-    quote: 'AgentLens turned our AI governance from a quarterly spreadsheet exercise into a live control. Our auditor now pulls evidence herself.',
+    quote: 'Orbita turned our AI governance from a quarterly spreadsheet exercise into a live control. Our auditor now pulls evidence herself.',
     who: 'Head of Security, healthcare SaaS · 250 employees',
   },
 ]
 
-function Reveal({ children, className = '' }) {
+/* ---------- Security loop flow diagram ---------- */
+
+const inventoryChips = [
+  { icon: Bot, label: 'AI Agents' },
+  { icon: ServerCog, label: 'MCP Servers' },
+  { icon: KeyRound, label: 'OAuth Grants' },
+  { icon: Fingerprint, label: 'Custom GPTs' },
+  { icon: Plug, label: 'Workflows' },
+  { icon: ScanSearch, label: 'DNS Egress' },
+]
+
+function FlowConnectors() {
+  return (
+    <svg
+      viewBox="0 0 1000 620"
+      preserveAspectRatio="none"
+      className="absolute inset-0 hidden h-full w-full lg:block"
+      aria-hidden="true"
+    >
+      <defs>
+        <marker id="flowArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L8,4 L0,8 Z" fill="rgba(255,255,255,0.55)" />
+        </marker>
+      </defs>
+
+      {/* Solid pipeline: discovery → Orbita → modules */}
+      {[
+        'M295,310 H385',
+        'M615,310 H645 Q662,310 662,293 V172 Q662,155 679,155 H685',
+        'M615,310 H645 Q662,310 662,327 V448 Q662,465 679,465 H685',
+      ].map((d) => (
+        <path
+          key={d}
+          d={d}
+          fill="none"
+          stroke="rgba(255,255,255,0.28)"
+          strokeWidth="1.5"
+          markerEnd="url(#flowArrow)"
+          vectorEffect="non-scaling-stroke"
+        />
+      ))}
+
+      {/* Dashed feedback loops */}
+      {[
+        'M855,105 V62',
+        'M880,205 V255',
+        'M935,345 V560 H928',
+        'M815,552 V512',
+      ].map((d) => (
+        <path
+          key={d}
+          d={d}
+          fill="none"
+          stroke="rgba(134,230,74,0.45)"
+          strokeWidth="1.5"
+          strokeDasharray="5 6"
+          markerEnd="url(#flowArrow)"
+          vectorEffect="non-scaling-stroke"
+        />
+      ))}
+
+      {/* Pulses travelling the pipeline */}
+      {[
+        ['M295,310 H385', '2.4s', '0s'],
+        ['M615,310 H645 Q662,310 662,293 V172 Q662,155 679,155 H685', '3s', '0.6s'],
+        ['M615,310 H645 Q662,310 662,327 V448 Q662,465 679,465 H685', '3s', '1.8s'],
+      ].map(([d, dur, begin]) => (
+        <circle key={d + dur + begin} r="4" fill="#86E64A" opacity="0.9">
+          <animateMotion dur={dur} begin={begin} repeatCount="indefinite" path={d} />
+        </circle>
+      ))}
+    </svg>
+  )
+}
+
+function LoopChip({ children, className = '', delay }) {
+  return (
+    <Reveal delay={delay} className={className}>
+      <div className="rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-center text-[11px] font-semibold text-white/80 backdrop-blur">
+        {children}
+      </div>
+    </Reveal>
+  )
+}
+
+function MobileArrow() {
+  return (
+    <div className="mx-auto h-7 w-px border-l-2 border-dashed border-brand/40 lg:hidden" aria-hidden="true" />
+  )
+}
+
+function SecurityLoop() {
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6" aria-label="How Orbita secures agentic AI">
+      <Reveal>
+        <p className="mx-auto w-fit rounded-full bg-brand-soft px-3 py-1 text-center text-xs font-semibold tracking-wider text-forest uppercase">
+          How we secure agentic AI
+        </p>
+        <h2 className="mt-4 text-center text-3xl font-semibold tracking-tight sm:text-4xl">
+          One continuous security loop
+        </h2>
+        <p className="mx-auto mt-3 max-w-2xl text-center text-sm leading-relaxed text-sub">
+          Discovery feeds the identity graph, the graph scores every agent's blast radius, and
+          enforcement acts in real time — evidence and mitigations flow straight back into the
+          loop.
+        </p>
+      </Reveal>
+
+      <Reveal className="mt-10">
+        <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-forest to-forest-2 p-5 shadow-lift sm:p-8 lg:h-[620px] lg:p-0">
+          {/* Backdrop */}
+          <div className="pixel-grid absolute inset-0" aria-hidden="true" />
+          <div className="pixel-twinkle absolute inset-0" aria-hidden="true" />
+          <div
+            className="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/15 blur-3xl"
+            aria-hidden="true"
+          />
+
+          <FlowConnectors />
+
+          <div className="relative flex flex-col gap-3 lg:block">
+            {/* Phase 1: discovery */}
+            <Reveal delay={100} className="lg:absolute lg:top-[150px] lg:left-[3%] lg:w-[26%]">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand">
+                  <ScanSearch size={19} className="text-forest" aria-hidden="true" />
+                </span>
+                <p className="mt-3 text-sm font-semibold text-white">
+                  Continuous discovery of AI agents
+                </p>
+                <p className="mt-2 border-t border-white/10 pt-2 text-[11px] font-semibold tracking-wider text-white/50 uppercase">
+                  Unified agent inventory
+                </p>
+                <div className="mt-2.5 grid grid-cols-2 gap-2">
+                  {inventoryChips.map((c) => (
+                    <span
+                      key={c.label}
+                      className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-2 text-[11px] font-medium text-white/80 transition-colors duration-300 hover:border-brand/40"
+                    >
+                      <c.icon size={12} className="shrink-0 text-brand" aria-hidden="true" />
+                      {c.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+
+            <MobileArrow />
+
+            {/* Phase 2: Orbita core */}
+            <Reveal delay={250} className="lg:absolute lg:top-[225px] lg:left-[39%] lg:w-[22%]">
+              <div className="relative rounded-3xl border border-brand/30 bg-forest-2/90 p-6 text-center shadow-lift backdrop-blur">
+                <div className="relative mx-auto flex h-14 w-14 items-center justify-center">
+                  <span className="pulse-ring absolute inset-0 rounded-full border-2 border-brand/50" aria-hidden="true" />
+                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand">
+                    <Radar size={22} className="text-forest" aria-hidden="true" />
+                  </span>
+                </div>
+                <p className="mt-3 text-lg font-semibold tracking-tight text-white">
+                  Orb<span className="text-brand">ita</span>
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-white/60">
+                  Every agent, credential and scope in one live graph
+                </p>
+              </div>
+            </Reveal>
+
+            <MobileArrow />
+
+            {/* Phase 3: modules */}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:contents">
+              <Reveal delay={400} className="lg:absolute lg:top-[100px] lg:left-[68.5%] lg:w-[23%]">
+                <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur transition-colors duration-300 hover:border-brand/40">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-warn-soft text-warn">
+                    <Gauge size={19} aria-hidden="true" />
+                  </span>
+                  <div>
+                    <p className="text-sm font-bold text-white">RISK ENGINE</p>
+                    <p className="text-xs text-white/50">Blast radius & risk scoring</p>
+                  </div>
+                </div>
+              </Reveal>
+
+              <Reveal delay={500} className="lg:absolute lg:top-[410px] lg:left-[68.5%] lg:w-[23%]">
+                <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur transition-colors duration-300 hover:border-brand/40">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-danger-soft text-danger">
+                    <Power size={19} aria-hidden="true" />
+                  </span>
+                  <div>
+                    <p className="text-sm font-bold text-white">KILL SWITCH</p>
+                    <p className="text-xs text-white/50">Runtime control & revocation</p>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+
+            {/* Feedback artifacts */}
+            <div className="flex flex-wrap justify-center gap-2 pt-1 lg:contents">
+              <LoopChip delay={620} className="lg:absolute lg:top-[22px] lg:left-[71%] lg:w-[21%]">
+                Mitigation playbooks
+              </LoopChip>
+              <LoopChip delay={700} className="lg:absolute lg:top-[258px] lg:left-[74%] lg:w-[23%]">
+                Compliance evidence vault
+              </LoopChip>
+              <LoopChip delay={780} className="lg:absolute lg:top-[556px] lg:left-[68.5%] lg:w-[23%]">
+                Auto-revoke orphaned grants
+              </LoopChip>
+            </div>
+          </div>
+        </div>
+      </Reveal>
+    </section>
+  )
+}
+
+function Reveal({ children, className = '', delay = 0 }) {
   const ref = useReveal()
   return (
-    <div ref={ref} className={`reveal ${className}`}>
+    <div
+      ref={ref}
+      className={`reveal ${className}`}
+      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
+    >
       {children}
     </div>
   )
@@ -423,12 +712,8 @@ export default function Home() {
 
           <h1 className="mt-7 text-[2.75rem] leading-[1.04] font-bold tracking-tight text-balance sm:text-6xl lg:text-7xl">
             <span className="rise block" style={{ animationDelay: '0.08s' }}>
-              You can't secure
-            </span>
-            <span className="rise block" style={{ animationDelay: '0.18s' }}>
-              a workforce{' '}
               <span className="font-accent relative inline-block text-[1.06em] whitespace-nowrap text-forest">
-                you can't see.
+                147 AI agents.
                 <svg
                   className="absolute -bottom-2 left-0 w-full sm:-bottom-3"
                   viewBox="0 0 300 14"
@@ -445,15 +730,18 @@ export default function Home() {
                 </svg>
               </span>
             </span>
+            <span className="rise block" style={{ animationDelay: '0.2s' }}>
+              Zero approvals.
+            </span>
           </h1>
 
           <p
             className="rise mx-auto mt-7 max-w-xl text-base leading-relaxed text-sub sm:text-lg"
             style={{ animationDelay: '0.28s' }}
           >
-            Zapier bots, custom GPTs, rogue MCP servers — your employees are hiring an{' '}
-            <span className="font-semibold text-ink">invisible workforce</span>. AgentLens finds
-            all of it in 24 hours, names an owner, and scores every risk.
+            <span className="font-semibold text-ink">You can't secure a workforce you can't see.</span>{' '}
+            Zapier bots, custom GPTs, rogue MCP servers — Orbita finds your invisible workforce
+            in 24 hours, names an owner, and scores every risk.
           </p>
 
           <div
@@ -526,7 +814,7 @@ export default function Home() {
         <Reveal>
           <h2 className="text-center text-3xl font-semibold tracking-tight">
             Your AI attack surface is growing.{' '}
-            <span className="text-danger">Your visibility isn't.</span>
+            <span className="text-forest">Your visibility isn't.</span>
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-center text-sm leading-relaxed text-sub">
             Every employee with a browser can now hire an AI agent. Six ways that goes wrong
@@ -534,14 +822,18 @@ export default function Home() {
           </p>
         </Reveal>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {threats.map((t) => (
-            <Reveal key={t.title}>
-              <article className="h-full rounded-card border border-line bg-card p-5 transition-colors hover:border-danger/40">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-danger-soft text-danger">
-                  <t.icon size={20} aria-hidden="true" />
+          {threats.map((t, i) => (
+            <Reveal key={t.title} className="h-full" delay={i * 90}>
+              <article className="group h-full overflow-hidden rounded-card bg-card p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-soft text-forest transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
+                  <t.icon size={22} aria-hidden="true" />
                 </span>
-                <h3 className="mt-3 text-sm font-semibold">{t.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-sub">{t.text}</p>
+                <h3 className="mt-4 text-base font-semibold">{t.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-sub">{t.text}</p>
+                <span
+                  className="mt-4 block h-0.5 w-full origin-left scale-x-0 rounded-full bg-brand transition-transform duration-500 group-hover:scale-x-100"
+                  aria-hidden="true"
+                />
               </article>
             </Reveal>
           ))}
@@ -564,6 +856,9 @@ export default function Home() {
         </section>
       </Reveal>
 
+      {/* Security loop flow diagram */}
+      <SecurityLoop />
+
       {/* How it works */}
       <section id="how" className="bg-forest py-16 text-white">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -572,7 +867,7 @@ export default function Home() {
               Visible in an afternoon
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-center text-sm leading-relaxed text-white/60">
-              No agents to instrument, no SDKs to ship. AgentLens watches the places agents already
+              No agents to instrument, no SDKs to ship. Orbita watches the places agents already
               leave footprints.
             </p>
           </Reveal>
@@ -602,7 +897,7 @@ export default function Home() {
             One platform, four modules
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-center text-sm leading-relaxed text-sub">
-            Traditional IAM can't see AI agents. AgentLens was built for them.
+            Traditional IAM can't see AI agents. Orbita was built for them.
           </p>
         </Reveal>
         <div className="mt-10 grid gap-4 md:grid-cols-2">
@@ -657,9 +952,9 @@ export default function Home() {
           </h2>
         </Reveal>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f) => (
-            <Reveal key={f.title}>
-              <article className="h-full rounded-card bg-card p-6 shadow-soft transition-shadow hover:shadow-lift">
+          {features.map((f, i) => (
+            <Reveal key={f.title} className="h-full" delay={i * 90}>
+              <article className="h-full rounded-card bg-card p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-soft text-forest">
                   <f.icon size={22} aria-hidden="true" />
                 </span>
@@ -673,12 +968,12 @@ export default function Home() {
 
       <ExposureCalculator />
 
-      {/* Why teams trust AgentLens */}
-      <section className="border-y border-line bg-card py-16" aria-label="Why teams trust AgentLens">
+      {/* Why teams trust Orbita */}
+      <section className="border-y border-line bg-card py-16" aria-label="Why teams trust Orbita">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
             <h2 className="text-center text-3xl font-semibold tracking-tight">
-              Why security teams trust AgentLens
+              Why security teams trust Orbita
             </h2>
           </Reveal>
           <div className="mt-10 grid gap-4 lg:grid-cols-2">

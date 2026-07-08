@@ -38,7 +38,7 @@ export default function AgentDrawer({ agent, onClose, onEdit, onDelete }) {
   const blastRadius = agent.scopes.length * 3 + Math.round(agent.risk / 10)
 
   const copyPassport = () => {
-    navigator.clipboard?.writeText(`https://app.agentlens.io/passport/${agent.id}`).catch(() => {})
+    navigator.clipboard?.writeText(`https://app.orbita.io/passport/${agent.id}`).catch(() => {})
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }

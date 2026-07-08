@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Radar, Menu, X, ShieldCheck, ArrowRight } from 'lucide-react'
+import { COOKIE_PREFS_EVENT } from '../PolicyBar.jsx'
 
 function LinkedInIcon(props) {
   return (
@@ -29,6 +30,7 @@ function GitHubIcon(props) {
 const navLinks = [
   { to: '/pricing', label: 'Pricing' },
   { to: '/blog', label: 'Blog' },
+  { to: '/about', label: 'About' },
 ]
 
 export default function MarketingLayout() {
@@ -55,7 +57,7 @@ export default function MarketingLayout() {
               <Radar size={20} className="text-brand" aria-hidden="true" />
             </span>
             <span className="text-lg font-semibold tracking-tight">
-              Agent<span className="text-forest">Lens</span>
+              Orb<span className="text-forest">ita</span>
             </span>
           </Link>
 
@@ -174,7 +176,7 @@ export default function MarketingLayout() {
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-forest">
                 <Radar size={16} className="text-brand" aria-hidden="true" />
               </span>
-              <span className="font-semibold">AgentLens</span>
+              <span className="font-semibold">Orbita</span>
             </div>
             <p className="mt-3 text-xs leading-relaxed text-sub">
               Every AI agent in your company, discovered, owned and risk-scored — in 24 hours.
@@ -204,8 +206,11 @@ export default function MarketingLayout() {
             {
               h: 'Company',
               links: [
+                ['About us', '/about'],
                 ['Log in', '/login'],
                 ['Sign up', '/signup'],
+                ['Privacy policy', '/privacy'],
+                ['Terms & conditions', '/terms'],
               ],
             },
           ].map((col) => (
@@ -236,7 +241,18 @@ export default function MarketingLayout() {
                 </span>
               ))}
             </div>
-            <p className="text-xs text-sub sm:ml-auto">© 2026 AgentLens · Made in India 🇮🇳</p>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-sub sm:ml-auto">
+              <Link to="/privacy" className="transition-colors hover:text-ink">Privacy</Link>
+              <Link to="/terms" className="transition-colors hover:text-ink">Terms</Link>
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new Event(COOKIE_PREFS_EVENT))}
+                className="cursor-pointer transition-colors hover:text-ink"
+              >
+                Cookie preferences
+              </button>
+              <span>© 2026 Orbita · Made in India 🇮🇳</span>
+            </div>
             <div className="flex gap-1">
               {[
                 { Icon: LinkedInIcon, label: 'LinkedIn' },

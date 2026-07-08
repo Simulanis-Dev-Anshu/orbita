@@ -11,7 +11,7 @@ const faqs = [
   },
   {
     q: 'Do you need to install anything on our agents?',
-    a: 'No. AgentLens watches OAuth grants, audit logs, DNS egress and behavioral signals — the footprints agents already leave. Nothing to instrument, no SDK.',
+    a: 'No. Orbita watches OAuth grants, audit logs, DNS egress and behavioral signals — the footprints agents already leave. Nothing to instrument, no SDK.',
   },
   {
     q: 'Where is our data stored?',
@@ -39,7 +39,7 @@ export default function Pricing() {
           Flat pricing. <span className="text-forest">No per-agent tax.</span>
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-sub sm:text-base">
-          Global platforms charge $50–200K a year for this. We built AgentLens for the mid-market —
+          Global platforms charge $50–200K a year for this. We built Orbita for the mid-market —
           start free, see everything, then pick a plan.
         </p>
 

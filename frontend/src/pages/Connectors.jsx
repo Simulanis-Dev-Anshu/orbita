@@ -88,7 +88,7 @@ export default function Connectors() {
           <div>
             <h2 className="text-base font-semibold">Register an MCP server or API endpoint</h2>
             <p className="text-sm text-sub">
-              Paste a link and AgentLens will monitor it — tools exposed, agents calling it, data
+              Paste a link and Orbita will monitor it — tools exposed, agents calling it, data
               it can reach.
             </p>
           </div>
