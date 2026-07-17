@@ -39,35 +39,22 @@ export default function MarketingLayout() {
 
   return (
     <div className="min-h-dvh bg-canvas">
-      {/* Announcement bar */}
-      <Link
-        to="/signup"
-        className="block bg-forest px-4 py-2 text-center text-xs font-semibold text-white transition-colors hover:bg-forest-2"
-      >
-        <span className="text-brand">New:</span> Run a free discovery scan — see every shadow
-        agent and MCP server in 24 hours
-        <ArrowRight size={12} className="ml-1.5 inline" aria-hidden="true" />
-      </Link>
-
-      {/* Navbar */}
-      <header className="sticky top-0 z-40 border-b border-line bg-canvas/85 backdrop-blur">
-        <nav className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-4 sm:px-6" aria-label="Main">
-          <Link to="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-forest">
-              <Radar size={20} className="text-brand" aria-hidden="true" />
+      <header className="sticky top-0 z-40 border-b border-line/70 bg-canvas/80 backdrop-blur-xl">
+        <nav className="relative mx-auto flex h-16 max-w-6xl items-center px-4 sm:px-6" aria-label="Main">
+          <Link to="/" className="relative z-10 flex items-center gap-2.5" onClick={() => setOpen(false)}>
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-forest">
+              <Radar size={16} className="text-brand" aria-hidden="true" />
             </span>
-            <span className="text-lg font-semibold tracking-tight">
-              Orb<span className="text-forest">ita</span>
-            </span>
+            <span className="text-[15px] font-bold tracking-tight">Orbita</span>
           </Link>
 
-          <div className="hidden items-center gap-6 md:flex">
+          <div className="absolute inset-x-0 hidden items-center justify-center gap-8 md:flex">
             {navLinks.map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}
                 className={({ isActive }) =>
-                  `text-sm font-medium transition-colors ${isActive ? 'text-forest' : 'text-sub hover:text-ink'}`
+                  `text-sm font-medium transition-colors ${isActive ? 'text-ink' : 'text-sub hover:text-ink'}`
                 }
               >
                 {l.label}
@@ -75,44 +62,47 @@ export default function MarketingLayout() {
             ))}
           </div>
 
-          <div className="ml-auto hidden items-center gap-3 md:flex">
+          <div className="relative z-10 ml-auto hidden items-center gap-4 md:flex">
             <Link to="/login" className="text-sm font-medium text-sub transition-colors hover:text-ink">
               Log in
             </Link>
             <Link
               to="/signup"
-              className="rounded-btn bg-forest px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              className="rounded-btn bg-ink px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             >
-              Get your free scan
+              Start free scan
             </Link>
           </div>
 
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="ml-auto cursor-pointer rounded-btn border border-line bg-card p-2 md:hidden"
+            className="relative z-10 ml-auto cursor-pointer rounded-full border border-line bg-card p-2 md:hidden"
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
           >
-            {open ? <X size={20} /> : <Menu size={20} />}
+            {open ? <X size={18} /> : <Menu size={18} />}
           </button>
         </nav>
 
-        {/* Mobile menu */}
         {open && (
           <div className="border-t border-line bg-canvas px-4 py-4 md:hidden">
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1">
               {navLinks.map((l) => (
                 <Link
                   key={l.to}
                   to={l.to}
                   onClick={() => setOpen(false)}
-                  className="rounded-btn px-3 py-2 text-sm font-medium text-ink hover:bg-card"
+                  className="rounded-xl px-3 py-2.5 text-sm font-medium text-ink hover:bg-muted"
                 >
                   {l.label}
                 </Link>
               ))}
-              <Link to="/login" onClick={() => setOpen(false)} className="rounded-btn px-3 py-2 text-sm font-medium text-ink hover:bg-card">
+              <Link
+                to="/login"
+                onClick={() => setOpen(false)}
+                className="rounded-xl px-3 py-2.5 text-sm font-medium text-ink hover:bg-muted"
+              >
                 Log in
               </Link>
               <button
@@ -121,9 +111,9 @@ export default function MarketingLayout() {
                   setOpen(false)
                   navigate('/signup')
                 }}
-                className="cursor-pointer rounded-btn bg-forest px-4 py-2.5 text-sm font-semibold text-white"
+                className="mt-2 cursor-pointer rounded-btn bg-ink px-4 py-3 text-sm font-semibold text-white"
               >
-                Get your free scan
+                Start free scan
               </button>
             </div>
           </div>
@@ -132,18 +122,14 @@ export default function MarketingLayout() {
 
       <Outlet />
 
-      {/* Newsletter */}
-      <section className="border-t border-line bg-canvas py-14" aria-label="Newsletter">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 text-center sm:px-6">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight">The Shadow Ledger, weekly</h2>
-            <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-sub">
-              Shadow-AI research, DPDP updates and agent-governance field notes. One email a week,
-              no fluff.
-            </p>
-          </div>
+      <section className="border-t border-line py-16" aria-label="Newsletter">
+        <div className="mx-auto flex max-w-xl flex-col items-center gap-5 px-4 text-center sm:px-6">
+          <h2 className="text-2xl font-bold tracking-tight">The Shadow Ledger</h2>
+          <p className="text-sm leading-relaxed text-sub">
+            Shadow-AI research and agent-governance notes. One email a week.
+          </p>
           <form
-            className="flex w-full max-w-md gap-2"
+            className="flex w-full gap-2"
             onSubmit={(e) => {
               e.preventDefault()
               e.target.reset()
@@ -155,12 +141,12 @@ export default function MarketingLayout() {
                 type="email"
                 required
                 placeholder="you@company.com"
-                className="w-full rounded-btn border border-line bg-card px-4 py-3 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-forest"
+                className="w-full rounded-btn border border-line bg-card px-5 py-3 text-sm outline-none transition-colors placeholder:text-sub/60 focus:border-ink"
               />
             </label>
             <button
               type="submit"
-              className="shrink-0 cursor-pointer rounded-btn bg-forest px-5 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90"
+              className="shrink-0 cursor-pointer rounded-btn bg-ink px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             >
               Subscribe
             </button>
@@ -168,22 +154,21 @@ export default function MarketingLayout() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-line bg-card">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-4 py-12 sm:px-6 md:grid-cols-4">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2.5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-forest">
-                <Radar size={16} className="text-brand" aria-hidden="true" />
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-forest">
+                <Radar size={14} className="text-brand" aria-hidden="true" />
               </span>
-              <span className="font-semibold">Orbita</span>
+              <span className="font-bold">Orbita</span>
             </div>
-            <p className="mt-3 text-xs leading-relaxed text-sub">
-              Every AI agent in your company, discovered, owned and risk-scored — in 24 hours.
+            <p className="mt-4 text-sm leading-relaxed text-sub">
+              Every AI agent in your company — discovered, owned, risk-scored.
             </p>
-            <p className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-[11px] font-semibold text-forest">
+            <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-forest">
               <ShieldCheck size={12} aria-hidden="true" />
-              DPDP-ready · Data residency in India
+              DPDP-ready · India residency
             </p>
           </div>
           {[
@@ -199,24 +184,22 @@ export default function MarketingLayout() {
               h: 'Resources',
               links: [
                 ['Blog', '/blog'],
-                ['Shadow MCP research', '/blog/shadow-mcp-servers'],
+                ['Shadow MCP', '/blog/shadow-mcp-servers'],
                 ['DPDP guide', '/blog/dpdp-act-ai-agents'],
               ],
             },
             {
               h: 'Company',
               links: [
-                ['About us', '/about'],
-                ['Log in', '/login'],
-                ['Sign up', '/signup'],
-                ['Privacy policy', '/privacy'],
-                ['Terms & conditions', '/terms'],
+                ['About', '/about'],
+                ['Privacy', '/privacy'],
+                ['Terms', '/terms'],
               ],
             },
           ].map((col) => (
             <div key={col.h}>
               <p className="text-xs font-semibold tracking-wider text-sub uppercase">{col.h}</p>
-              <ul className="mt-3 space-y-2">
+              <ul className="mt-4 space-y-2.5">
                 {col.links.map(([label, to]) => (
                   <li key={label}>
                     <Link to={to} className="text-sm text-sub transition-colors hover:text-ink">
@@ -230,28 +213,21 @@ export default function MarketingLayout() {
         </div>
         <div className="border-t border-line">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-4 py-5 sm:px-6">
-            <div className="flex flex-wrap gap-2">
-              {['SOC 2 Type II', 'ISO 27001', 'DPDP-aligned'].map((b) => (
-                <span
-                  key={b}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-line bg-canvas px-2.5 py-1 text-[11px] font-semibold text-sub"
-                >
-                  <ShieldCheck size={11} className="text-forest" aria-hidden="true" />
-                  {b}
-                </span>
-              ))}
-            </div>
+            <p className="text-xs text-sub">© 2026 Orbita · Made in India</p>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-sub sm:ml-auto">
-              <Link to="/privacy" className="transition-colors hover:text-ink">Privacy</Link>
-              <Link to="/terms" className="transition-colors hover:text-ink">Terms</Link>
+              <Link to="/privacy" className="hover:text-ink">
+                Privacy
+              </Link>
+              <Link to="/terms" className="hover:text-ink">
+                Terms
+              </Link>
               <button
                 type="button"
                 onClick={() => window.dispatchEvent(new Event(COOKIE_PREFS_EVENT))}
-                className="cursor-pointer transition-colors hover:text-ink"
+                className="cursor-pointer hover:text-ink"
               >
-                Cookie preferences
+                Cookies
               </button>
-              <span>© 2026 Orbita · Made in India 🇮🇳</span>
             </div>
             <div className="flex gap-1">
               {[
@@ -263,7 +239,7 @@ export default function MarketingLayout() {
                   key={label}
                   href="#"
                   aria-label={label}
-                  className="rounded-lg p-2 text-sub transition-colors hover:bg-canvas hover:text-ink"
+                  className="rounded-lg p-2 text-sub transition-colors hover:bg-muted hover:text-ink"
                 >
                   <Icon />
                 </a>
