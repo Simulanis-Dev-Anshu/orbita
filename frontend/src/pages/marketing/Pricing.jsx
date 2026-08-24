@@ -35,7 +35,8 @@ export default function Pricing() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <div ref={headRef} className="reveal text-center">
-        <h1 className="text-4xl font-bold tracking-tight">
+        <p className="ox-label text-sub">Pricing</p>
+        <h1 className="font-display mt-3 text-4xl">
           Flat pricing. <span className="text-forest">No per-agent tax.</span>
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-sub sm:text-base">
@@ -74,7 +75,7 @@ export default function Pricing() {
             }`}
           >
             {p.current && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-1 text-[11px] font-bold text-forest">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-1 text-[11px] font-bold text-white">
                 MOST POPULAR
               </span>
             )}
@@ -97,8 +98,8 @@ export default function Pricing() {
               to="/signup"
               className={`mt-7 inline-flex items-center justify-center gap-2 rounded-btn px-5 py-3 text-sm font-bold transition-opacity hover:opacity-90 ${
                 p.current
-                  ? 'bg-brand text-forest'
-                  : 'border border-line bg-canvas text-ink hover:border-forest'
+                  ? 'bg-brand text-white'
+                  : 'border border-line bg-canvas text-ink hover:border-brand'
               }`}
             >
               {p.id === 'enterprise' ? 'Contact sales' : 'Start with free scan'}

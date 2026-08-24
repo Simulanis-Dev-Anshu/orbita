@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
+import { ASSET_TYPES, inferType, asAsset } from '../data/asset.js'
 
 const platforms = ['Zapier', 'Make', 'n8n', 'Custom GPT', 'Claude', 'GitHub App', 'MCP', 'Other']
 const statuses = ['active', 'pending', 'orphaned']
@@ -7,6 +8,7 @@ const statuses = ['active', 'pending', 'orphaned']
 const empty = {
   name: '',
   platform: 'Zapier',
+  type: 'AI_AGENT',
   owner: '',
   ownerRole: '',
   scopes: '',
@@ -36,16 +38,18 @@ export default function AgentFormModal({ agent, onSave, onClose }) {
 
   const submit = (e) => {
     e.preventDefault()
-    onSave({
-      ...form,
-      owner: form.owner.trim() || 'Unassigned',
-      ownerRole: form.ownerRole.trim() || '—',
-      risk: Number(form.risk),
-      scopes: form.scopes
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean),
-    })
+    onSave(
+      asAsset({
+        ...form,
+        owner: form.owner.trim() || 'Unassigned',
+        ownerRole: form.ownerRole.trim() || '—',
+        risk: Number(form.risk),
+        scopes: form.scopes
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean),
+      }),
+    )
     onClose()
   }
 
@@ -89,7 +93,7 @@ export default function AgentFormModal({ agent, onSave, onClose }) {
               value={form.name}
               onChange={set('name')}
               placeholder="e.g. Invoice Reconciliation Bot"
-              className="mt-1.5 w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-sub/60 focus:border-forest"
+              className="mt-1.5 w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
             />
           </label>
 
@@ -98,8 +102,11 @@ export default function AgentFormModal({ agent, onSave, onClose }) {
               <span className="text-xs font-semibold text-sub">Platform</span>
               <select
                 value={form.platform}
-                onChange={set('platform')}
-                className="mt-1.5 w-full cursor-pointer rounded-btn border border-line bg-canvas px-3 py-2.5 text-sm outline-none focus:border-forest"
+                onChange={(e) => {
+                  const platform = e.target.value
+                  setForm((f) => ({ ...f, platform, type: inferType(platform) }))
+                }}
+                className="mt-1.5 w-full cursor-pointer rounded-btn border border-line bg-canvas px-3 py-2.5 text-sm outline-none focus:border-brand"
               >
                 {platforms.map((p) => (
                   <option key={p}>{p}</option>
@@ -111,7 +118,7 @@ export default function AgentFormModal({ agent, onSave, onClose }) {
               <select
                 value={form.status}
                 onChange={set('status')}
-                className="mt-1.5 w-full cursor-pointer rounded-btn border border-line bg-canvas px-3 py-2.5 text-sm capitalize outline-none focus:border-forest"
+                className="mt-1.5 w-full cursor-pointer rounded-btn border border-line bg-canvas px-3 py-2.5 text-sm capitalize outline-none focus:border-brand"
               >
                 {statuses.map((s) => (
                   <option key={s}>{s}</option>
@@ -120,6 +127,21 @@ export default function AgentFormModal({ agent, onSave, onClose }) {
             </label>
           </div>
 
+          <label className="block">
+            <span className="text-xs font-semibold text-sub">Asset type</span>
+            <select
+              value={form.type}
+              onChange={set('type')}
+              className="mt-1.5 w-full cursor-pointer rounded-btn border border-line bg-canvas px-3 py-2.5 text-sm outline-none focus:border-brand"
+            >
+              {ASSET_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {t.replaceAll('_', ' ')}
+                </option>
+              ))}
+            </select>
+          </label>
+
           <div className="grid grid-cols-2 gap-3">
             <label className="block">
               <span className="text-xs font-semibold text-sub">Owner</span>
@@ -127,7 +149,7 @@ export default function AgentFormModal({ agent, onSave, onClose }) {
                 value={form.owner}
                 onChange={set('owner')}
                 placeholder="Unassigned"
-                className="mt-1.5 w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-sub/60 focus:border-forest"
+                className="mt-1.5 w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
               />
             </label>
             <label className="block">
@@ -136,7 +158,7 @@ export default function AgentFormModal({ agent, onSave, onClose }) {
                 value={form.ownerRole}
                 onChange={set('ownerRole')}
                 placeholder="e.g. Finance Ops"
-                className="mt-1.5 w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-sub/60 focus:border-forest"
+                className="mt-1.5 w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
               />
             </label>
           </div>
@@ -147,7 +169,7 @@ export default function AgentFormModal({ agent, onSave, onClose }) {
               value={form.scopes}
               onChange={set('scopes')}
               placeholder="Comma-separated, e.g. Gmail, Sheets"
-              className="mt-1.5 w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-sub/60 focus:border-forest"
+              className="mt-1.5 w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
             />
             <span className="mt-1 block text-[11px] text-sub">
               Separate multiple scopes with commas
@@ -165,7 +187,7 @@ export default function AgentFormModal({ agent, onSave, onClose }) {
               max="100"
               value={form.risk}
               onChange={set('risk')}
-              className="mt-2 w-full cursor-pointer accent-[#103E2D]"
+              className="mt-2 w-full cursor-pointer accent-[#170702]"
             />
           </label>
         </div>
@@ -180,7 +202,7 @@ export default function AgentFormModal({ agent, onSave, onClose }) {
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer rounded-btn border border-line bg-canvas px-4 py-2.5 text-sm font-semibold transition-colors hover:border-forest"
+            className="cursor-pointer rounded-btn border border-line bg-canvas px-4 py-2.5 text-sm font-semibold transition-colors hover:border-brand"
           >
             Cancel
           </button>

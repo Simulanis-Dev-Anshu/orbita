@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import agents, auth, copilot, insights, operations, telemetry
 from app.core.config import settings
 from app.db.base import SessionLocal, engine
-from app.db.models import Base
+from app.db.models import Base, ensure_asset_columns
 from app.db.seed import seed_if_empty
 
 
@@ -14,6 +14,7 @@ from app.db.seed import seed_if_empty
 async def lifespan(_: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(ensure_asset_columns)
 
     if settings.seed_demo_data:
         async with SessionLocal() as session:

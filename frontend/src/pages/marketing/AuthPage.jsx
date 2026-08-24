@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Radar, Eye, EyeOff, ArrowRight } from 'lucide-react'
+import { Eye, EyeOff, ArrowRight } from 'lucide-react'
+import BrandMark from '../../components/BrandMark.jsx'
 
 function GoogleIcon() {
   return (
@@ -28,17 +29,15 @@ export default function AuthPage({ mode }) {
   return (
     <div className="grid min-h-dvh bg-canvas lg:grid-cols-2">
       {/* Brand panel */}
-      <div className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-forest to-forest-2 p-10 text-white lg:flex">
+      <div className="ox-plate relative hidden flex-col justify-between overflow-hidden p-10 lg:flex">
         <div className="absolute -top-20 -right-16 h-72 w-72 rounded-full bg-brand/15 blur-3xl" aria-hidden="true" />
         <Link to="/" className="relative flex w-fit items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand">
-            <Radar size={20} className="text-forest" aria-hidden="true" />
-          </span>
+          <BrandMark size={36} invert />
           <span className="text-lg font-semibold">Orbita</span>
         </Link>
 
         <div className="relative">
-          <p className="text-3xl leading-snug font-semibold tracking-tight">
+          <p className="font-display text-3xl leading-snug">
             "The first scan found 31 agents we didn't know existed."
           </p>
           <p className="mt-4 text-sm text-white/60">CISO, Indian fintech · 400 employees</p>
@@ -62,13 +61,11 @@ export default function AuthPage({ mode }) {
       <div className="flex items-center justify-center px-4 py-12 sm:px-8">
         <div className="w-full max-w-sm">
           <Link to="/" className="flex w-fit items-center gap-2.5 lg:hidden">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-forest">
-              <Radar size={20} className="text-brand" aria-hidden="true" />
-            </span>
+            <BrandMark size={36} />
             <span className="text-lg font-semibold">Orbita</span>
           </Link>
 
-          <h1 className="mt-8 text-2xl font-bold tracking-tight lg:mt-0">
+          <h1 className="font-display mt-8 text-3xl tracking-tight lg:mt-0">
             {isSignup ? 'Start your free discovery scan' : 'Welcome back'}
           </h1>
           <p className="mt-2 text-sm text-sub">
@@ -80,7 +77,7 @@ export default function AuthPage({ mode }) {
           <button
             type="button"
             onClick={submit}
-            className="mt-7 flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-btn border border-line bg-card px-4 py-3 text-sm font-semibold shadow-soft transition-colors hover:border-forest"
+            className="mt-7 flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-btn border border-line bg-card px-4 py-3 text-sm font-semibold shadow-soft transition-colors hover:border-brand"
           >
             <GoogleIcon />
             Continue with Google
@@ -101,7 +98,7 @@ export default function AuthPage({ mode }) {
                     required
                     autoComplete="name"
                     placeholder="Prabhhav"
-                    className="mt-1.5 w-full rounded-btn border border-line bg-card px-3.5 py-3 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-forest"
+                    className="mt-1.5 w-full rounded-btn border border-line bg-card px-3.5 py-3 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
                   />
                 </label>
                 <label className="block">
@@ -110,7 +107,7 @@ export default function AuthPage({ mode }) {
                     required
                     autoComplete="organization"
                     placeholder="Zintellix"
-                    className="mt-1.5 w-full rounded-btn border border-line bg-card px-3.5 py-3 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-forest"
+                    className="mt-1.5 w-full rounded-btn border border-line bg-card px-3.5 py-3 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
                   />
                 </label>
               </>
@@ -122,7 +119,7 @@ export default function AuthPage({ mode }) {
                 required
                 autoComplete="email"
                 placeholder="you@company.com"
-                className="mt-1.5 w-full rounded-btn border border-line bg-card px-3.5 py-3 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-forest"
+                className="mt-1.5 w-full rounded-btn border border-line bg-card px-3.5 py-3 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
               />
             </label>
             <label className="block">
@@ -141,7 +138,7 @@ export default function AuthPage({ mode }) {
                   minLength={8}
                   autoComplete={isSignup ? 'new-password' : 'current-password'}
                   placeholder="At least 8 characters"
-                  className="w-full rounded-btn border border-line bg-card px-3.5 py-3 pr-11 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-forest"
+                  className="w-full rounded-btn border border-line bg-card px-3.5 py-3 pr-11 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
                 />
                 <button
                   type="button"
@@ -157,7 +154,7 @@ export default function AuthPage({ mode }) {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-btn bg-forest px-4 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="ox-btn ox-btn-primary w-full cursor-pointer disabled:opacity-60"
             >
               {loading ? (
                 'Signing in…'
@@ -174,14 +171,14 @@ export default function AuthPage({ mode }) {
             {isSignup ? (
               <>
                 Already have an account?{' '}
-                <Link to="/login" className="font-semibold text-forest hover:underline">
+                <Link to="/login" className="font-semibold text-brand hover:underline">
                   Log in
                 </Link>
               </>
             ) : (
               <>
                 New to Orbita?{' '}
-                <Link to="/signup" className="font-semibold text-forest hover:underline">
+                <Link to="/signup" className="font-semibold text-brand hover:underline">
                   Start free
                 </Link>
               </>

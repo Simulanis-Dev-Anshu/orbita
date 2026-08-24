@@ -14,7 +14,7 @@ function CopilotTeaser() {
   return (
     <Link
       to="/app/copilot"
-      className="card-hover group relative block h-full overflow-hidden rounded-card bg-gradient-to-br from-forest to-forest-2 p-5 text-white shadow-lift"
+      className="card-hover ox-plate group relative block h-full overflow-hidden rounded-card p-5 shadow-lift"
       aria-label="Open Sentinel Copilot"
     >
       <div
@@ -23,7 +23,7 @@ function CopilotTeaser() {
       />
       <div className="flex items-center gap-3">
         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand">
-          <Sparkles size={20} className="text-forest" aria-hidden="true" />
+          <Sparkles size={20} className="text-white" aria-hidden="true" />
         </span>
         <div className="flex-1">
           <p className="text-base font-semibold">Sentinel Copilot</p>

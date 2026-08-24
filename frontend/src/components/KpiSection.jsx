@@ -52,7 +52,7 @@ function MiniKpi({ icon: Icon, iconClass, title, value, badge, badgeClass, trend
       <div className="mt-5 flex items-end justify-between gap-2">
         <div>
           <p className="text-sm text-sub">{title}</p>
-          <p className="mt-1 text-3xl font-semibold tracking-tight tabular-nums">{count}</p>
+          <p className="font-display mt-1 text-3xl tabular-nums">{count}</p>
         </div>
         <Sparkline data={trend} stroke={trendColor} />
       </div>
@@ -67,7 +67,7 @@ export default function KpiSection() {
     <section aria-label="Key metrics" className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {/* Hero KPI */}
       <article
-        className="card-in card-hover relative overflow-hidden rounded-card bg-gradient-to-br from-forest to-forest-2 p-5 text-white shadow-lift"
+        className="card-in card-hover ox-plate relative overflow-hidden rounded-card p-5 shadow-lift"
         style={{ '--i': 0 }}
       >
         {/* Background illustration */}
@@ -81,7 +81,7 @@ export default function KpiSection() {
         />
 
         <p className="text-sm text-white/70">Total AI Agents</p>
-        <p className="mt-2 text-4xl font-bold tracking-tight tabular-nums">{total}</p>
+        <p className="font-display mt-2 text-4xl tabular-nums">{total}</p>
         <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-brand/15 px-2.5 py-1 text-xs font-semibold text-brand">
           <ArrowUpRight size={14} aria-hidden="true" />
           +{kpis.newThisWeek} this week
@@ -89,7 +89,7 @@ export default function KpiSection() {
 
         <button
           type="button"
-          className="relative mt-5 inline-flex cursor-pointer items-center gap-2 rounded-btn bg-brand px-4 py-2.5 text-sm font-semibold text-forest transition-all hover:opacity-90 active:scale-95"
+          className="ox-btn ox-btn-primary relative mt-5 cursor-pointer"
         >
           <Download size={16} aria-hidden="true" />
           Export report
@@ -127,7 +127,7 @@ export default function KpiSection() {
         badge="All syncing"
         badgeClass="bg-brand-soft text-forest"
         trend={kpiTrends.connectedSources}
-        trendColor="#103E2D"
+        trendColor="#170702"
       />
     </section>
   )

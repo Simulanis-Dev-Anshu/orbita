@@ -37,8 +37,8 @@ export default function ActivityPulse() {
           <ComposedChart data={fleetActivity} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
             <defs>
               <linearGradient id="fillActivity" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#103E2D" stopOpacity={0.25} />
-                <stop offset="100%" stopColor="#103E2D" stopOpacity={0.02} />
+                <stop offset="0%" stopColor="#170702" stopOpacity={0.25} />
+                <stop offset="100%" stopColor="#170702" stopOpacity={0.02} />
               </linearGradient>
             </defs>
             <CartesianGrid stroke="#ECECEC" strokeDasharray="4 4" vertical={false} />
@@ -57,7 +57,7 @@ export default function ActivityPulse() {
               type="monotone"
               dataKey="actions"
               name="Actions"
-              stroke="#103E2D"
+              stroke="#170702"
               strokeWidth={2}
               fill="url(#fillActivity)"
             />

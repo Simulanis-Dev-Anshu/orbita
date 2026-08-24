@@ -100,7 +100,7 @@ export default function CommandPalette({ open, onClose }) {
         <div className="max-h-[50dvh] overflow-y-auto p-2">
           {agentHits.length > 0 && (
             <>
-              <p className="px-3 pt-2 pb-1 text-[11px] font-semibold tracking-wider text-sub uppercase">
+              <p className="ox-label px-3 pt-2 pb-1 text-sub">
                 Agents
               </p>
               {agentHits.map((a) => (
@@ -133,7 +133,7 @@ export default function CommandPalette({ open, onClose }) {
 
           {pageHits.length > 0 && (
             <>
-              <p className="px-3 pt-3 pb-1 text-[11px] font-semibold tracking-wider text-sub uppercase">
+              <p className="ox-label px-3 pt-3 pb-1 text-sub">
                 Pages
               </p>
               {pageHits.map((p) => (
@@ -151,7 +151,7 @@ export default function CommandPalette({ open, onClose }) {
           )}
 
           {/* Ask Sentinel fallback */}
-          <p className="px-3 pt-3 pb-1 text-[11px] font-semibold tracking-wider text-sub uppercase">
+          <p className="ox-label px-3 pt-3 pb-1 text-sub">
             Stuck?
           </p>
           <button

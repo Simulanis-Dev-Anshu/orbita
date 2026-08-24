@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback } from 'react'
 import { agents as seed } from '../data/mock.js'
+import { asAsset } from '../data/asset.js'
 
 const AgentsContext = createContext(null)
 
@@ -8,7 +9,7 @@ export function AgentsProvider({ children }) {
 
   const addAgent = useCallback((agent) => {
     setAgents((prev) => [
-      { ...agent, id: `ag-${Date.now()}`, lastActive: 'just now' },
+      asAsset({ ...agent, id: `ag-${Date.now()}`, lastActive: 'just now' }),
       ...prev,
     ])
   }, [])

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Radar, Eye, ShieldCheck, Handshake, MapPin, ArrowRight } from 'lucide-react'
+import { Eye, ShieldCheck, Handshake, MapPin, ArrowRight } from 'lucide-react'
+import BrandMark from '../../components/BrandMark.jsx'
 import useReveal from '../../hooks/useReveal.js'
 import useSeo from '../../hooks/useSeo.js'
 
@@ -55,10 +56,8 @@ export default function About() {
     <main>
       {/* Hero */}
       <Section className="mx-auto max-w-4xl px-4 pt-16 pb-12 text-center sm:px-6">
-        <p className="mx-auto w-fit rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold tracking-wider text-forest uppercase">
-          About Orbita
-        </p>
-        <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
+        <p className="ox-label text-sub">About Orbita</p>
+        <h1 className="font-display mt-5 text-4xl sm:text-5xl">
           Every company just hired an{' '}
           <span className="font-accent text-forest">invisible workforce.</span>
           <br />
@@ -74,14 +73,14 @@ export default function About() {
 
       {/* Mission strip */}
       <Section className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-card bg-gradient-to-br from-forest to-forest-2 p-8 text-white shadow-lift sm:p-12">
+        <div className="ox-plate relative overflow-hidden rounded-card p-8 shadow-lift sm:p-12">
           <div className="absolute -top-10 -right-10 h-44 w-44 rounded-full bg-brand/20 blur-2xl" aria-hidden="true" />
           <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand">
-              <Radar size={26} className="text-forest" aria-hidden="true" />
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center">
+              <BrandMark size={56} invert />
             </span>
             <div>
-              <p className="text-xs font-semibold tracking-wider text-brand uppercase">Our mission</p>
+              <p className="ox-label text-brand">Our mission</p>
               <p className="mt-2 text-xl leading-relaxed font-medium sm:text-2xl">
                 Give every security team a live, trustworthy answer to one question:{' '}
                 <span className="text-brand">"What are the AI agents in my company doing right now?"</span>
@@ -95,7 +94,7 @@ export default function About() {
       <Section className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-4 py-12 sm:px-6 lg:grid-cols-4">
         {stats.map(([num, label]) => (
           <div key={label} className="rounded-card bg-card p-6 text-center shadow-soft">
-            <p className="text-3xl font-bold tracking-tight text-forest">{num}</p>
+            <p className="font-display text-3xl text-ink">{num}</p>
             <p className="mt-2 text-sm text-sub">{label}</p>
           </div>
         ))}
@@ -103,7 +102,7 @@ export default function About() {
 
       {/* Values */}
       <Section className="mx-auto max-w-6xl px-4 py-4 sm:px-6">
-        <h2 className="text-center text-3xl font-semibold tracking-tight">What we believe</h2>
+        <h2 className="font-display text-center text-3xl">What we believe</h2>
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {values.map((v) => (
             <article
@@ -151,14 +150,14 @@ export default function About() {
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/signup"
-              className="btn-shine inline-flex items-center gap-2 rounded-btn bg-forest px-6 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90"
+              className="ox-btn ox-btn-primary"
             >
               Get your free scan
               <ArrowRight size={16} aria-hidden="true" />
             </Link>
             <Link
               to="/pricing"
-              className="rounded-btn border border-line bg-card px-6 py-3 text-sm font-semibold transition-colors hover:border-forest"
+              className="ox-btn ox-btn-ghost text-ink"
             >
               View pricing
             </Link>

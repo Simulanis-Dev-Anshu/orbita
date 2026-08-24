@@ -52,7 +52,7 @@ export default function PolicyBar() {
         <button
           type="button"
           onClick={() => choose('essential')}
-          className="cursor-pointer rounded-btn border border-line bg-canvas px-4 py-2 text-xs font-semibold transition-colors hover:border-forest"
+          className="cursor-pointer rounded-btn border border-line bg-canvas px-4 py-2 text-xs font-semibold transition-colors hover:border-brand"
         >
           Essential only
         </button>

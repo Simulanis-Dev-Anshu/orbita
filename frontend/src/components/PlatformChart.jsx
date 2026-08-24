@@ -31,7 +31,7 @@ export default function PlatformChart() {
             />
             <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#777777' }} />
             <Tooltip
-              cursor={{ fill: 'rgba(16, 62, 45, 0.04)' }}
+              cursor={{ fill: 'rgba(23, 7, 2, 0.04)' }}
               contentStyle={{
                 borderRadius: 14,
                 border: '1px solid #ECECEC',
@@ -44,7 +44,7 @@ export default function PlatformChart() {
               {platformBreakdown.map((d, i) => (
                 <Cell
                   key={d.platform}
-                  fill={i === activeIndex ? '#86E64A' : '#103E2D'}
+                  fill={i === activeIndex ? '#FF4D00' : '#170702'}
                   style={{ transition: 'fill 0.2s ease' }}
                 />
               ))}

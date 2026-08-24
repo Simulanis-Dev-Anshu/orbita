@@ -55,7 +55,7 @@ export default function Alerts() {
             type="checkbox"
             checked={showResolved}
             onChange={(e) => setShowResolved(e.target.checked)}
-            className="h-4 w-4 accent-[#103E2D]"
+            className="h-4 w-4 accent-[#170702]"
           />
           Show resolved
         </label>
@@ -91,7 +91,7 @@ export default function Alerts() {
                 <button
                   type="button"
                   onClick={() => resolve(a.id)}
-                  className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-btn border border-line bg-card px-3 py-1.5 text-xs font-semibold transition-colors hover:border-forest"
+                  className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-btn border border-line bg-card px-3 py-1.5 text-xs font-semibold transition-colors hover:border-brand"
                 >
                   <Check size={14} aria-hidden="true" />
                   Resolve

@@ -26,7 +26,7 @@ export default function DiscoveryChart() {
         <select
           value={range}
           onChange={(e) => setRange(e.target.value)}
-          className="cursor-pointer rounded-btn border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-forest"
+          className="cursor-pointer rounded-btn border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-brand"
           aria-label="Time range"
         >
           {ranges.map((r) => (
@@ -40,8 +40,8 @@ export default function DiscoveryChart() {
           <AreaChart data={discoveryTrend} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
             <defs>
               <linearGradient id="fillDiscovered" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#86E64A" stopOpacity={0.35} />
-                <stop offset="100%" stopColor="#86E64A" stopOpacity={0.02} />
+                <stop offset="0%" stopColor="#FF4D00" stopOpacity={0.35} />
+                <stop offset="100%" stopColor="#FF4D00" stopOpacity={0.02} />
               </linearGradient>
               <linearGradient id="fillRisk" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#E5484D" stopOpacity={0.25} />
@@ -65,7 +65,7 @@ export default function DiscoveryChart() {
               type="monotone"
               dataKey="discovered"
               name="Discovered"
-              stroke="#103E2D"
+              stroke="#170702"
               strokeWidth={2}
               fill="url(#fillDiscovered)"
             />

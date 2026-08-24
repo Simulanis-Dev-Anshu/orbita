@@ -11,8 +11,8 @@ export default function RadarLoader({ label = 'Scanning your agent fleet', size 
   const ring = dark ? 'border-white/15' : 'border-forest/15'
   const cross = dark ? 'bg-white/10' : 'bg-forest/10'
   const beam = dark
-    ? 'conic-gradient(from 0deg, rgba(134, 230, 74, 0.45), rgba(134, 230, 74, 0.08) 70deg, transparent 90deg)'
-    : 'conic-gradient(from 0deg, rgba(16, 62, 45, 0.35), rgba(16, 62, 45, 0.06) 70deg, transparent 90deg)'
+    ? 'conic-gradient(from 0deg, rgba(255, 77, 0, 0.45), rgba(255, 77, 0, 0.08) 70deg, transparent 90deg)'
+    : 'conic-gradient(from 0deg, rgba(23, 7, 2, 0.35), rgba(23, 7, 2, 0.06) 70deg, transparent 90deg)'
 
   return (
     <div className="flex flex-col items-center gap-4" role="status" aria-label={label}>
@@ -34,7 +34,7 @@ export default function RadarLoader({ label = 'Scanning your agent fleet', size 
         {blips.map((b, i) => (
           <span
             key={i}
-            className="radar-blip absolute h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_8px_rgba(134,230,74,0.9)]"
+            className="radar-blip absolute h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_8px_rgba(255,77,0,0.9)]"
             style={{ top: b.top, left: b.left, animationDelay: b.delay }}
             aria-hidden="true"
           />

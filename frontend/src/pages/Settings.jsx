@@ -23,14 +23,14 @@ export default function Settings() {
             <span className="text-xs font-semibold text-sub">Company name</span>
             <input
               defaultValue="Zintellix"
-              className="mt-1.5 w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-forest"
+              className="mt-1.5 w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-brand"
             />
           </label>
           <label className="block">
             <span className="text-xs font-semibold text-sub">Data residency</span>
             <div className="relative mt-1.5">
               <MapPin size={16} className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sub" aria-hidden="true" />
-              <select className="w-full cursor-pointer rounded-btn border border-line bg-canvas py-2.5 pr-3 pl-9 text-sm outline-none focus:border-forest">
+              <select className="w-full cursor-pointer rounded-btn border border-line bg-canvas py-2.5 pr-3 pl-9 text-sm outline-none focus:border-brand">
                 <option>India — AWS Mumbai (DPDP-aligned)</option>
                 <option>EU — Frankfurt</option>
                 <option>US — Virginia</option>
@@ -78,7 +78,7 @@ export default function Settings() {
               </span>
               <select
                 defaultValue={m.role}
-                className="cursor-pointer rounded-btn border border-line bg-canvas px-2.5 py-1.5 text-xs outline-none focus:border-forest"
+                className="cursor-pointer rounded-btn border border-line bg-canvas px-2.5 py-1.5 text-xs outline-none focus:border-brand"
                 aria-label={`Role for ${m.name}`}
               >
                 <option>Owner</option>
@@ -160,8 +160,8 @@ export default function Settings() {
                 type="button"
                 className={`mt-5 cursor-pointer rounded-btn px-4 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90 ${
                   p.current
-                    ? 'bg-brand text-forest'
-                    : 'border border-line bg-card text-ink hover:border-forest'
+                    ? 'bg-brand text-white'
+                    : 'border border-line bg-card text-ink hover:border-brand'
                 }`}
               >
                 {p.current ? 'Manage plan' : p.id === 'enterprise' ? 'Contact sales' : 'Switch plan'}

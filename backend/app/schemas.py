@@ -49,6 +49,11 @@ class AgentIn(BaseModel):
     scopes: List[str] = []
     risk: Optional[int] = Field(default=None, ge=0, le=100)
     status: str = "pending"
+    asset_type: Optional[str] = None
+    vendor: Optional[str] = None
+    device: str = ""
+    connections: List[str] = []
+    data_access: List[str] = []
 
 
 class AgentPatch(BaseModel):
@@ -59,6 +64,11 @@ class AgentPatch(BaseModel):
     scopes: Optional[List[str]] = None
     risk: Optional[int] = Field(default=None, ge=0, le=100)
     status: Optional[str] = None
+    asset_type: Optional[str] = None
+    vendor: Optional[str] = None
+    device: Optional[str] = None
+    connections: Optional[List[str]] = None
+    data_access: Optional[List[str]] = None
 
 
 class AgentOut(BaseModel):
@@ -75,6 +85,11 @@ class AgentOut(BaseModel):
     source: str
     first_seen_at: datetime
     last_active_at: datetime
+    asset_type: str = "AI_AGENT"
+    vendor: str = ""
+    device: str = ""
+    connections: List[str] = []
+    data_access: List[str] = []
 
 
 # ---------- Alerts / notifications / approvals ----------

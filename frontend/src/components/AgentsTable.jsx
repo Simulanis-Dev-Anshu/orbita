@@ -52,7 +52,7 @@ export default function AgentsTable({ rows, limit, title = 'Recently discovered 
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="cursor-pointer rounded-btn border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-forest"
+            className="cursor-pointer rounded-btn border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-brand"
             aria-label="Filter agents"
           >
             {filters.map((f) => (
@@ -62,7 +62,7 @@ export default function AgentsTable({ rows, limit, title = 'Recently discovered 
           <button
             type="button"
             onClick={() => setSortDesc((v) => !v)}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-btn border border-line bg-canvas px-3 py-2 text-sm transition-colors hover:border-forest"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-btn border border-line bg-canvas px-3 py-2 text-sm transition-colors hover:border-brand"
             aria-label={`Sort by risk, currently ${sortDesc ? 'highest' : 'lowest'} first`}
           >
             <ArrowUpDown size={14} aria-hidden="true" />
@@ -76,6 +76,7 @@ export default function AgentsTable({ rows, limit, title = 'Recently discovered 
           <thead>
             <tr className="border-b border-line text-xs text-sub uppercase tracking-wide">
               <th scope="col" className="py-3 pr-4 font-semibold">Agent</th>
+              <th scope="col" className="py-3 pr-4 font-semibold">Type</th>
               <th scope="col" className="py-3 pr-4 font-semibold">Owner</th>
               <th scope="col" className="py-3 pr-4 font-semibold">Access</th>
               <th scope="col" className="py-3 pr-4 font-semibold">Risk</th>
@@ -105,6 +106,9 @@ export default function AgentsTable({ rows, limit, title = 'Recently discovered 
                         <p className="text-xs text-sub">{a.platform}</p>
                       </div>
                     </div>
+                  </td>
+                  <td className="py-3.5 pr-4">
+                    <span className="ox-label text-sub">{(a.type || 'AI_AGENT').replaceAll('_', ' ')}</span>
                   </td>
                   <td className="py-3.5 pr-4">
                     <p className={a.owner === 'Unassigned' ? 'font-medium text-danger' : ''}>{a.owner}</p>
@@ -141,7 +145,7 @@ export default function AgentsTable({ rows, limit, title = 'Recently discovered 
             })}
             {visible.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-10 text-center text-sm text-sub">
+                <td colSpan={7} className="py-10 text-center text-sm text-sub">
                   No agents match this filter.
                 </td>
               </tr>

@@ -34,9 +34,9 @@ const artifacts = [
 ]
 
 const trendSeries = [
-  { key: 'dpdp', name: 'DPDP', color: '#86E64A' },
+  { key: 'dpdp', name: 'DPDP', color: '#FF4D00' },
   { key: 'soc2', name: 'SOC 2', color: '#E8930C' },
-  { key: 'iso', name: 'ISO 27001', color: '#103E2D' },
+  { key: 'iso', name: 'ISO 27001', color: '#170702' },
   { key: 'euai', name: 'EU AI Act', color: '#E5484D' },
 ]
 
@@ -75,7 +75,7 @@ function ReadinessRing({ value }) {
           cy="64"
           r={r}
           fill="none"
-          stroke="#86E64A"
+          stroke="#FF4D00"
           strokeWidth="10"
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -165,7 +165,7 @@ export default function Compliance() {
                 <button
                   type="button"
                   onClick={() => exportReport(f.id)}
-                  className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-btn border border-line bg-canvas px-3 py-2 text-xs font-semibold transition-all hover:border-forest active:scale-95"
+                  className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-btn border border-line bg-canvas px-3 py-2 text-xs font-semibold transition-all hover:border-brand active:scale-95"
                 >
                   <FileDown size={14} aria-hidden="true" />
                   {exported === f.id ? 'Report queued ✓' : 'Export auditor PDF'}

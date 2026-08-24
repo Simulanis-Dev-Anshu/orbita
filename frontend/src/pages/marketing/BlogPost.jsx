@@ -63,7 +63,7 @@ export default function BlogPost() {
         </p>
         <Link
           to="/signup"
-          className="mt-5 inline-flex items-center gap-2 rounded-btn bg-brand px-5 py-2.5 text-sm font-bold text-forest transition-opacity hover:opacity-90"
+          className="mt-5 inline-flex items-center gap-2 rounded-btn bg-brand px-5 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90"
         >
           Start the free scan
           <ArrowRight size={15} aria-hidden="true" />

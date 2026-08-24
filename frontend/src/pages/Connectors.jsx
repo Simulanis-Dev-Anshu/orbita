@@ -72,7 +72,7 @@ export default function Connectors() {
           </div>
           <button
             type="button"
-            className="cursor-pointer rounded-btn bg-brand px-5 py-2.5 text-sm font-semibold text-forest transition-opacity hover:opacity-90"
+            className="cursor-pointer rounded-btn bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
           >
             Run full discovery scan
           </button>
@@ -101,7 +101,7 @@ export default function Connectors() {
               value={mcpName}
               onChange={(e) => setMcpName(e.target.value)}
               placeholder="Name (optional)"
-              className="w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-sub/60 focus:border-forest"
+              className="w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
             />
           </label>
           <label className="relative min-w-0 flex-1">
@@ -115,7 +115,7 @@ export default function Connectors() {
               value={mcpUrl}
               onChange={(e) => setMcpUrl(e.target.value)}
               placeholder="https://mcp.internal.company.com/sse  ·  mcp://…  ·  https://api.vendor.com/v1"
-              className={`w-full rounded-btn border bg-canvas py-2.5 pr-4 pl-10 text-sm outline-none transition-colors placeholder:text-sub/60 focus:border-forest ${
+              className={`w-full rounded-btn border bg-canvas py-2.5 pr-4 pl-10 text-sm outline-none transition-colors placeholder:text-sub/60 focus:border-brand ${
                 mcpError ? 'border-danger' : 'border-line'
               }`}
               aria-invalid={Boolean(mcpError)}

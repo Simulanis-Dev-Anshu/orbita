@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { Radar, Menu, X, ShieldCheck, ArrowRight } from 'lucide-react'
+import { Menu, X, ShieldCheck, ArrowRight } from 'lucide-react'
+import BrandMark from '../BrandMark.jsx'
 import { COOKIE_PREFS_EVENT } from '../PolicyBar.jsx'
 
 function LinkedInIcon(props) {
@@ -42,10 +43,8 @@ export default function MarketingLayout() {
       <header className="sticky top-0 z-40 border-b border-line/70 bg-canvas/80 backdrop-blur-xl">
         <nav className="relative mx-auto flex h-16 max-w-6xl items-center px-4 sm:px-6" aria-label="Main">
           <Link to="/" className="relative z-10 flex items-center gap-2.5" onClick={() => setOpen(false)}>
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-forest">
-              <Radar size={16} className="text-brand" aria-hidden="true" />
-            </span>
-            <span className="text-[15px] font-bold tracking-tight">Orbita</span>
+            <BrandMark size={32} />
+            <span className="text-[15px] font-semibold tracking-tight">Orbita</span>
           </Link>
 
           <div className="absolute inset-x-0 hidden items-center justify-center gap-8 md:flex">
@@ -54,7 +53,7 @@ export default function MarketingLayout() {
                 key={l.to}
                 to={l.to}
                 className={({ isActive }) =>
-                  `text-sm font-medium transition-colors ${isActive ? 'text-ink' : 'text-sub hover:text-ink'}`
+                  `ox-label transition-colors ${isActive ? 'text-ink' : 'text-sub hover:text-ink'}`
                 }
               >
                 {l.label}
@@ -63,14 +62,14 @@ export default function MarketingLayout() {
           </div>
 
           <div className="relative z-10 ml-auto hidden items-center gap-4 md:flex">
-            <Link to="/login" className="text-sm font-medium text-sub transition-colors hover:text-ink">
+            <Link to="/login" className="ox-label text-sub transition-colors hover:text-ink">
               Log in
             </Link>
-            <Link
-              to="/signup"
-              className="rounded-btn bg-ink px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-            >
-              Start free scan
+            <Link to="/app" className="ox-btn ox-btn-ghost text-ink">
+              Get a demo
+            </Link>
+            <Link to="/signup" className="ox-btn ox-btn-primary">
+              Get started
             </Link>
           </div>
 
@@ -111,9 +110,9 @@ export default function MarketingLayout() {
                   setOpen(false)
                   navigate('/signup')
                 }}
-                className="mt-2 cursor-pointer rounded-btn bg-ink px-4 py-3 text-sm font-semibold text-white"
+                className="mt-2 w-full cursor-pointer ox-btn ox-btn-primary"
               >
-                Start free scan
+                Get started
               </button>
             </div>
           </div>
@@ -124,7 +123,7 @@ export default function MarketingLayout() {
 
       <section className="border-t border-line py-16" aria-label="Newsletter">
         <div className="mx-auto flex max-w-xl flex-col items-center gap-5 px-4 text-center sm:px-6">
-          <h2 className="text-2xl font-bold tracking-tight">The Shadow Ledger</h2>
+          <h2 className="font-display text-3xl text-ink">The Shadow Ledger</h2>
           <p className="text-sm leading-relaxed text-sub">
             Shadow-AI research and agent-governance notes. One email a week.
           </p>
@@ -146,7 +145,7 @@ export default function MarketingLayout() {
             </label>
             <button
               type="submit"
-              className="shrink-0 cursor-pointer rounded-btn bg-ink px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              className="ox-btn ox-btn-primary shrink-0 cursor-pointer"
             >
               Subscribe
             </button>
@@ -158,9 +157,7 @@ export default function MarketingLayout() {
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2.5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-forest">
-                <Radar size={14} className="text-brand" aria-hidden="true" />
-              </span>
+              <BrandMark size={32} />
               <span className="font-bold">Orbita</span>
             </div>
             <p className="mt-4 text-sm leading-relaxed text-sub">
@@ -198,7 +195,7 @@ export default function MarketingLayout() {
             },
           ].map((col) => (
             <div key={col.h}>
-              <p className="text-xs font-semibold tracking-wider text-sub uppercase">{col.h}</p>
+              <p className="text-xs font-semibold tracking-wider text-sub uppercase ox-label">{col.h}</p>
               <ul className="mt-4 space-y-2.5">
                 {col.links.map(([label, to]) => (
                   <li key={label}>

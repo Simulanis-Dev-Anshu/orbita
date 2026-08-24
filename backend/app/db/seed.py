@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import hash_password
 from app.db.models import Agent, Alert, Approval, Connector, Notification, User
+from app.domain.asset import infer_asset_type, infer_vendor
 
 
 def _ago(**kwargs) -> datetime:
@@ -29,6 +30,14 @@ AGENTS = [
     ("Meeting Notes Summarizer", "Custom GPT", "Ananya Iyer", "Chief of Staff", ["Meet", "Docs"], 33, "active", _ago(days=2)),
     ("Postgres MCP Server", "MCP", "Dev Patel", "Eng Manager", ["Postgres", "Claude Desktop"], 71, "active", _ago(minutes=18)),
     ("Inventory Reorder Agent", "Make", "Rohan Gupta", "Ops Manager", ["Zoho Inventory", "Gmail"], 66, "pending", _ago(days=3)),
+    ("ChatGPT", "ChatGPT", "Anshu Nishad", "Founder", ["Web", "Memory"], 28, "active", _ago(minutes=4)),
+    ("ChatGPT", "ChatGPT", "Riya Sharma", "Finance Ops", ["Web"], 31, "active", _ago(minutes=22)),
+    ("Claude", "Claude", "Dev Patel", "Eng Manager", ["Web", "Projects"], 24, "active", _ago(minutes=9)),
+    ("Gemini", "Gemini", "Priya Nair", "HR Manager", ["Workspace"], 36, "active", _ago(hours=1)),
+    ("Cursor", "Cursor", "Anshu Nishad", "Founder", ["Editor"], 44, "active", _ago(minutes=1)),
+    ("Perplexity", "Perplexity", "Kabir Singh", "Support Head", ["Web"], 19, "active", _ago(hours=3)),
+    ("ChatGPT for Chrome", "Browser extension", "Arjun Mehta", "Sales Lead", ["Active tab"], 52, "active", _ago(minutes=40)),
+    ("GitHub Copilot", "Copilot", "Dev Patel", "Eng Manager", ["Workspace"], 48, "active", _ago(minutes=8)),
 ]
 
 ALERTS = [
@@ -90,6 +99,8 @@ async def seed_if_empty(session: AsyncSession) -> bool:
                 name=name, platform=platform, owner_name=owner, owner_role=owner_role,
                 scopes=scopes, risk=risk, status=status, source="scan",
                 first_seen_at=last_active - timedelta(days=14), last_active_at=last_active,
+                asset_type=infer_asset_type(platform), vendor=infer_vendor(platform),
+                connections=scopes, data_access=scopes,
             )
         )
     for type_, severity, agent_name, detail, resolved, created in ALERTS:

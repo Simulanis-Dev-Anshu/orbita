@@ -439,7 +439,7 @@ export default function AgentGraph() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Find a node…"
-            className="w-full rounded-btn border border-line bg-card py-2.5 pr-3 pl-10 text-sm shadow-soft outline-none transition-colors placeholder:text-sub focus:border-forest"
+            className="w-full rounded-btn border border-line bg-card py-2.5 pr-3 pl-10 text-sm shadow-soft outline-none transition-colors placeholder:text-sub focus:border-brand"
             aria-label="Search graph nodes"
           />
           {hits.length > 0 && (
@@ -477,7 +477,7 @@ export default function AgentGraph() {
               className={`cursor-pointer rounded-full border px-3.5 py-2 text-xs font-semibold transition-all ${
                 filter === f && !selectedId
                   ? 'border-forest bg-forest text-white'
-                  : 'border-line bg-card text-sub shadow-soft hover:border-forest hover:text-ink'
+                  : 'border-line bg-card text-sub shadow-soft hover:border-brand hover:text-ink'
               }`}
             >
               {f}
@@ -489,7 +489,7 @@ export default function AgentGraph() {
           <button
             type="button"
             onClick={resetView}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-btn border border-line bg-card px-3.5 py-2.5 text-sm font-semibold shadow-soft transition-colors hover:border-forest"
+            className="inline-flex cursor-pointer items-center gap-2 rounded-btn border border-line bg-card px-3.5 py-2.5 text-sm font-semibold shadow-soft transition-colors hover:border-brand"
           >
             <Maximize2 size={15} aria-hidden="true" />
             <span className="hidden sm:inline">Reset view</span>
@@ -527,7 +527,7 @@ export default function AgentGraph() {
           <MiniMap
             className="!hidden md:!block"
             nodeColor={(n) =>
-              ({ human: '#CBD5D0', agent: '#103E2D', credential: '#E8930C', scope: '#E5484D' })[n.type] ?? '#ccc'
+              ({ human: '#CBD5D0', agent: '#170702', credential: '#E8930C', scope: '#E5484D' })[n.type] ?? '#ccc'
             }
             maskColor="rgba(248,249,247,0.7)"
           />
@@ -620,7 +620,7 @@ export default function AgentGraph() {
                     <button
                       type="button"
                       onClick={() => navigate('/app/inventory', { state: { q: selected.data.label } })}
-                      className="w-full cursor-pointer rounded-btn border border-line bg-card px-3 py-2 text-xs font-semibold transition-colors hover:border-forest"
+                      className="w-full cursor-pointer rounded-btn border border-line bg-card px-3 py-2 text-xs font-semibold transition-colors hover:border-brand"
                     >
                       View in inventory
                     </button>

@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_current_user, require_role
 from app.db.base import get_session
 from app.db.models import Agent, Notification, User
+from app.domain.asset import infer_asset_type, infer_vendor
 from app.schemas import AgentIn, AgentOut, AgentPatch
 from app.services.risk import score_agent
 
@@ -54,6 +55,11 @@ async def create_agent(
         risk=risk,
         status="orphaned" if orphaned else body.status,
         created_by=user.id,
+        asset_type=body.asset_type or infer_asset_type(body.platform),
+        vendor=body.vendor or infer_vendor(body.platform),
+        device=body.device or "",
+        connections=body.connections or body.scopes,
+        data_access=body.data_access or body.scopes,
     )
     session.add(agent)
     session.add(

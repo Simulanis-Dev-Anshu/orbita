@@ -179,14 +179,14 @@ export default function Header({ title, subtitle, onMenuClick, onSearchClick }) 
 
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-xl font-semibold tracking-tight sm:text-2xl">{title}</h1>
-          {subtitle && <p className="hidden truncate text-sm text-sub sm:block">{subtitle}</p>}
+          {subtitle && <p className="mt-0.5 hidden truncate text-sm text-sub sm:block">{subtitle}</p>}
         </div>
 
         {/* Search — opens the command palette */}
         <button
           type="button"
           onClick={onSearchClick}
-          className="hidden w-64 cursor-pointer items-center gap-2.5 rounded-btn border border-line bg-card py-2.5 pr-3 pl-3.5 text-sm text-sub shadow-soft transition-colors hover:border-forest md:flex"
+          className="hidden w-64 cursor-pointer items-center gap-2.5 rounded-btn border border-line bg-card py-2.5 pr-3 pl-3.5 text-sm text-sub shadow-soft transition-colors hover:border-brand md:flex"
           aria-label="Search agents, owners and pages"
         >
           <Search size={18} aria-hidden="true" />
@@ -199,7 +199,7 @@ export default function Header({ title, subtitle, onMenuClick, onSearchClick }) 
         <button
           type="button"
           onClick={onSearchClick}
-          className="cursor-pointer rounded-btn border border-line bg-card p-2.5 text-ink shadow-soft transition-colors hover:border-forest md:hidden"
+          className="cursor-pointer rounded-btn border border-line bg-card p-2.5 text-ink shadow-soft transition-colors hover:border-brand md:hidden"
           aria-label="Search"
         >
           <Search size={18} />
@@ -211,7 +211,7 @@ export default function Header({ title, subtitle, onMenuClick, onSearchClick }) 
             <button
               type="button"
               onClick={() => toggle('notifications')}
-              className={`bell-btn relative cursor-pointer rounded-btn border bg-card p-2.5 text-ink shadow-soft transition-colors hover:border-forest ${
+              className={`bell-btn relative cursor-pointer rounded-btn border bg-card p-2.5 text-ink shadow-soft transition-colors hover:border-brand ${
                 openMenu === 'notifications' ? 'border-forest' : 'border-line'
               }`}
               aria-label={`Notifications (${unread} unread)`}
@@ -244,7 +244,7 @@ export default function Header({ title, subtitle, onMenuClick, onSearchClick }) 
               close()
               navigate('/app/settings')
             }}
-            className="hidden cursor-pointer rounded-btn border border-line bg-card p-2.5 text-ink shadow-soft transition-colors hover:border-forest hover:[&>svg]:rotate-45 sm:block [&>svg]:transition-transform [&>svg]:duration-300"
+            className="hidden cursor-pointer rounded-btn border border-line bg-card p-2.5 text-ink shadow-soft transition-colors hover:border-brand hover:[&>svg]:rotate-45 sm:block [&>svg]:transition-transform [&>svg]:duration-300"
             aria-label="Settings"
           >
             <Settings size={18} />

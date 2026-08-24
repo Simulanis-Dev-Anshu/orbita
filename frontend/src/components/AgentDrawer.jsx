@@ -60,10 +60,13 @@ export default function AgentDrawer({ agent, onClose, onEdit, onDelete }) {
           <div className="min-w-0 flex-1">
             <h2 className="truncate text-base font-semibold">{agent.name}</h2>
             <p className="text-sm text-sub">
-              {agent.platform} · owned by{' '}
+              <span className="ox-label">{(agent.type || 'AI_AGENT').replaceAll('_', ' ')}</span>
+              {' · '}
+              {agent.vendor || agent.platform} · owned by{' '}
               <span className={agent.owner === 'Unassigned' ? 'font-semibold text-danger' : ''}>
                 {agent.owner}
               </span>
+              {agent.device ? ` · ${agent.device}` : ''}
             </p>
           </div>
           <div className="flex shrink-0 gap-1">
@@ -107,7 +110,7 @@ export default function AgentDrawer({ agent, onClose, onEdit, onDelete }) {
             <button
               type="button"
               onClick={copyPassport}
-              className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-btn bg-brand px-3 py-2 text-xs font-semibold text-forest transition-opacity hover:opacity-90"
+              className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-btn bg-brand px-3 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90"
             >
               <Link2 size={14} aria-hidden="true" />
               {copied ? 'Link copied' : 'Copy passport link'}
@@ -184,7 +187,7 @@ export default function AgentDrawer({ agent, onClose, onEdit, onDelete }) {
                 <button
                   type="button"
                   onClick={() => setKillState('idle')}
-                  className="cursor-pointer rounded-btn border border-line bg-card px-4 py-2 text-xs font-semibold transition-colors hover:border-forest"
+                  className="cursor-pointer rounded-btn border border-line bg-card px-4 py-2 text-xs font-semibold transition-colors hover:border-brand"
                 >
                   Cancel
                 </button>
@@ -227,7 +230,7 @@ export default function AgentDrawer({ agent, onClose, onEdit, onDelete }) {
                   <button
                     type="button"
                     onClick={() => setDeleteState('idle')}
-                    className="cursor-pointer rounded-btn border border-line bg-card px-3 py-2 text-xs font-semibold transition-colors hover:border-forest"
+                    className="cursor-pointer rounded-btn border border-line bg-card px-3 py-2 text-xs font-semibold transition-colors hover:border-brand"
                   >
                     Cancel
                   </button>

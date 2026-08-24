@@ -156,7 +156,7 @@ export default function Copilot() {
                 key={s}
                 type="button"
                 onClick={() => send(s)}
-                className="cursor-pointer rounded-full border border-line bg-canvas px-3 py-1.5 text-xs font-medium text-ink transition-all hover:-translate-y-0.5 hover:border-forest hover:bg-brand-soft"
+                className="cursor-pointer rounded-full border border-line bg-canvas px-3 py-1.5 text-xs font-medium text-ink transition-all hover:-translate-y-0.5 hover:border-brand hover:bg-brand-soft"
               >
                 {s}
               </button>
@@ -193,7 +193,7 @@ export default function Copilot() {
             </button>
             <button
               type="submit"
-              className="cursor-pointer rounded-xl bg-brand p-2.5 text-forest transition-all hover:opacity-90 active:scale-95"
+              className="cursor-pointer rounded-xl bg-brand p-2.5 text-white transition-all hover:opacity-90 active:scale-95"
               aria-label="Send message"
             >
               <SendHorizonal size={18} />

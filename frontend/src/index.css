@@ -1,28 +1,30 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Newsreader", ui-serif, Georgia, serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
 
-  --color-brand: #86e64a;
-  --color-brand-soft: #eafbdd;
-  --color-forest: #0b1f18;
-  --color-forest-2: #061410;
-  --color-canvas: #f7f8f6;
+  --color-brand: #ff4d00;
+  --color-brand-soft: #fff0e8;
+  --color-forest: #170702;
+  --color-forest-2: #150f0d;
+  --color-canvas: #fffaf8;
   --color-card: #ffffff;
-  --color-muted: #eef0ed;
-  --color-line: #e6e8e4;
-  --color-ink: #0c0c0c;
-  --color-sub: #6b716c;
-  --color-danger: #e5484d;
+  --color-muted: #f7f3ee;
+  --color-line: #efe8e1;
+  --color-ink: #1f1e1c;
+  --color-sub: #7d756d;
+  --color-danger: #e40014;
   --color-danger-soft: #fdeeee;
-  --color-warn: #e8930c;
-  --color-warn-soft: #fdf3e3;
+  --color-warn: #f99c00;
+  --color-warn-soft: #fff3dc;
 
-  --radius-card: 24px;
-  --radius-btn: 9999px;
+  --radius-card: 16px;
+  --radius-btn: 10px;
 
-  --shadow-soft: 0 2px 16px rgba(11, 31, 24, 0.04);
-  --shadow-lift: 0 24px 60px rgba(11, 31, 24, 0.12);
+  --shadow-soft: 0 2px 16px rgba(23, 7, 2, 0.05);
+  --shadow-lift: 0 24px 60px rgba(23, 7, 2, 0.12);
 }
 
 html,
@@ -55,19 +57,120 @@ body {
 
 /* ---------- Marketing animations ---------- */
 
-/* Serif accent for display headlines */
-.font-accent {
-  font-family: 'Instrument Serif', Georgia, serif;
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+/* Display face — Oximy Rinter stand-in */
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  font-optical-sizing: auto;
 }
 
-/* Soft Timbal-style mist behind product stages */
+.font-accent {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.ox-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ox-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 10px;
+  padding: 0.7rem 1.15rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  transition: opacity 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+.ox-btn-primary {
+  background: var(--color-brand);
+  color: #fff;
+}
+.ox-btn-primary:hover {
+  opacity: 0.9;
+}
+.ox-btn-ghost {
+  border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+  background: transparent;
+}
+.ox-btn-ghost:hover {
+  background: color-mix(in srgb, currentColor 6%, transparent);
+}
+
+.ox-plate {
+  background:
+    radial-gradient(130% 118% at 8% 52%, rgba(8, 7, 10, 0.78), rgba(23, 7, 2, 0.42) 46%, rgba(255, 77, 0, 0.16) 78%),
+    #170702;
+  color: #fffaf8;
+}
+
+.ox-aurora {
+  position: absolute;
+  inset: -30% -10%;
+  background:
+    radial-gradient(ellipse 55% 45% at 12% 58%, rgba(255, 77, 0, 0.38), transparent 58%),
+    radial-gradient(ellipse 40% 50% at 88% 28%, rgba(255, 140, 60, 0.16), transparent 52%),
+    radial-gradient(ellipse 35% 30% at 48% 108%, rgba(255, 77, 0, 0.14), transparent 62%);
+  animation: ox-aurora 22s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes ox-aurora {
+  from { transform: translate3d(-2%, 1%, 0) scale(1); }
+  to { transform: translate3d(3%, -3%, 0) scale(1.08); }
+}
+
+.ox-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+.ox-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 250, 248, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 250, 248, 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at 28% 48%, #000 15%, transparent 68%);
+}
+
+.ox-hero-in > * {
+  animation: rise-in 0.95s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.ox-hero-in > *:nth-child(1) { animation-delay: 0.04s; }
+.ox-hero-in > *:nth-child(2) { animation-delay: 0.14s; }
+.ox-hero-in > *:nth-child(3) { animation-delay: 0.26s; }
+.ox-hero-in > *:nth-child(4) { animation-delay: 0.38s; }
+
+.ox-glow {
+  box-shadow: 0 0 0 1px rgba(255, 77, 0, 0.35), 0 10px 36px rgba(255, 77, 0, 0.28);
+  transition: box-shadow 0.35s ease, transform 0.35s ease;
+}
+.ox-glow:hover {
+  box-shadow: 0 0 0 1px rgba(255, 77, 0, 0.55), 0 14px 48px rgba(255, 77, 0, 0.42);
+}
+
+/* Soft ember mist behind product stages */
 .stage-mist {
   background:
-    radial-gradient(ellipse 60% 45% at 50% 20%, rgba(134, 230, 74, 0.16), transparent 70%),
-    radial-gradient(ellipse 40% 30% at 80% 10%, rgba(11, 31, 24, 0.05), transparent 60%);
+    radial-gradient(ellipse 60% 45% at 50% 20%, rgba(255, 77, 0, 0.14), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 80% 10%, rgba(23, 7, 2, 0.05), transparent 60%);
 }
 
 /* Staggered entrance: fade + rise + unblur */
@@ -399,7 +502,7 @@ body {
 
 /* Dotted pixel grid backdrop */
 .pixel-grid {
-  background-image: radial-gradient(rgba(134, 230, 74, 0.11) 1.5px, transparent 1.6px);
+  background-image: radial-gradient(rgba(255, 77, 0, 0.11) 1.5px, transparent 1.6px);
   background-size: 22px 22px;
 }
 @keyframes twinkle {
@@ -411,7 +514,7 @@ body {
   }
 }
 .pixel-twinkle {
-  background-image: radial-gradient(rgba(134, 230, 74, 0.22) 1.5px, transparent 1.6px);
+  background-image: radial-gradient(rgba(255, 77, 0, 0.22) 1.5px, transparent 1.6px);
   background-size: 44px 44px;
   background-position: 11px 11px;
   animation: twinkle 4.5s ease-in-out infinite;
@@ -419,8 +522,8 @@ body {
 
 /* Soft breathing pulse for "live" dots */
 @keyframes live-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(134, 230, 74, 0.5); }
-  70% { box-shadow: 0 0 0 6px rgba(134, 230, 74, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 77, 0, 0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(255, 77, 0, 0); }
 }
 .live-dot {
   animation: live-pulse 2s ease-out infinite;
@@ -433,7 +536,7 @@ body {
 }
 .mod-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 18px 40px rgba(11, 31, 24, 0.08);
+  box-shadow: 0 18px 40px rgba(23, 7, 2, 0.08);
 }
 
 @keyframes mod-float {
@@ -495,12 +598,11 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal,
-  .rise {
-    opacity: 1;
-    transform: none;
-    filter: none;
+  .ox-aurora,
+  .ox-hero-in > * {
     animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
   }
 
   .draw-line {
@@ -564,6 +666,20 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   .tb-marquee {
+    animation: none !important;
+  }
+}
+
+/* Sector-cases tab switch: cards fade/rise in */
+@keyframes tb-cases-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.tb-cases-in {
+  animation: tb-cases-in 0.35s ease both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tb-cases-in {
     animation: none !important;
   }
 }

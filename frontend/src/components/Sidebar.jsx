@@ -1,6 +1,5 @@
 import { NavLink } from 'react-router-dom'
 import {
-  Radar,
   LayoutDashboard,
   Waypoints,
   Bot,
@@ -13,6 +12,7 @@ import {
   Sparkles,
   X,
 } from 'lucide-react'
+import BrandMark from './BrandMark.jsx'
 
 const mainNav = [
   { to: '/app', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -38,7 +38,7 @@ function NavItem({ to, label, icon: Icon, badge, end, onNavigate }) {
       className={({ isActive }) =>
         `group flex items-center gap-3 rounded-btn px-4 py-2.5 text-sm font-medium transition-colors duration-200 ${
           isActive
-            ? 'bg-card text-ink shadow-soft'
+            ? 'bg-brand-soft text-ink'
             : 'text-sub hover:bg-card/60 hover:text-ink'
         }`
       }
@@ -48,7 +48,7 @@ function NavItem({ to, label, icon: Icon, badge, end, onNavigate }) {
           <Icon
             size={20}
             strokeWidth={1.8}
-            className={isActive ? 'text-forest' : 'text-sub group-hover:text-forest'}
+            className={isActive ? 'text-brand' : 'text-sub group-hover:text-brand'}
             aria-hidden="true"
           />
           <span className="flex-1">{label}</span>
@@ -85,9 +85,7 @@ export default function Sidebar({ open, onClose }) {
           {/* Logo */}
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-forest">
-                <Radar size={20} className="text-brand" aria-hidden="true" />
-              </span>
+              <BrandMark size={36} />
               <span className="text-lg font-semibold tracking-tight">
                 Orb<span className="text-forest">ita</span>
               </span>
@@ -119,7 +117,7 @@ export default function Sidebar({ open, onClose }) {
 
           {/* Main nav */}
           <nav className="mt-8 flex flex-1 flex-col gap-1.5">
-            <p className="px-4 pb-2 text-[11px] font-semibold tracking-wider text-sub uppercase">
+            <p className="ox-label px-4 pb-2 text-sub">
               Main
             </p>
             {mainNav.map((item) => (
@@ -134,14 +132,14 @@ export default function Sidebar({ open, onClose }) {
           </nav>
 
           {/* Scan CTA */}
-          <div className="mt-6 rounded-card bg-forest p-4">
+          <div className="ox-plate mt-6 rounded-card p-4">
             <p className="text-sm font-semibold text-white">Weekly scan ready</p>
             <p className="mt-1 text-xs leading-relaxed text-white/60">
               12 sources connected. Run a fresh discovery sweep.
             </p>
             <button
               type="button"
-              className="mt-3 w-full cursor-pointer rounded-btn bg-brand px-3 py-2 text-sm font-semibold text-forest transition-opacity hover:opacity-90"
+              className="ox-btn ox-btn-primary mt-3 w-full cursor-pointer"
             >
               Run scan
             </button>

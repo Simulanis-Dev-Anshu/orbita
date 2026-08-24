@@ -19,6 +19,7 @@ export default function Inventory() {
         a.name.toLowerCase().includes(q) ||
         a.owner.toLowerCase().includes(q) ||
         a.platform.toLowerCase().includes(q) ||
+        (a.type && a.type.toLowerCase().includes(q)) ||
         a.scopes.some((s) => s.toLowerCase().includes(q)),
     )
   }, [agents, query])
@@ -41,11 +42,11 @@ export default function Inventory() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by name, owner, platform, scope…"
-            className="w-full rounded-btn border border-line bg-card py-2.5 pr-4 pl-10 text-sm shadow-soft outline-none transition-colors placeholder:text-sub focus:border-forest"
+            className="w-full rounded-btn border border-line bg-card py-2.5 pr-4 pl-10 text-sm shadow-soft outline-none transition-colors placeholder:text-sub focus:border-brand"
           />
         </label>
         <div className="flex gap-2 text-xs font-semibold">
-          <span className="rounded-full bg-card px-3 py-2 shadow-soft">{agents.length} agents</span>
+          <span className="rounded-full bg-card px-3 py-2 shadow-soft">{agents.length} assets</span>
           <span className="rounded-full bg-danger-soft px-3 py-2 text-danger shadow-soft">
             {orphaned} orphaned
           </span>
