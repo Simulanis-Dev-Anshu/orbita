@@ -42,7 +42,7 @@ export default function AgentFormModal({ agent, onSave, onClose }) {
       asAsset({
         ...form,
         owner: form.owner.trim() || 'Unassigned',
-        ownerRole: form.ownerRole.trim() || '—',
+        ownerRole: form.ownerRole.trim() || '-',
         risk: Number(form.risk),
         scopes: form.scopes
           .split(',')

@@ -123,12 +123,12 @@ const nodeTypeMeta = {
 const initialNodes = [
   { id: 'h1', type: 'human', position: { x: 0, y: 40 }, data: { label: 'Riya Sharma', sub: 'Finance Ops', detail: 'Owns 2 agents · last login 3 hrs ago' } },
   { id: 'h2', type: 'human', position: { x: 0, y: 320 }, data: { label: 'Dev Patel', sub: 'Eng Manager', detail: 'Owns 1 agent · last login 20 min ago' } },
-  { id: 'h3', type: 'human', position: { x: 0, y: 560 }, data: { label: '(departed employee)', sub: 'Left company Mar 2026', detail: 'Credentials still active — orphaned agents attached' } },
+  { id: 'h3', type: 'human', position: { x: 0, y: 560 }, data: { label: '(departed employee)', sub: 'Left company Mar 2026', detail: 'Credentials still active, orphaned agents attached' } },
 
   { id: 'a1', type: 'agent', position: { x: 320, y: 0 }, data: { label: 'Zapier Invoice Bot', sub: 'Zapier', risk: 87, detail: 'Runs every 15 min · touches Gmail, Sheets, Tally' } },
   { id: 'a2', type: 'agent', position: { x: 320, y: 170 }, data: { label: 'Sales Outreach GPT', sub: 'Custom GPT', risk: 74, detail: 'Reads HubSpot contacts, sends email on behalf of owner' } },
   { id: 'a3', type: 'agent', position: { x: 320, y: 340 }, data: { label: 'GitHub PR Reviewer', sub: 'GitHub App', risk: 22, detail: 'Read-only repo access, scoped token' } },
-  { id: 'a4', type: 'agent', position: { x: 320, y: 540 }, data: { label: 'Payroll Sync Agent', sub: 'Make', risk: 92, orphaned: true, detail: 'Owner left company — still syncing payroll nightly' } },
+  { id: 'a4', type: 'agent', position: { x: 320, y: 540 }, data: { label: 'Payroll Sync Agent', sub: 'Make', risk: 92, orphaned: true, detail: 'Owner left company, still syncing payroll nightly' } },
 
   { id: 'c1', type: 'credential', position: { x: 660, y: 80 }, data: { label: 'OAuth Grant · Google', sub: 'gmail.send, sheets.rw', detail: 'Issued Nov 2025 · never rotated' } },
   { id: 'c2', type: 'credential', position: { x: 660, y: 300 }, data: { label: 'Service Token', sub: 'GitHub fine-grained', detail: 'Expires Sep 2026 · repo:read' } },
@@ -137,7 +137,7 @@ const initialNodes = [
   { id: 's1', type: 'scope', position: { x: 980, y: 20 }, data: { label: 'Customer PII', sub: 'CRM + Sheets', sensitive: true, detail: '3 agents can reach this scope' } },
   { id: 's2', type: 'scope', position: { x: 980, y: 200 }, data: { label: 'Company Email', sub: 'Gmail', sensitive: true, detail: 'Send-as permission granted' } },
   { id: 's3', type: 'scope', position: { x: 980, y: 380 }, data: { label: 'Source Code', sub: 'GitHub repos', detail: 'Read-only' } },
-  { id: 's4', type: 'scope', position: { x: 980, y: 560 }, data: { label: 'Payroll Data', sub: 'Zoho Payroll', sensitive: true, detail: 'Read/write — highest blast radius' } },
+  { id: 's4', type: 'scope', position: { x: 980, y: 560 }, data: { label: 'Payroll Data', sub: 'Zoho Payroll', sensitive: true, detail: 'Read/write, highest blast radius' } },
 ]
 
 const edgeStyle = { stroke: '#B9C4BE', strokeWidth: 1.5 }
@@ -171,7 +171,7 @@ const filters = ['All', 'High risk', 'Orphaned', 'Sensitive data']
 
 /* ---------- Graph helpers ---------- */
 
-// Everything reachable downstream of the seeds plus everything upstream —
+// Everything reachable downstream of the seeds plus everything upstream,
 // i.e. the blast radius of a node: its owners and all data it can touch.
 function reachableSet(seeds, edges) {
   const grow = (set, from, to) => {
@@ -614,7 +614,7 @@ export default function AgentGraph() {
                       </button>
                     ) : (
                       <p className="rounded-xl bg-brand-soft px-3 py-2 text-center text-xs font-semibold text-forest">
-                        Access revoked — credentials disconnected
+                        Access revoked. Credentials disconnected
                       </p>
                     )}
                     <button
@@ -633,7 +633,7 @@ export default function AgentGraph() {
       </div>
 
       <p className="text-xs text-sub">
-        Drag to pan, scroll to zoom. Click a node to isolate its blast radius — everything it owns,
+        Drag to pan, scroll to zoom. Click a node to isolate its blast radius: everything it owns,
         uses or can reach. Red animated edges mark orphaned or PII-reaching paths.
       </p>
 

@@ -15,10 +15,10 @@ const sections = [
     h: 'Data we collect',
     body: ['We collect only what we need to run the service:'],
     list: [
-      'Account data — name, work email, company name and role when you sign up or are invited to a workspace.',
-      'Discovery metadata — when you connect a source (e.g. Google Workspace, Slack, GitHub), we read metadata about automations: OAuth grant scopes, agent names, owners, activity timestamps. Connectors are read-only; we do not read message bodies, file contents or email contents.',
-      'Usage data — pages visited, features used and device/browser information, used to improve the product.',
-      'Support data — the contents of messages you send to our support and sales teams.',
+      'Account data: name, work email, company name and role when you sign up or are invited to a workspace.',
+      'Discovery metadata: when you connect a source (e.g. Google Workspace, Slack, GitHub), we read metadata about automations: OAuth grant scopes, agent names, owners, activity timestamps. Connectors are read-only; we do not read message bodies, file contents or email contents.',
+      'Usage data: pages visited, features used and device/browser information, used to improve the product.',
+      'Support data: the contents of messages you send to our support and sales teams.',
     ],
   },
   {
@@ -28,7 +28,7 @@ const sections = [
       'To provide the service: building your agent inventory, computing risk scores and sending the alerts you configure.',
       'To secure the service: fraud prevention, abuse detection and audit logging.',
       'To improve the product: aggregate, de-identified analytics on feature usage.',
-      'To communicate: service notices, security alerts and — only with consent — product updates and our newsletter.',
+      'To communicate: service notices, security alerts and (only with consent) product updates and our newsletter.',
     ],
     body: ['We never sell personal data, and we never use customer discovery metadata to train models shared across customers.'],
   },
@@ -39,8 +39,8 @@ const sections = [
       'We use a small number of cookies and similar technologies. You can change your choice at any time via "Cookie preferences" in the footer.',
     ],
     list: [
-      'Essential cookies — session authentication, security (CSRF protection) and remembering your cookie choice itself. These are required for the site to function and cannot be switched off.',
-      'Analytics cookies (optional) — help us understand which pages and features are used so we can improve the product. Set only if you choose "Accept all".',
+      'Essential cookies: session authentication, security (CSRF protection) and remembering your cookie choice itself. These are required for the site to function and cannot be switched off.',
+      'Analytics cookies (optional): help us understand which pages and features are used so we can improve the product. Set only if you choose "Accept all".',
       'We do not use advertising or cross-site tracking cookies.',
     ],
   },
@@ -63,14 +63,14 @@ const sections = [
     id: 'your-rights',
     h: 'Your rights',
     body: [
-      'Depending on your jurisdiction (including under the DPDP Act and GDPR), you may have rights to access, correct, delete or port your personal data, and to withdraw consent. To exercise any of these, email privacy@orbita.io — we respond within 30 days. You may also lodge a complaint with your local data protection authority, including the Data Protection Board of India.',
+      'Depending on your jurisdiction (including under the DPDP Act and GDPR), you may have rights to access, correct, delete or port your personal data, and to withdraw consent. To exercise any of these, email privacy@orbita.io. We respond within 30 days. You may also lodge a complaint with your local data protection authority, including the Data Protection Board of India.',
     ],
   },
   {
     id: 'security',
     h: 'Security',
     body: [
-      'All data is encrypted in transit (TLS 1.2+) and at rest (AES-256). Access to production systems requires SSO and hardware-key MFA, and every access is logged. We run our own platform on Orbita — every internal automation is inventoried and risk-scored.',
+      'All data is encrypted in transit (TLS 1.2+) and at rest (AES-256). Access to production systems requires SSO and hardware-key MFA, and every access is logged. We run our own platform on Orbita. Every internal automation is inventoried and risk-scored.',
     ],
   },
   {
@@ -84,7 +84,7 @@ const sections = [
 
 export default function Privacy() {
   useSeo({
-    title: 'Privacy Policy — Orbita',
+    title: 'Privacy Policy | Orbita',
     description:
       'How Orbita collects, uses and protects your data: read-only connectors, India data residency, DPDP-aligned processing, cookies and your rights.',
     path: '/privacy',

@@ -36,7 +36,7 @@ function CopilotTeaser() {
         />
       </div>
       <p className="relative mt-3 rounded-2xl bg-white/10 p-3 text-xs leading-relaxed text-white/80">
-        "Which agents can access customer PII?" — get answers grounded in your live identity graph.
+        "Which agents can access customer PII?" Get answers grounded in your live identity graph.
       </p>
     </Link>
   )
@@ -85,7 +85,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Peer benchmark — full-width closer */}
+      {/* Peer benchmark: full-width closer */}
       <div className="card-in" style={{ '--i': 10 }}>
         <BenchmarkCard />
       </div>

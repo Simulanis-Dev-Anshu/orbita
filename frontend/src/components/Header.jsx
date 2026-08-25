@@ -104,11 +104,11 @@ function ProfileMenu({ onClose }) {
     <div className="pop-in absolute top-full right-0 z-50 mt-2 w-60 overflow-hidden rounded-card border border-line bg-card shadow-lift">
       <div className="flex items-center gap-3 border-b border-line px-4 py-3.5">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-forest text-sm font-semibold text-brand">
-          PR
+          AN
         </span>
         <span className="min-w-0">
-          <span className="block truncate text-sm font-semibold">Prabhhav</span>
-          <span className="block truncate text-xs text-sub">prabhhav@zintellix.com</span>
+          <span className="block truncate text-sm font-semibold">Anshu</span>
+          <span className="block truncate text-xs text-sub">anshu@orbita.com</span>
         </span>
       </div>
 
@@ -182,7 +182,7 @@ export default function Header({ title, subtitle, onMenuClick, onSearchClick }) 
           {subtitle && <p className="mt-0.5 hidden truncate text-sm text-sub sm:block">{subtitle}</p>}
         </div>
 
-        {/* Search — opens the command palette */}
+        {/* Search: opens the command palette */}
         <button
           type="button"
           onClick={onSearchClick}
@@ -262,7 +262,7 @@ export default function Header({ title, subtitle, onMenuClick, onSearchClick }) 
               aria-expanded={openMenu === 'profile'}
               aria-haspopup="true"
             >
-              PR
+              AN
             </button>
             {openMenu === 'profile' && <ProfileMenu onClose={close} />}
           </div>

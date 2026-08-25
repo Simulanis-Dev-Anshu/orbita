@@ -22,7 +22,7 @@ export default function Settings() {
           <label className="block">
             <span className="text-xs font-semibold text-sub">Company name</span>
             <input
-              defaultValue="Zintellix"
+              defaultValue="Orbita"
               className="mt-1.5 w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-brand"
             />
           </label>
@@ -31,9 +31,9 @@ export default function Settings() {
             <div className="relative mt-1.5">
               <MapPin size={16} className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sub" aria-hidden="true" />
               <select className="w-full cursor-pointer rounded-btn border border-line bg-canvas py-2.5 pr-3 pl-9 text-sm outline-none focus:border-brand">
-                <option>India — AWS Mumbai (DPDP-aligned)</option>
-                <option>EU — Frankfurt</option>
-                <option>US — Virginia</option>
+                <option>India, AWS Mumbai (DPDP-aligned)</option>
+                <option>EU, Frankfurt</option>
+                <option>US, Virginia</option>
                 <option>Self-hosted (Enterprise)</option>
               </select>
             </div>
@@ -99,7 +99,7 @@ export default function Settings() {
           </span>
           <div className="flex-1">
             <h2 className="text-base font-semibold">Plan & billing</h2>
-            <p className="text-sm text-sub">You're on Growth — renews Aug 7, 2026</p>
+            <p className="text-sm text-sub">You're on Growth. Renews Aug 7, 2026</p>
           </div>
           <div className="flex rounded-btn border border-line bg-canvas p-1 text-xs font-semibold" role="group" aria-label="Currency">
             {[

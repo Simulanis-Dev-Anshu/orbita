@@ -14,7 +14,7 @@ export default function Connectors() {
     e.preventDefault()
     const url = mcpUrl.trim()
     if (!/^(https?|mcp):\/\/.+\..+/.test(url)) {
-      setMcpError('Enter a valid link — e.g. https://mcp.internal.company.com/sse or mcp://…')
+      setMcpError('Enter a valid link, e.g. https://mcp.internal.company.com/sse or mcp://...')
       return
     }
     setMcpError('')
@@ -57,7 +57,7 @@ export default function Connectors() {
 
   return (
     <div className="mt-6 space-y-6">
-      {/* Free scan banner — top-of-funnel CTA */}
+      {/* Free scan banner: top-of-funnel CTA */}
       <section className="relative overflow-hidden rounded-card bg-gradient-to-br from-forest to-forest-2 p-6 text-white shadow-lift">
         <div className="absolute -top-12 -right-8 h-44 w-44 rounded-full bg-brand/20 blur-2xl" aria-hidden="true" />
         <div className="relative flex flex-wrap items-center gap-4">
@@ -88,7 +88,7 @@ export default function Connectors() {
           <div>
             <h2 className="text-base font-semibold">Register an MCP server or API endpoint</h2>
             <p className="text-sm text-sub">
-              Paste a link and Orbita will monitor it — tools exposed, agents calling it, data
+              Paste a link and Orbita will monitor it: tools exposed, agents calling it, data
               it can reach.
             </p>
           </div>

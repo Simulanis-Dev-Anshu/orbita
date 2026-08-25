@@ -17,11 +17,11 @@ import { aiSuggestions, copilotSignals } from '../data/mock.js'
 const replies = [
   {
     match: ['pii', 'customer data', 'personal'],
-    text: '3 agents can currently reach customer PII: Payroll Sync Agent (92), Customer Data Enricher (81) and Zapier Invoice Bot (87). Two of them are orphaned — I recommend revoking their OAuth grants first.',
+    text: '3 agents can currently reach customer PII: Payroll Sync Agent (92), Customer Data Enricher (81) and Zapier Invoice Bot (87). Two of them are orphaned. I recommend revoking their OAuth grants first.',
   },
   {
     match: ['orphan', 'owner left', 'unassigned'],
-    text: 'I found 8 orphaned agents. The riskiest are Payroll Sync Agent (92) and Customer Data Enricher (81) — both still executing on credentials of deactivated accounts. Want me to draft revocation requests for their OAuth grants?',
+    text: 'I found 8 orphaned agents. The riskiest are Payroll Sync Agent (92) and Customer Data Enricher (81), both still executing on credentials of deactivated accounts. Want me to draft revocation requests for their OAuth grants?',
   },
   {
     match: ['dpdp', 'compliance', 'audit', 'report'],
@@ -29,12 +29,12 @@ const replies = [
   },
   {
     match: ['risk', 'score', 'dangerous', 'critical'],
-    text: 'Your fleet average risk score is 62. 9 agents are critical (score ≥ 85). The top driver is stale OAuth grants combined with write access to financial systems — Payroll Sync Agent is the single biggest exposure.',
+    text: 'Your fleet average risk score is 62. 9 agents are critical (score ≥ 85). The top driver is stale OAuth grants combined with write access to financial systems. Payroll Sync Agent is the single biggest exposure.',
   },
 ]
 
 const fallback =
-  'I scanned the identity graph: 147 agents across 12 sources, 8 orphaned, 23 high-risk. Ask me about PII exposure, orphaned agents, risk scores or compliance readiness — or pick a quick action on the right.'
+  'I scanned the identity graph: 147 agents across 12 sources, 8 orphaned, 23 high-risk. Ask me about PII exposure, orphaned agents, risk scores or compliance readiness, or pick a quick action on the right.'
 
 function replyFor(text) {
   const q = text.toLowerCase()
@@ -125,7 +125,7 @@ export default function Copilot() {
         <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-5 sm:p-6" aria-live="polite">
           {messages.length === 0 && (
             <div className="msg-in rounded-2xl bg-canvas p-4 text-sm leading-relaxed text-sub">
-              Hi Prabhhav — I watch your identity graph continuously. Ask about any agent, owner or
+              Hi Anshu. I watch your identity graph continuously. Ask about any agent, owner or
               data scope, or start from a quick action on the right.
             </div>
           )}

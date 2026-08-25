@@ -23,7 +23,7 @@ export default function BenchmarkCard() {
             {benchmark.orphanedVsPeers}×
           </p>
           <p className="text-xs leading-relaxed text-sub">
-            more orphaned agents than similar companies — revoking 3 grants moves you to median
+            more orphaned agents than similar companies. Revoking 3 grants moves you to median
           </p>
         </div>
         <div className="rounded-2xl bg-canvas p-4">

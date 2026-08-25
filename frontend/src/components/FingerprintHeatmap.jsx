@@ -69,7 +69,7 @@ export default function FingerprintHeatmap({ agentId }) {
       <Grid matrix={buildMatrix(agentId, 'agent')} label="This identity" />
       <Grid matrix={buildMatrix(agentId, 'human')} label="Typical human baseline" />
       <p className="text-[11px] leading-relaxed text-sub">
-        Flat 24/7 cadence with no weekend drop-off — classifier confidence:{' '}
+        Flat 24/7 cadence with no weekend drop-off. Classifier confidence:{' '}
         <span className="font-semibold text-danger">98% machine</span>
       </p>
     </div>

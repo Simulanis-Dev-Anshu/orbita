@@ -53,7 +53,7 @@ export default function ApprovalsWidget() {
         {items.length === 0 && (
           <li className="flex flex-col items-center gap-2 rounded-2xl bg-canvas p-6 text-center">
             <ShieldQuestion size={24} className="text-sub" aria-hidden="true" />
-            <p className="text-sm text-sub">All caught up — no approvals waiting.</p>
+            <p className="text-sm text-sub">All caught up. No approvals waiting.</p>
           </li>
         )}
       </ul>

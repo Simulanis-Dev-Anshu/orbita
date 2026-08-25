@@ -82,7 +82,7 @@ export default function Alerts() {
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium">
-                  {a.type} — <span className="text-forest">{a.agent}</span>
+                  {a.type}: <span className="text-forest">{a.agent}</span>
                 </p>
                 <p className="mt-0.5 text-xs leading-relaxed text-sub">{a.detail}</p>
                 <p className="mt-1 text-[11px] text-sub">{a.time}</p>

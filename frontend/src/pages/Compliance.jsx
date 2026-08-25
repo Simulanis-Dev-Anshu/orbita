@@ -342,7 +342,7 @@ export default function Compliance() {
           </ul>
           <div className="mt-4 rounded-2xl border border-dashed border-line p-4 text-center">
             <p className="text-xs leading-relaxed text-sub">
-              <span className="font-semibold text-ink">Auditor workspace</span> — invite your
+              <span className="font-semibold text-ink">Auditor workspace</span>: invite your
               auditor with read-only access instead of emailing PDFs.
             </p>
             <button

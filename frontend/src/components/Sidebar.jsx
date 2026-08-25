@@ -106,10 +106,10 @@ export default function Sidebar({ open, onClose }) {
             className="mt-6 flex w-full cursor-pointer items-center gap-3 rounded-card bg-card p-3 text-left shadow-soft transition-shadow hover:shadow-lift"
           >
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-sm font-semibold text-forest">
-              PR
+              AN
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-semibold">Prabhhav</span>
+              <span className="block truncate text-sm font-semibold">Anshu</span>
               <span className="block text-xs text-sub">Security Admin</span>
             </span>
             <ChevronDown size={16} className="text-sub" aria-hidden="true" />

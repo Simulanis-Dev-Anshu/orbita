@@ -1,4 +1,4 @@
-/** Canonical AI Asset — every later source (browser, IDE, OAuth, MCP) maps here. */
+/** Canonical AI Asset. Every later source (browser, IDE, OAuth, MCP) maps here. */
 
 export const ASSET_TYPES = [
   'AI_APP',
