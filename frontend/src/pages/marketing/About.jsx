@@ -3,6 +3,7 @@ import { Eye, ShieldCheck, Handshake, MapPin, ArrowRight } from 'lucide-react'
 import BrandMark from '../../components/BrandMark.jsx'
 import useReveal from '../../hooks/useReveal.js'
 import useSeo from '../../hooks/useSeo.js'
+import { organization } from '../../data/seo.js'
 
 const values = [
   {
@@ -50,6 +51,16 @@ export default function About() {
     description:
       'Orbita discovers, inventories and risk-scores every AI agent in your company. Learn about our mission, values and the team building agent governance from India.',
     path: '/about',
+    jsonLd: [
+      organization,
+      {
+        '@context': 'https://schema.org',
+        '@type': 'AboutPage',
+        url: 'https://www.orbita.io/about',
+        name: 'About Orbita',
+        mainEntity: organization,
+      },
+    ],
   })
 
   return (

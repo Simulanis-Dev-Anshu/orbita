@@ -1,0 +1,33 @@
+# www.orbita.io
+
+User-agent: *
+Allow: /
+Disallow: /app
+Disallow: /login
+Disallow: /signup
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: CCBot
+Disallow: /
+
+Sitemap: https://www.orbita.io/sitemap.xml

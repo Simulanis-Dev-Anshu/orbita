@@ -1,13 +1,41 @@
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { posts } from '../../data/blog.js'
+import useSeo from '../../hooks/useSeo.js'
+import { organization, SITE } from '../../data/seo.js'
+
+function isoDate(label) {
+  const t = Date.parse(label)
+  return Number.isNaN(t) ? undefined : new Date(t).toISOString().slice(0, 10)
+}
 
 export default function BlogPost() {
   const { slug } = useParams()
   const post = posts.find((p) => p.slug === slug)
-  if (!post) return <Navigate to="/blog" replace />
+  const others = post ? posts.filter((p) => p.slug !== slug).slice(0, 2) : []
+  const published = post ? isoDate(post.date) : undefined
 
-  const others = posts.filter((p) => p.slug !== slug).slice(0, 2)
+  useSeo({
+    title: post ? `${post.title} — Orbita` : 'Article — Orbita',
+    description: post?.excerpt,
+    path: post ? `/blog/${post.slug}` : '/blog',
+    type: 'article',
+    jsonLd: post
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: post.title,
+          description: post.excerpt,
+          datePublished: published,
+          dateModified: published,
+          author: { '@type': 'Organization', name: post.author },
+          publisher: organization,
+          mainEntityOfPage: `${SITE}/blog/${post.slug}`,
+        }
+      : undefined,
+  })
+
+  if (!post) return <Navigate to="/blog" replace />
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6">

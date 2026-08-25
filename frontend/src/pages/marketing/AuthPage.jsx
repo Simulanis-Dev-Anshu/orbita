@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, ArrowRight } from 'lucide-react'
 import BrandMark from '../../components/BrandMark.jsx'
+import useSeo from '../../hooks/useSeo.js'
 
 function GoogleIcon() {
   return (
@@ -19,6 +20,14 @@ export default function AuthPage({ mode }) {
   const navigate = useNavigate()
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
+  useSeo({
+    title: isSignup ? 'Sign up — Orbita' : 'Log in — Orbita',
+    description: isSignup
+      ? 'Create an Orbita account and run a free read-only discovery scan of the AI agents in your company.'
+      : 'Log in to Orbita to view your agent inventory, risk scores and compliance evidence.',
+    path: isSignup ? '/signup' : '/login',
+    noindex: true,
+  })
 
   const submit = (e) => {
     e.preventDefault()

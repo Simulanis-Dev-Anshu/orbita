@@ -10,6 +10,7 @@ import MarketingLayout from './components/marketing/MarketingLayout.jsx'
 import Home from './pages/marketing/Home.jsx'
 import RadarLoader from './components/RadarLoader.jsx'
 import PolicyBar from './components/PolicyBar.jsx'
+import useSeo from './hooks/useSeo.js'
 
 const Identity = lazy(() => import('./pages/Identity.jsx'))
 const Assets = lazy(() => import('./pages/Assets.jsx'))
@@ -28,6 +29,10 @@ const AuthPage = lazy(() => import('./pages/marketing/AuthPage.jsx'))
 const About = lazy(() => import('./pages/marketing/About.jsx'))
 const Privacy = lazy(() => import('./pages/marketing/Privacy.jsx'))
 const Terms = lazy(() => import('./pages/marketing/Terms.jsx'))
+const Cookies = lazy(() => import('./pages/marketing/Cookies.jsx'))
+const Security = lazy(() => import('./pages/marketing/Security.jsx'))
+const Contact = lazy(() => import('./pages/marketing/Contact.jsx'))
+const NotFound = lazy(() => import('./pages/marketing/NotFound.jsx'))
 
 function PageLoader() {
   return (
@@ -81,6 +86,12 @@ function AppShell() {
   const [paletteOpen, setPaletteOpen] = useState(false)
   const { pathname } = useLocation()
   const meta = pageMeta[pathname] ?? { title: 'Orbita', subtitle: '' }
+  useSeo({
+    title: `${meta.title} — Orbita`,
+    description: meta.subtitle,
+    path: pathname.startsWith('/app') ? pathname : `/app${pathname === '/' ? '' : pathname}`,
+    noindex: true,
+  })
 
   useEffect(() => {
     const onKey = (e) => {
@@ -162,6 +173,10 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/cookies" element={<Cookies />} />
+            <Route path="/security" element={<Security />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
           <Route path="/login" element={<AuthPage mode="login" />} />
           <Route path="/signup" element={<AuthPage mode="signup" />} />

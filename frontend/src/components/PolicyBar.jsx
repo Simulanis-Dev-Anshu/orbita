@@ -44,6 +44,10 @@ export default function PolicyBar() {
             <Link to="/privacy#cookies" className="font-semibold text-forest hover:underline">
               privacy policy
             </Link>
+            {' '}and{' '}
+            <Link to="/cookies" className="font-semibold text-forest hover:underline">
+              cookie policy
+            </Link>
             .
           </p>
         </div>

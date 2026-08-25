@@ -3,34 +3,36 @@ import { Link } from 'react-router-dom'
 import { Check, ArrowRight } from 'lucide-react'
 import { plans } from '../../data/mock.js'
 import useReveal from '../../hooks/useReveal.js'
-
-const faqs = [
-  {
-    q: 'What does the free discovery scan include?',
-    a: 'We connect read-only to up to 3 sources and give you the full "scary list": every agent found, its owner, and its risk score. No credit card, and you keep the report.',
-  },
-  {
-    q: 'Do you need to install anything on our agents?',
-    a: 'No. Orbita watches OAuth grants, audit logs, DNS egress and behavioral signals: the footprints agents already leave. Nothing to instrument, no SDK.',
-  },
-  {
-    q: 'Where is our data stored?',
-    a: 'India (AWS Mumbai) by default, aligned with DPDP data-residency expectations. EU and US regions are available, and Enterprise can self-host entirely.',
-  },
-  {
-    q: 'How is pricing counted?',
-    a: 'Per company, flat. We deliberately do not charge per discovered agent, so you should never be penalized for finding more shadow AI.',
-  },
-  {
-    q: 'Can our auditor use it?',
-    a: 'Yes. Growth and Enterprise include a read-only Auditor role and exportable evidence packs for DPDP, SOC 2, ISO 27001 and the EU AI Act.',
-  },
-]
+import useSeo from '../../hooks/useSeo.js'
+import SeoFaq from '../../components/marketing/SeoFaq.jsx'
+import { faqSchema, pricingFaqs, SITE } from '../../data/seo.js'
 
 export default function Pricing() {
   const [currency, setCurrency] = useState('inr')
-  const [openFaq, setOpenFaq] = useState(0)
   const headRef = useReveal()
+  useSeo({
+    title: 'Orbita pricing — flat, no per-agent tax',
+    description:
+      'Orbita pricing is per company, not per agent. Free discovery scan, Starter from ₹40,000 / $1,500 a month, Growth ₹80,000 / $3,000, Enterprise custom. India residency included.',
+    path: '/pricing',
+    jsonLd: [
+      faqSchema(pricingFaqs, '/pricing'),
+      {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'Orbita plans',
+        url: `${SITE}/pricing`,
+        itemListElement: plans.map((p, i) => ({
+          '@type': 'Offer',
+          position: i + 1,
+          name: p.name,
+          price: p.id === 'enterprise' ? undefined : p.priceUsd.replace(/[^0-9.]/g, ''),
+          priceCurrency: 'USD',
+          url: `${SITE}/signup`,
+        })),
+      },
+    ],
+  })
 
   return (
     <main className="mx-auto max-w-[1200px] px-4 py-16 sm:px-8">
@@ -41,7 +43,11 @@ export default function Pricing() {
         </h1>
         <p className="ox-lead mx-auto mt-[18px] text-center">
           Global platforms charge $50–200K a year for this. We built Orbita for the mid-market.
-          Start free, see everything, then pick a plan.
+          Start free, see everything, then pick a plan.{' '}
+          <a href="/pricing.md" className="font-medium text-ink underline decoration-[rgba(31,30,28,0.25)] underline-offset-2 hover:decoration-ink">
+            Machine-readable pricing
+          </a>
+          .
         </p>
 
         <div
@@ -67,7 +73,6 @@ export default function Pricing() {
         </div>
       </div>
 
-      {/* Plans */}
       <div className="mt-10 grid gap-5 md:grid-cols-3">
         {plans.map((p) => (
           <article
@@ -111,29 +116,8 @@ export default function Pricing() {
         ))}
       </div>
 
-      {/* FAQ */}
-      <section className="mx-auto mt-20 max-w-2xl" aria-label="Frequently asked questions">
-        <h2 className="font-display text-center text-[clamp(28px,3vw,40px)]">Questions, answered</h2>
-        <div className="mt-8 space-y-0 border-t border-[rgba(31,30,28,0.11)]">
-          {faqs.map((f, i) => (
-            <div key={f.q} className="border-b border-[rgba(31,30,28,0.11)]">
-              <button
-                type="button"
-                onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
-                aria-expanded={openFaq === i}
-                className="flex w-full cursor-pointer items-center justify-between gap-4 py-4 text-left text-[15px] font-medium text-ink transition-colors hover:text-brand"
-              >
-                {f.q}
-                <span className={`text-sub transition-transform duration-200 ${openFaq === i ? 'rotate-45' : ''}`} aria-hidden="true">
-                  +
-                </span>
-              </button>
-              {openFaq === i && (
-                <p className="pb-5 text-[15px] leading-relaxed text-ink-2">{f.a}</p>
-              )}
-            </div>
-          ))}
-        </div>
+      <section className="mx-auto mt-20 max-w-4xl">
+        <SeoFaq items={pricingFaqs} title="Questions, answered" />
       </section>
     </main>
   )
