@@ -104,7 +104,7 @@ export default function AgentDrawer({ agent, onClose, onEdit, onDelete }) {
               </span>
             </div>
             <p className="mt-2 text-xs leading-relaxed text-white/60">
-              Portable, verifiable record of this agent's identity, permissions and behavior —
+              Portable, verifiable record of this agent's identity, permissions and behavior,
               shareable with auditors and vendors.
             </p>
             <button
@@ -119,7 +119,7 @@ export default function AgentDrawer({ agent, onClose, onEdit, onDelete }) {
 
           {/* Risk breakdown */}
           <section>
-            <h3 className="text-sm font-semibold">Risk breakdown — {agent.risk}/100</h3>
+            <h3 className="text-sm font-semibold">Risk breakdown: {agent.risk}/100</h3>
             <ul className="mt-3 space-y-2.5">
               {riskFactors(agent).map((f) => (
                 <li key={f.label}>
@@ -195,7 +195,7 @@ export default function AgentDrawer({ agent, onClose, onEdit, onDelete }) {
             )}
             {killState === 'revoked' && (
               <p className="mt-3 rounded-btn bg-card px-3 py-2 text-xs font-semibold text-forest">
-                ✓ Revocation queued — grants will be removed on next sync (demo)
+                Revocation queued. Grants will be removed on next sync (demo)
               </p>
             )}
           </section>
@@ -206,7 +206,7 @@ export default function AgentDrawer({ agent, onClose, onEdit, onDelete }) {
               <div>
                 <p className="text-sm font-semibold">Remove from inventory</p>
                 <p className="text-xs text-sub">
-                  Deletes the record only — access grants stay untouched.
+                  Deletes the record only. Access grants stay untouched.
                 </p>
               </div>
               {deleteState === 'idle' ? (

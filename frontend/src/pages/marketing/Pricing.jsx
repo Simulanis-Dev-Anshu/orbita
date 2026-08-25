@@ -7,11 +7,11 @@ import useReveal from '../../hooks/useReveal.js'
 const faqs = [
   {
     q: 'What does the free discovery scan include?',
-    a: 'We connect read-only to up to 3 sources and give you the full "scary list" — every agent found, its owner, and its risk score. No credit card, and you keep the report.',
+    a: 'We connect read-only to up to 3 sources and give you the full "scary list": every agent found, its owner, and its risk score. No credit card, and you keep the report.',
   },
   {
     q: 'Do you need to install anything on our agents?',
-    a: 'No. Orbita watches OAuth grants, audit logs, DNS egress and behavioral signals — the footprints agents already leave. Nothing to instrument, no SDK.',
+    a: 'No. Orbita watches OAuth grants, audit logs, DNS egress and behavioral signals: the footprints agents already leave. Nothing to instrument, no SDK.',
   },
   {
     q: 'Where is our data stored?',
@@ -19,11 +19,11 @@ const faqs = [
   },
   {
     q: 'How is pricing counted?',
-    a: 'Per company, flat. We deliberately do not charge per discovered agent — you should never be penalized for finding more shadow AI.',
+    a: 'Per company, flat. We deliberately do not charge per discovered agent, so you should never be penalized for finding more shadow AI.',
   },
   {
     q: 'Can our auditor use it?',
-    a: 'Yes — Growth and Enterprise include a read-only Auditor role and exportable evidence packs for DPDP, SOC 2, ISO 27001 and the EU AI Act.',
+    a: 'Yes. Growth and Enterprise include a read-only Auditor role and exportable evidence packs for DPDP, SOC 2, ISO 27001 and the EU AI Act.',
   },
 ]
 
@@ -33,18 +33,22 @@ export default function Pricing() {
   const headRef = useReveal()
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <main className="mx-auto max-w-[1200px] px-4 py-16 sm:px-8">
       <div ref={headRef} className="reveal text-center">
-        <p className="ox-label text-sub">Pricing</p>
-        <h1 className="font-display mt-3 text-4xl">
-          Flat pricing. <span className="text-forest">No per-agent tax.</span>
+        <p className="ox-label">Pricing</p>
+        <h1 className="font-display mt-3.5 text-[clamp(38px,4.3vw,58px)] tracking-[-0.038em]">
+          Flat pricing. <span className="text-brand">No per-agent tax.</span>
         </h1>
-        <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-sub sm:text-base">
-          Global platforms charge $50–200K a year for this. We built Orbita for the mid-market —
-          start free, see everything, then pick a plan.
+        <p className="ox-lead mx-auto mt-[18px] text-center">
+          Global platforms charge $50–200K a year for this. We built Orbita for the mid-market.
+          Start free, see everything, then pick a plan.
         </p>
 
-        <div className="mx-auto mt-8 flex w-fit rounded-btn border border-line bg-card p-1 text-xs font-semibold shadow-soft" role="group" aria-label="Currency">
+        <div
+          className="mx-auto mt-8 flex w-fit border border-[rgba(31,30,28,0.18)] bg-card p-1 text-[13.5px] font-medium"
+          role="group"
+          aria-label="Currency"
+        >
           {[
             { id: 'inr', label: '₹ INR' },
             { id: 'usd', label: '$ USD' },
@@ -53,8 +57,8 @@ export default function Pricing() {
               key={c.id}
               type="button"
               onClick={() => setCurrency(c.id)}
-              className={`cursor-pointer rounded-[10px] px-4 py-2 transition-colors ${
-                currency === c.id ? 'bg-forest text-white' : 'text-sub hover:text-ink'
+              className={`cursor-pointer px-4 py-2 transition-colors ${
+                currency === c.id ? 'bg-ink text-white' : 'text-ink-2 hover:text-ink'
               }`}
             >
               {c.label}
@@ -96,10 +100,8 @@ export default function Pricing() {
             </ul>
             <Link
               to="/signup"
-              className={`mt-7 inline-flex items-center justify-center gap-2 rounded-btn px-5 py-3 text-sm font-bold transition-opacity hover:opacity-90 ${
-                p.current
-                  ? 'bg-brand text-white'
-                  : 'border border-line bg-canvas text-ink hover:border-brand'
+              className={`ox-btn mt-7 w-full ${
+                p.current ? 'ox-btn-brand' : 'ox-btn-ghost'
               }`}
             >
               {p.id === 'enterprise' ? 'Contact sales' : 'Start with free scan'}
@@ -111,15 +113,15 @@ export default function Pricing() {
 
       {/* FAQ */}
       <section className="mx-auto mt-20 max-w-2xl" aria-label="Frequently asked questions">
-        <h2 className="text-center text-2xl font-semibold tracking-tight">Questions, answered</h2>
-        <div className="mt-8 space-y-3">
+        <h2 className="font-display text-center text-[clamp(28px,3vw,40px)]">Questions, answered</h2>
+        <div className="mt-8 space-y-0 border-t border-[rgba(31,30,28,0.11)]">
           {faqs.map((f, i) => (
-            <div key={f.q} className="overflow-hidden rounded-card bg-card shadow-soft">
+            <div key={f.q} className="border-b border-[rgba(31,30,28,0.11)]">
               <button
                 type="button"
                 onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
                 aria-expanded={openFaq === i}
-                className="flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-4 text-left text-sm font-semibold"
+                className="flex w-full cursor-pointer items-center justify-between gap-4 py-4 text-left text-[15px] font-medium text-ink transition-colors hover:text-brand"
               >
                 {f.q}
                 <span className={`text-sub transition-transform duration-200 ${openFaq === i ? 'rotate-45' : ''}`} aria-hidden="true">
@@ -127,7 +129,7 @@ export default function Pricing() {
                 </span>
               </button>
               {openFaq === i && (
-                <p className="px-5 pb-5 text-sm leading-relaxed text-sub">{f.a}</p>
+                <p className="pb-5 text-[15px] leading-relaxed text-ink-2">{f.a}</p>
               )}
             </div>
           ))}

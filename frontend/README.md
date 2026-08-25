@@ -1,8 +1,8 @@
-# AgentLens — Shadow Agent Discovery Dashboard
+# AgentLens: Shadow Agent Discovery Dashboard
 
 Frontend for the shadow-AI-agent discovery platform: discover, inventory and risk-score every AI agent operating inside a company.
 
-Built with **React + Vite**, **Tailwind CSS v4**, **Recharts** (analytics), **@xyflow/react** (identity graph) and **lucide-react** icons. All data is mocked in `src/data/mock.js` — swap those imports for FastAPI calls when the backend is ready.
+Built with **React + Vite**, **Tailwind CSS v4**, **Recharts** (analytics), **@xyflow/react** (identity graph) and **lucide-react** icons. All data is mocked in `src/data/mock.js`. Swap those imports for FastAPI calls when the backend is ready.
 
 ## Run
 
@@ -18,16 +18,16 @@ npm run build    # production build in dist/
 
 | Route | What's there |
 |-------|--------------|
-| `/` | Homepage — announcement bar, animated live-discovery hero (beams → radar → discovered-agent ticker), logo marquee, threat-landscape grid (6 risks), stats, how-it-works, product modules (Discovery Engine / Identity Graph / MCP Gateway / Compliance Packs), features grid, exposure calculator, trust section (stack compatibility + framework alignment + zero-intrusion), testimonials, blog cards, newsletter, certified footer |
+| `/` | Homepage: announcement bar, animated live-discovery hero (beams → radar → discovered-agent ticker), logo marquee, threat-landscape grid (6 risks), stats, how-it-works, product modules (Discovery Engine / Identity Graph / MCP Gateway / Compliance Packs), features grid, exposure calculator, trust section (stack compatibility + framework alignment + zero-intrusion), testimonials, blog cards, newsletter, certified footer |
 | `/pricing` | Flat ₹/$ plans with "most popular" highlight + FAQ accordion |
-| `/blog`, `/blog/:slug` | "The Shadow Ledger" — 4 research-grounded articles (Shadow MCP, DPDP, orphaned agents, behavioral fingerprinting) |
-| `/login`, `/signup` | Split-screen auth (mock — submits into the app) |
+| `/blog`, `/blog/:slug` | "The Shadow Ledger": 4 research-grounded articles (Shadow MCP, DPDP, orphaned agents, behavioral fingerprinting) |
+| `/login`, `/signup` | Split-screen auth (mock, submits into the app) |
 
 **App** (sidebar layout, under `/app`):
 
 | Route | What's there |
 |-------|--------------|
-| `/app` | Dashboard — hero KPI + minis, discovery trend, Sentinel copilot, agents table, risk donut, peer benchmark, approvals + source health |
+| `/app` | Dashboard: hero KPI + minis, discovery trend, Sentinel copilot, agents table, risk donut, peer benchmark, approvals + source health |
 | `/app/graph` | React Flow identity graph: Human → Agent → Credential → Data scope, red animated edges for orphaned/PII paths |
 | `/app/inventory` | Full registry with search, **Register agent** (create), and per-agent edit/delete |
 | `/app/alerts` | Drift/orphan/egress alert feed with severity filters and resolve actions |
@@ -37,7 +37,7 @@ npm run build    # production build in dist/
 
 **⌘K / Ctrl+K** anywhere in the app opens the command palette: search agents/owners/pages, or hand the query to Sentinel Copilot ("Stuck?" row). Clicking any table row opens the **agent drawer**: Agent Passport trust score, risk breakdown, blast radius, behavioral fingerprint heatmap, kill switch, edit and delete.
 
-Agent CRUD is backed by `src/context/AgentsContext.jsx` (in-memory) — swap its callbacks for FastAPI calls to go live.
+Agent CRUD is backed by `src/context/AgentsContext.jsx` (in-memory). Swap its callbacks for FastAPI calls to go live.
 
 ## Design tokens
 

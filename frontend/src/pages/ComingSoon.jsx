@@ -8,8 +8,7 @@ export default function ComingSoon({ name }) {
       </span>
       <h2 className="mt-5 text-xl font-semibold">{name} is on the way</h2>
       <p className="mt-2 max-w-sm text-sm leading-relaxed text-sub">
-        This module is part of the roadmap. The dashboard, agent graph and inventory are live —
-        explore those while we build this out.
+        This module is part of the roadmap. The dashboard, relationship graph and inventory are live. Explore those while we build this out.
       </p>
     </div>
   )

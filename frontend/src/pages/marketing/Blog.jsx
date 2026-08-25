@@ -48,11 +48,13 @@ function PostCard({ post, featured }) {
 export default function Blog() {
   const [featured, ...rest] = posts
   return (
-    <main className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-      <p className="ox-label text-sub">Journal</p>
-      <h1 className="font-display mt-3 text-4xl">The Shadow Ledger</h1>
-      <p className="mt-3 max-w-xl text-sm leading-relaxed text-sub sm:text-base">
-        Research and field notes on shadow AI, agent governance and DPDP compliance — from the
+    <main className="mx-auto max-w-[1200px] px-4 py-16 sm:px-8">
+      <p className="ox-label">Journal</p>
+      <h1 className="font-display mt-3.5 text-[clamp(38px,4.3vw,58px)] tracking-[-0.038em]">
+        The Shadow Ledger
+      </h1>
+      <p className="ox-lead mt-[18px]">
+        Research and field notes on shadow AI, agent governance and DPDP compliance, from the
         Orbita discovery team.
       </p>
       <div className="mt-10 grid gap-5 md:grid-cols-2">

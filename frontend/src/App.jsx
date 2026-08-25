@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Sidebar from './components/Sidebar.jsx'
 import Header from './components/Header.jsx'
 import CommandPalette from './components/CommandPalette.jsx'
@@ -11,12 +11,15 @@ import Home from './pages/marketing/Home.jsx'
 import RadarLoader from './components/RadarLoader.jsx'
 import PolicyBar from './components/PolicyBar.jsx'
 
-const AgentGraph = lazy(() => import('./pages/AgentGraph.jsx'))
-const Copilot = lazy(() => import('./pages/Copilot.jsx'))
-const Inventory = lazy(() => import('./pages/Inventory.jsx'))
+const Identity = lazy(() => import('./pages/Identity.jsx'))
+const Assets = lazy(() => import('./pages/Assets.jsx'))
+const Discovery = lazy(() => import('./pages/Discovery.jsx'))
+const RelationshipGraph = lazy(() => import('./pages/RelationshipGraph.jsx'))
+const Risk = lazy(() => import('./pages/Risk.jsx'))
+const Intelligence = lazy(() => import('./pages/Intelligence.jsx'))
+const Remediation = lazy(() => import('./pages/Remediation.jsx'))
+const Governance = lazy(() => import('./pages/Governance.jsx'))
 const Alerts = lazy(() => import('./pages/Alerts.jsx'))
-const Compliance = lazy(() => import('./pages/Compliance.jsx'))
-const Connectors = lazy(() => import('./pages/Connectors.jsx'))
 const Settings = lazy(() => import('./pages/Settings.jsx'))
 const Pricing = lazy(() => import('./pages/marketing/Pricing.jsx'))
 const Blog = lazy(() => import('./pages/marketing/Blog.jsx'))
@@ -36,12 +39,39 @@ function PageLoader() {
 
 const pageMeta = {
   '/app': { title: 'Dashboard', subtitle: 'Every AI agent in your company, at a glance' },
-  '/app/copilot': { title: 'Sentinel Copilot', subtitle: 'AI security analyst grounded in your identity graph' },
-  '/app/graph': { title: 'Agent Graph', subtitle: 'Who owns what, and what it can touch' },
-  '/app/inventory': { title: 'Agent Inventory', subtitle: 'Full registry of discovered agents' },
+  '/app/identity': {
+    title: 'Identity',
+    subtitle: 'Organization, OAuth, accounts and correlation',
+  },
+  '/app/discovery': {
+    title: 'Discovery',
+    subtitle: 'AI apps, extensions, local runtimes and MCP',
+  },
+  '/app/assets': {
+    title: 'Assets',
+    subtitle: 'Asset DB, inventory, MCP tools and data access',
+  },
+  '/app/relationships': {
+    title: 'Relationship Graph',
+    subtitle: 'USER → DEVICE → APP → AGENT → MCP → TOOL → DATA',
+  },
+  '/app/risk': {
+    title: 'Risk Engine',
+    subtitle: 'Scores, explanations, attack paths and blast radius',
+  },
+  '/app/intelligence': {
+    title: 'Intelligence',
+    subtitle: 'Security analyst, NL search and attack simulation',
+  },
+  '/app/remediation': {
+    title: 'Remediation',
+    subtitle: 'Recommended fixes and admin-approved actions',
+  },
+  '/app/governance': {
+    title: 'Governance',
+    subtitle: 'Policies, AI-BOM and compliance evidence',
+  },
   '/app/alerts': { title: 'Alerts', subtitle: 'Permission drift and new-agent notifications' },
-  '/app/compliance': { title: 'Compliance', subtitle: 'DPDP, SOC 2, ISO 27001 and EU AI Act readiness' },
-  '/app/connectors': { title: 'Connectors', subtitle: 'Data sources feeding the discovery engine' },
   '/app/settings': { title: 'Settings', subtitle: 'Workspace, team and billing' },
   '/app/help': { title: 'Help Center', subtitle: 'Guides, docs and support' },
 }
@@ -52,7 +82,6 @@ function AppShell() {
   const { pathname } = useLocation()
   const meta = pageMeta[pathname] ?? { title: 'Orbita', subtitle: '' }
 
-  // Global ⌘K / Ctrl+K shortcut
   useEffect(() => {
     const onKey = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -80,14 +109,30 @@ function AppShell() {
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/copilot" element={<Copilot />} />
-              <Route path="/graph" element={<AgentGraph />} />
-              <Route path="/inventory" element={<Inventory />} />
+              <Route path="/identity" element={<Identity />} />
+              <Route path="/discovery" element={<Discovery />} />
+              <Route path="/assets" element={<Assets />} />
+              <Route path="/relationships" element={<RelationshipGraph />} />
+              <Route path="/risk" element={<Risk />} />
+              <Route path="/intelligence" element={<Intelligence />} />
+              <Route path="/remediation" element={<Remediation />} />
+              <Route path="/governance" element={<Governance />} />
               <Route path="/alerts" element={<Alerts />} />
-              <Route path="/compliance" element={<Compliance />} />
-              <Route path="/connectors" element={<Connectors />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/help" element={<ComingSoon name="Help Center" />} />
+
+              {/* Legacy paths → consolidated hubs */}
+              <Route path="/organization" element={<Navigate to="/app/identity?tab=organization" replace />} />
+              <Route path="/oauth" element={<Navigate to="/app/identity?tab=oauth" replace />} />
+              <Route path="/accounts" element={<Navigate to="/app/identity?tab=accounts" replace />} />
+              <Route path="/correlation" element={<Navigate to="/app/identity?tab=correlation" replace />} />
+              <Route path="/extensions" element={<Navigate to="/app/discovery?tab=extensions" replace />} />
+              <Route path="/local-ai" element={<Navigate to="/app/discovery?tab=local" replace />} />
+              <Route path="/inventory" element={<Navigate to="/app/assets?tab=inventory" replace />} />
+              <Route path="/connectors" element={<Navigate to="/app" replace />} />
+              <Route path="/copilot" element={<Navigate to="/app/intelligence?tab=analyst" replace />} />
+              <Route path="/compliance" element={<Navigate to="/app/governance?tab=compliance" replace />} />
+              <Route path="/graph" element={<Navigate to="/app/relationships" replace />} />
             </Routes>
           </Suspense>
         </main>

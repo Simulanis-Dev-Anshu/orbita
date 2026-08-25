@@ -1,4 +1,4 @@
-// Mock data for the Orbita dashboard — replace with FastAPI calls later.
+// Mock data for the Orbita dashboard. Replace with FastAPI calls later.
 import { asAsset } from './asset.js'
 
 export const kpis = {
@@ -78,7 +78,7 @@ const RAW_AGENTS = [
     name: 'Payroll Sync Agent',
     platform: 'Make',
     owner: 'Unassigned',
-    ownerRole: '—',
+    ownerRole: '-',
     scopes: ['Zoho Payroll', 'Sheets', 'Gmail'],
     risk: 92,
     status: 'orphaned',
@@ -111,7 +111,7 @@ const RAW_AGENTS = [
     name: 'Customer Data Enricher',
     platform: 'n8n',
     owner: 'Unassigned',
-    ownerRole: '—',
+    ownerRole: '-',
     scopes: ['CRM', 'Clearbit', 'Postgres'],
     risk: 81,
     status: 'orphaned',
@@ -318,7 +318,7 @@ export const alerts = [
     type: 'Orphaned agent',
     severity: 'critical',
     agent: 'Customer Data Enricher',
-    detail: 'Owner account deactivated in Google Workspace — agent still executing',
+    detail: 'Owner account deactivated in Google Workspace. Agent still executing',
     time: '1 hr ago',
     resolved: false,
   },
@@ -363,7 +363,7 @@ export const alerts = [
     type: 'New agent detected',
     severity: 'low',
     agent: 'Meeting Notes Summarizer',
-    detail: 'Registered via approval workflow — auto-approved by policy',
+    detail: 'Registered via approval workflow, auto-approved by policy',
     time: '2 days ago',
     resolved: true,
   },
@@ -477,9 +477,9 @@ export const plans = [
 ]
 
 export const teamMembers = [
-  { id: 'tm-1', name: 'Prabhhav', email: 'prabhhav@zintellix.com', role: 'Owner', status: 'active' },
-  { id: 'tm-2', name: 'Riya Sharma', email: 'riya@zintellix.com', role: 'Security Admin', status: 'active' },
-  { id: 'tm-3', name: 'Dev Patel', email: 'dev@zintellix.com', role: 'Viewer', status: 'invited' },
+  { id: 'tm-1', name: 'Anshu', email: 'anshu@orbita.com', role: 'Owner', status: 'active' },
+  { id: 'tm-2', name: 'Riya Sharma', email: 'riya@orbita.com', role: 'Security Admin', status: 'active' },
+  { id: 'tm-3', name: 'Dev Patel', email: 'dev@orbita.com', role: 'Viewer', status: 'invited' },
 ]
 
 export const benchmark = {
@@ -532,7 +532,7 @@ export const notifications = [
   },
 ]
 
-// Agents per platform — dashboard bar chart
+// Agents per platform, dashboard bar chart
 export const platformBreakdown = [
   { platform: 'Zapier', agents: 38, highRisk: 7 },
   { platform: 'Custom GPT', agents: 29, highRisk: 4 },
@@ -559,7 +559,7 @@ export const fleetActivity = [
   { hour: '22', actions: 428, anomalies: 3 },
 ]
 
-// Which data scopes the fleet can reach — exposure bars
+// Which data scopes the fleet can reach, exposure bars
 export const scopeExposure = [
   { scope: 'Gmail', agents: 41, pii: true },
   { scope: 'Google Sheets', agents: 33, pii: true },
@@ -569,7 +569,7 @@ export const scopeExposure = [
   { scope: 'Zoho Payroll', agents: 6, pii: true },
 ]
 
-// Sentinel Copilot page — live signals sidebar
+// Sentinel Copilot page, live signals sidebar
 export const copilotSignals = [
   { id: 'cs-1', label: 'OAuth grants watched', value: '312', trend: '+9 today' },
   { id: 'cs-2', label: 'DNS egress events / hr', value: '1.4k', trend: 'normal' },

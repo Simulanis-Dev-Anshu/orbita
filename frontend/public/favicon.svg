@@ -1,16 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90.37 90.37">
-  <rect width="90.37" height="90.37" fill="#170702"/>
-  <rect x="26.78" y="13.39" width="10.04" height="10.04" fill="#FF4D00"/>
-  <rect x="40.17" y="13.39" width="10.04" height="10.04" fill="#FF4D00"/>
-  <rect x="53.55" y="13.39" width="10.04" height="10.04" fill="#FF4D00"/>
-  <rect x="13.39" y="26.78" width="10.04" height="10.04" fill="#FF4D00"/>
-  <rect x="66.94" y="26.78" width="10.04" height="10.04" fill="#FF4D00"/>
-  <rect x="13.39" y="40.16" width="10.04" height="10.04" fill="#FF4D00"/>
-  <rect x="40.17" y="40.16" width="10.04" height="10.04" fill="#FF4D00"/>
-  <rect x="66.94" y="40.16" width="10.04" height="10.04" fill="#FF4D00"/>
-  <rect x="13.39" y="53.55" width="10.04" height="10.04" fill="#FF4D00"/>
-  <rect x="66.94" y="53.55" width="10.04" height="10.04" fill="#FF4D00"/>
-  <rect x="26.78" y="66.94" width="10.04" height="10.04" fill="#FF4D00"/>
-  <rect x="40.17" y="66.94" width="10.04" height="10.04" fill="#FF4D00"/>
-  <rect x="53.55" y="66.94" width="10.04" height="10.04" fill="#FF4D00"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="8" fill="#170702"/>
+  <path d="M23.7 12.41 A8.5 8.5 0 1 1 18.2 7.79" fill="none" stroke="#FF4D00" stroke-width="2.15" stroke-linecap="round"/>
+  <circle cx="16" cy="16" r="3.35" fill="#FF4D00"/>
+  <circle cx="21.5" cy="9.5" r="2.15" fill="#FF4D00"/>
 </svg>

@@ -1,4 +1,4 @@
-// Radar-sweep loader — Orbita's "scanning for agents" motif.
+// Radar-sweep loader, Orbita's "scanning for agents" motif.
 // `dark` renders it for dark surfaces (hero, forest cards).
 
 const blips = [

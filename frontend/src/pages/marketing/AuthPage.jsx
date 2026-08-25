@@ -97,7 +97,7 @@ export default function AuthPage({ mode }) {
                   <input
                     required
                     autoComplete="name"
-                    placeholder="Prabhhav"
+                    placeholder="Anshu"
                     className="mt-1.5 w-full rounded-btn border border-line bg-card px-3.5 py-3 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
                   />
                 </label>
@@ -106,7 +106,7 @@ export default function AuthPage({ mode }) {
                   <input
                     required
                     autoComplete="organization"
-                    placeholder="Zintellix"
+                    placeholder="Orbita"
                     className="mt-1.5 w-full rounded-btn border border-line bg-card px-3.5 py-3 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
                   />
                 </label>

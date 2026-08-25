@@ -3,446 +3,16 @@ import { Link } from 'react-router-dom'
 import {
   ArrowRight,
   ArrowLeft,
-  Bot,
   Cloud,
-  Fingerprint,
-  Power,
   ShieldCheck,
-  Waypoints,
   ServerCog,
-  Plug,
-  ScanSearch,
-  UserX,
-  KeyRound,
   Radar,
   FileText,
 } from 'lucide-react'
 import useReveal from '../../hooks/useReveal.js'
-import BrandMark from '../../components/BrandMark.jsx'
 import { posts } from '../../data/blog.js'
-
-const feedPool = [
-  { name: 'Zapier Invoice Bot', platform: 'Zapier', risk: 87 },
-  { name: 'Postgres MCP Server', platform: 'MCP', risk: 71 },
-  { name: 'Sales Outreach GPT', platform: 'Custom GPT', risk: 74 },
-  { name: 'GitHub PR Reviewer', platform: 'GitHub', risk: 22 },
-  { name: 'Payroll Sync Agent', platform: 'Make', risk: 92 },
-  { name: 'HR Onboarding Flow', platform: 'n8n', risk: 58 },
-]
-
-const weekly = [12, 19, 15, 27, 22, 31, 26, 38]
-const chartPts = weekly.map((v, i) => [
-  (i / (weekly.length - 1)) * 280,
-  96 - (v / Math.max(...weekly)) * 78,
-])
-
-function smoothPath(pts) {
-  let d = `M ${pts[0][0]},${pts[0][1]}`
-  for (let i = 1; i < pts.length - 1; i++) {
-    const xc = (pts[i][0] + pts[i + 1][0]) / 2
-    const yc = (pts[i][1] + pts[i + 1][1]) / 2
-    d += ` Q ${pts[i][0]},${pts[i][1]} ${xc},${yc}`
-  }
-  d += ` T ${pts[pts.length - 1][0]},${pts[pts.length - 1][1]}`
-  return d
-}
-
-const linePath = smoothPath(chartPts)
-const areaPath = `${linePath} L 280,100 L 0,100 Z`
-
-/* ── "Built to pass the security review" bento (timbal.ai-style) ── */
-
-const TB_INK = '#1f1e1c'
-const TB_SUB = '#7d756d'
-const TB_FONT = '"Inter Tight", ui-sans-serif, system-ui, sans-serif'
-
-/* Twinkling pixel-grid canvas with edge fade (timbal pixel-card) */
-function PixelField() {
-  const ref = useRef(null)
-  useEffect(() => {
-    const canvas = ref.current
-    if (!canvas) return
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const ctx = canvas.getContext('2d')
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
-    let raf
-    const gap = 16 * dpr
-    const size = 2.4 * dpr
-    const resize = () => {
-      canvas.width = canvas.offsetWidth * dpr
-      canvas.height = canvas.offsetHeight * dpr
-      draw(performance.now())
-    }
-    const draw = (t) => {
-      cancelAnimationFrame(raf)
-      const { width: w, height: h } = canvas
-      ctx.clearRect(0, 0, w, h)
-      const cols = Math.ceil(w / gap)
-      const rows = Math.ceil(h / gap)
-      for (let i = 0; i <= cols; i++) {
-        for (let j = 0; j <= rows; j++) {
-          const s = Math.sin(i * 127.1 + j * 311.7) * 43758.5453
-          const phase = s - Math.floor(s)
-          const tw = reduced ? 0.4 : Math.max(0, Math.sin(t / 1500 + phase * Math.PI * 2))
-          ctx.fillStyle = `rgba(23,7,2,${0.04 + 0.16 * tw})`
-          ctx.fillRect(i * gap, j * gap, size, size)
-        }
-      }
-      if (!reduced) raf = requestAnimationFrame(draw)
-    }
-    resize()
-    const ro = new ResizeObserver(resize)
-    ro.observe(canvas)
-    return () => {
-      cancelAnimationFrame(raf)
-      ro.disconnect()
-    }
-  }, [])
-  return (
-    <canvas
-      ref={ref}
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 h-full w-full"
-      style={{
-        maskImage: 'radial-gradient(ellipse at center, black 25%, transparent 78%)',
-        WebkitMaskImage: 'radial-gradient(ellipse at center, black 25%, transparent 78%)',
-      }}
-    />
-  )
-}
-
-/* Cycling deployment-target tile (blur in/out, timbal cloud cycler) */
-const tbClouds = ['AWS', 'Azure', 'GCP', 'On-prem']
-function CloudCycler() {
-  const [idx, setIdx] = useState(0)
-  const [out, setOut] = useState(false)
-  useEffect(() => {
-    const t = setInterval(() => {
-      setOut(true)
-      setTimeout(() => {
-        setIdx((i) => (i + 1) % tbClouds.length)
-        setOut(false)
-      }, 320)
-    }, 2600)
-    return () => clearInterval(t)
-  }, [])
-  return (
-    <div className="relative flex h-full min-h-[260px] items-center justify-center overflow-hidden rounded-xl">
-      <PixelField />
-      {/* hover radial glow */}
-      <div className="tb-pixel-glow pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
-      <p className="sr-only" aria-live="polite">
-        Deployment option: {tbClouds[idx]}
-      </p>
-      <div className="relative z-[2] flex h-[88px] w-[88px] items-center justify-center rounded-2xl border border-[#efefef] bg-white shadow-[0_2px_8px_rgba(15,23,42,0.06)] sm:h-24 sm:w-24">
-        <span
-          className="text-[17px] font-semibold tracking-tight"
-          style={{
-            color: TB_INK,
-            filter: out ? 'blur(6px)' : 'blur(0px)',
-            opacity: out ? 0 : 1,
-            transform: out ? 'scale(0.92)' : 'none',
-            transition: 'filter 0.32s ease, opacity 0.32s ease, transform 0.32s ease',
-          }}
-        >
-          {tbClouds[idx]}
-        </span>
-      </div>
-    </div>
-  )
-}
-
-/* Compliance seals: minimal 1.6-stroke outline SVGs (timbal badges) */
-function TbSeal({ variant, label }) {
-  const common = {
-    className: 'h-20 w-20 sm:h-24 sm:w-24',
-    fill: 'none',
-    stroke: 'currentColor',
-    strokeWidth: 1.6,
-    strokeLinejoin: 'round',
-    strokeLinecap: 'round',
-    viewBox: '0 0 100 100',
-    'aria-hidden': true,
-  }
-  return (
-    <li
-      className="flex flex-col items-center gap-2.5 transition-transform duration-300 hover:-translate-y-1"
-      style={{ color: TB_INK }}
-    >
-      {variant === 'soc2' && (
-        <svg {...common}>
-          <circle cx="50" cy="44" r="26" />
-          <circle cx="50" cy="44" r="19" strokeDasharray="2.5 4" />
-          <text x="50" y="42" textAnchor="middle" fontSize="11" fontWeight="700" stroke="none" fill="currentColor">SOC 2</text>
-          <text x="50" y="53" textAnchor="middle" fontSize="6.5" fontWeight="500" stroke="none" fill="currentColor" letterSpacing="1">TYPE II</text>
-          <path d="M42 66l-6 14 8-4 4 8 4-11" />
-          <path d="M58 66l6 14-8-4-4 8" />
-        </svg>
-      )}
-      {variant === 'iso' && (
-        <svg {...common}>
-          <circle cx="50" cy="50" r="30" />
-          <g strokeDasharray="1.8 5.2">
-            <circle cx="50" cy="50" r="36" />
-          </g>
-          <text x="50" y="48" textAnchor="middle" fontSize="12" fontWeight="700" stroke="none" fill="currentColor">ISO</text>
-          <text x="50" y="60" textAnchor="middle" fontSize="9" fontWeight="500" stroke="none" fill="currentColor">27001</text>
-        </svg>
-      )}
-      {variant === 'gdpr' && (
-        <svg {...common}>
-          <circle cx="50" cy="50" r="30" />
-          {Array.from({ length: 12 }).map((_, i) => {
-            const a = (i / 12) * Math.PI * 2 - Math.PI / 2
-            return (
-              <circle
-                key={i}
-                cx={50 + 23 * Math.cos(a)}
-                cy={50 + 23 * Math.sin(a)}
-                r="1.6"
-                fill="currentColor"
-                stroke="none"
-              />
-            )
-          })}
-          <text x="50" y="54" textAnchor="middle" fontSize="10" fontWeight="700" stroke="none" fill="currentColor">GDPR</text>
-        </svg>
-      )}
-      {variant === 'dpdp' && (
-        <svg {...common}>
-          <path d="M50 16l26 9v22c0 16-10.5 28-26 35-15.5-7-26-19-26-35V25z" />
-          <rect x="41" y="43" width="18" height="15" rx="2.5" />
-          <path d="M45 43v-5a5 5 0 0 1 10 0v5" />
-          <text x="50" y="72" textAnchor="middle" fontSize="8.5" fontWeight="700" stroke="none" fill="currentColor">DPDP</text>
-        </svg>
-      )}
-      <span className="text-[12px] font-medium" style={{ color: TB_SUB }}>
-        {label}
-      </span>
-    </li>
-  )
-}
-
-/* Dark card: expanding radar rings + India-region marker */
-function IndiaRings() {
-  return (
-    <div className="relative flex h-full min-h-[260px] items-center justify-center overflow-hidden rounded-xl">
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: 'radial-gradient(circle at 50% 55%, rgba(255,77,0,0.14), transparent 62%)' }}
-      />
-      {/* static structure rings */}
-      {[110, 190, 270].map((d) => (
-        <span
-          key={d}
-          className="absolute rounded-full border border-[#170702]/[0.08]"
-          style={{ width: d, height: d }}
-        />
-      ))}
-      {/* expanding pulse rings */}
-      {[0, 1, 2, 3].map((i) => (
-        <span
-          key={i}
-          className="tb-ring absolute rounded-full border border-[#ff4d00]/60"
-          style={{ width: 290, height: 290, animationDelay: `${i * 1.125}s` }}
-        />
-      ))}
-      <div className="relative z-[2] flex flex-col items-center gap-3">
-        <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-md shadow-soft">
-          <BrandMark size={48} />
-        </span>
-        <span className="rounded-full border border-[#efefef] bg-white px-3.5 py-1.5 text-[11px] font-medium tracking-wide text-[#1f1e1c]/80 shadow-soft">
-          ap-south-1 · Mumbai
-        </span>
-      </div>
-    </div>
-  )
-}
-
-/* 3D slot-machine wheel of agent platforms (timbal model wheel) */
-const tbPlatforms = [
-  ['Zapier', '#ff4f00'],
-  ['Make', '#8a2be2'],
-  ['n8n', '#ea4b71'],
-  ['Custom GPTs', '#10a37f'],
-  ['MCP Servers', '#1f1e1c'],
-  ['GitHub', '#24292f'],
-  ['Slack', '#611f69'],
-  ['Copilot Studio', '#0078d4'],
-]
-function PlatformWheel() {
-  const [active, setActive] = useState(0)
-  useEffect(() => {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduced) return undefined
-    const t = setInterval(() => setActive((a) => a + 1), 2000)
-    return () => clearInterval(t)
-  }, [])
-  const n = tbPlatforms.length
-  return (
-    <div className="flex h-full min-h-[300px] items-center justify-center" style={{ perspective: '800px' }}>
-      <div className="relative h-[280px] w-full overflow-hidden" aria-hidden="true">
-        {tbPlatforms.map(([name, color], i) => {
-          let d = (((i - active) % n) + n) % n
-          if (d > n / 2) d -= n
-          const abs = Math.abs(d)
-          const clamped = Math.max(-3, Math.min(3, d))
-          const opacity = abs >= 3 ? 0 : [1, 0.56, 0.12][abs]
-          return (
-            <div
-              key={name}
-              className="absolute inset-x-0 top-0 flex h-14 items-center justify-center gap-2.5"
-              style={{
-                pointerEvents: 'none',
-                transformStyle: 'preserve-3d',
-                transform: `translateY(${112 + clamped * 40}px) scale(${1 - abs * 0.14})`,
-                opacity,
-                transition:
-                  'transform 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.5s cubic-bezier(0.4,0,0.2,1)',
-              }}
-            >
-              <span
-                className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[7px] text-[12px] font-bold"
-                style={{ backgroundColor: `${color}1a`, color }}
-              >
-                {name[0]}
-              </span>
-              <span
-                style={{
-                  fontFamily: TB_FONT,
-                  fontSize: d === 0 ? 28 : 22,
-                  fontWeight: 400,
-                  letterSpacing: '-0.04em',
-                  color: TB_INK,
-                  transition: 'font-size 0.4s ease',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {name}
-              </span>
-            </div>
-          )
-        })}
-      </div>
-      <p className="sr-only">
-        Discover agents on Zapier, Make, n8n, Custom GPTs, MCP servers, GitHub, Slack, and Copilot Studio.
-      </p>
-    </div>
-  )
-}
-
-/* Discovery Engine radar: rotating sweep surfaces agent blips (Orbita original) */
-const tbBlips = [
-  { deg: 45, r: 62, label: 'Zapier bot' },
-  { deg: 110, r: 40, label: 'MCP server' },
-  { deg: 170, r: 70, label: 'Custom GPT' },
-  { deg: 230, r: 52, label: 'shadow agent', risk: true },
-  { deg: 300, r: 66, label: 'n8n flow' },
-  { deg: 335, r: 30, label: 'Make flow' },
-]
-function TbRadarSweep() {
-  return (
-    <div className="relative aspect-square w-full max-w-[400px]" aria-hidden="true">
-      {/* rings + crosshair */}
-      <svg viewBox="0 0 400 400" fill="none" className="absolute inset-0 h-full w-full">
-        {[60, 110, 160, 196].map((r) => (
-          <circle key={r} cx="200" cy="200" r={r} stroke="rgba(23,7,2,0.1)" strokeWidth="1" />
-        ))}
-        <path d="M 200 4 V 396 M 4 200 H 396" stroke="rgba(23,7,2,0.06)" strokeWidth="1" />
-        <circle cx="200" cy="200" r="3" fill="rgba(255,77,0,0.9)" />
-        <circle cx="200" cy="200" r="8" stroke="rgba(255,77,0,0.35)" strokeWidth="1" />
-      </svg>
-      {/* rotating sweep beam */}
-      <div
-        className="tb-sweep absolute inset-[2%] rounded-full"
-        style={{
-          background:
-            'conic-gradient(from 0deg, transparent 0deg, transparent 290deg, rgba(255,77,0,0.05) 310deg, rgba(255,77,0,0.16) 344deg, rgba(255,77,0,0.5) 358deg, transparent 360deg)',
-        }}
-      />
-      {/* agent blips, timed to the beam */}
-      {tbBlips.map(({ deg, r, label, risk }) => {
-        const rad = ((deg - 90) * Math.PI) / 180
-        const x = 50 + (r / 2) * Math.cos(rad)
-        const y = 50 + (r / 2) * Math.sin(rad)
-        return (
-          <span
-            key={label}
-            className="tb-blip absolute flex items-center gap-1.5"
-            style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${(deg / 360) * 6}s` }}
-          >
-            <span
-              className="h-2 w-2 flex-shrink-0 rounded-full"
-              style={{
-                backgroundColor: risk ? '#ef4444' : '#ff4d00',
-                boxShadow: risk ? '0 0 10px rgba(239,68,68,0.55)' : '0 0 10px rgba(255,77,0,0.6)',
-              }}
-            />
-            <span
-              className="font-mono text-[9px] leading-none whitespace-nowrap"
-              style={{ color: risk ? 'rgba(220,38,38,0.9)' : 'rgba(23,7,2,0.55)' }}
-            >
-              {label}
-            </span>
-          </span>
-        )
-      })}
-    </div>
-  )
-}
-
-/* Drifting dot-wave canvas for the Hybrid DB dev card */
-function TbDataCanvas() {
-  const ref = useRef(null)
-  useEffect(() => {
-    const canvas = ref.current
-    if (!canvas) return
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const ctx = canvas.getContext('2d')
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
-    let raf
-    const draw = (t) => {
-      cancelAnimationFrame(raf)
-      const { width: w, height: h } = canvas
-      ctx.clearRect(0, 0, w, h)
-      const cols = 26
-      const rows = 8
-      const gx = w / (cols - 1)
-      const gy = h / (rows + 1)
-      for (let i = 0; i < cols; i++) {
-        for (let j = 1; j <= rows; j++) {
-          const wave = Math.sin(i * 0.55 + j * 0.8 + (reduced ? 0 : t / 900))
-          const y = j * gy + wave * gy * 0.28
-          const a = 0.1 + 0.24 * (0.5 + wave / 2)
-          ctx.fillStyle = `rgba(23,7,2,${a})`
-          ctx.beginPath()
-          ctx.arc(i * gx, y, 1.1 * dpr, 0, Math.PI * 2)
-          ctx.fill()
-        }
-      }
-      if (!reduced) raf = requestAnimationFrame(draw)
-    }
-    const resize = () => {
-      canvas.width = canvas.offsetWidth * dpr
-      canvas.height = canvas.offsetHeight * dpr
-      draw(performance.now())
-    }
-    resize()
-    const ro = new ResizeObserver(resize)
-    ro.observe(canvas)
-    return () => {
-      cancelAnimationFrame(raf)
-      ro.disconnect()
-    }
-  }, [])
-  return <canvas ref={ref} aria-hidden="true" className="block h-full w-full" />
-}
-
-/* Commit-bar sparkline for the framework release mini-card */
-const tbBars = Array.from({ length: 28 }, (_, i) => {
-  const s = Math.abs(Math.sin((i + 1) * 12.9898)) * 12 + 4
-  return Math.round(s)
-})
+import HeroAsciiBackground from '../../components/hero/HeroAsciiBackground.jsx'
+import DiscoveryRoomStage from '../../components/marketing/DiscoveryRoomStage.jsx'
 
 function Reveal({ children, className = '', delay = 0 }) {
   const ref = useReveal()
@@ -453,584 +23,6 @@ function Reveal({ children, className = '', delay = 0 }) {
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}
     >
       {children}
-    </div>
-  )
-}
-
-/* ── Product tour: sticky rail + scroll-spy panels (timbal-style) ── */
-
-/* Floating detail card shared chrome */
-function TourCard({ icon: Icon, title, sub, dot, children, footerLeft, footerRight }) {
-  const dotColor =
-    dot === 'red'
-      ? 'bg-red-400 shadow-[0_0_16px_rgba(248,113,113,0.85)]'
-      : dot === 'amber'
-        ? 'bg-amber-400 shadow-[0_0_16px_rgba(251,191,36,0.85)]'
-        : 'bg-emerald-400 shadow-[0_0_16px_rgba(52,211,153,0.85)]'
-  return (
-    <div className="pointer-events-auto absolute top-1/2 right-5 z-10 w-full max-w-[260px] -translate-y-1/2 rounded-[1.1rem] border border-line bg-white/85 p-3 shadow-lift backdrop-blur sm:right-6 lg:right-7">
-      <div className="flex items-start gap-2">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-forest">
-          <Icon size={18} aria-hidden="true" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-[15px] leading-tight font-medium text-ink sm:text-[16px]">{title}</p>
-          <p className="mt-1 text-[12px] leading-tight text-sub sm:text-[13px]">{sub}</p>
-        </div>
-        <span aria-hidden="true" className={`mt-1 h-3 w-3 rounded-full ${dotColor}`} />
-      </div>
-      <div className="mt-3 h-px bg-line" />
-      {children}
-      <div className="mt-3 flex items-center justify-between gap-4 text-[11px] sm:text-[12px]">
-        <div className="flex items-center gap-2 font-medium text-ink/70">{footerLeft}</div>
-        <p className="font-mono tabular-nums text-sub">{footerRight}</p>
-      </div>
-    </div>
-  )
-}
-
-function TourStat({ label, value, wide = false, tone }) {
-  return (
-    <div className={`rounded-lg border border-line bg-muted/60 p-2 ${wide ? 'col-span-2' : ''}`}>
-      <p className="text-[10px] leading-none font-medium text-sub/80 sm:text-[11px]">{label}</p>
-      <p
-        className={`mt-1.5 font-mono text-[11px] leading-tight font-medium tracking-tight sm:text-[12px] ${
-          tone === 'red' ? 'text-red-500' : tone === 'amber' ? 'text-amber-600' : 'text-ink'
-        }`}
-      >
-        {value}
-      </p>
-    </div>
-  )
-}
-
-/* Mini product-UI window used by tour panel visuals */
-function TourWindow({ title, badge, children, className = '' }) {
-  return (
-    <div className={`overflow-hidden rounded-xl border border-line bg-white shadow-lift ${className}`}>
-      <div className="flex items-center gap-2 border-b border-line/70 bg-[#fafbf9] px-3.5 py-2">
-        <span className="flex gap-1.5" aria-hidden="true">
-          <span className="h-2 w-2 rounded-full bg-[#e3e6e0]" />
-          <span className="h-2 w-2 rounded-full bg-[#e3e6e0]" />
-          <span className="h-2 w-2 rounded-full bg-brand/70" />
-        </span>
-        <span className="truncate text-[10px] font-medium text-sub">{title}</span>
-        {badge && (
-          <span className="ml-auto flex items-center gap-1 rounded-full bg-brand-soft px-2 py-0.5 text-[8px] font-bold text-forest">
-            <span className="h-1 w-1 animate-pulse rounded-full bg-brand" aria-hidden="true" />
-            {badge}
-          </span>
-        )}
-      </div>
-      {children}
-    </div>
-  )
-}
-
-/* Shared wrapper: ambient glow + offset back-sheet for depth */
-function TourVisual({ children }) {
-  return (
-    <div className="relative w-[min(430px,88%)]">
-      <div
-        aria-hidden="true"
-        className="absolute -inset-8"
-        style={{ background: 'radial-gradient(60% 60% at 45% 40%, rgba(255,77,0,0.16), transparent 70%)' }}
-      />
-      <div
-        aria-hidden="true"
-        className="absolute top-3 -right-2.5 -bottom-2.5 left-3 rounded-xl border border-line/60 bg-white/55"
-      />
-      <div className="relative">{children}</div>
-    </div>
-  )
-}
-
-const tourRiskTone = {
-  red: { text: 'text-red-500', bg: 'bg-red-500/10', bar: '#ef4444' },
-  amber: { text: 'text-amber-600', bg: 'bg-amber-500/10', bar: '#f59e0b' },
-  green: { text: 'text-forest', bg: 'bg-brand-soft', bar: '#ff4d00' },
-}
-
-/* Panel 1: live inventory table */
-function TourInventoryUI() {
-  const rows = [
-    { name: 'Payroll Sync Agent', platform: 'Make', score: 92, tone: 'red', isNew: true },
-    { name: 'Zapier Invoice Bot', platform: 'Zapier', score: 87, tone: 'red' },
-    { name: 'Sales Outreach GPT', platform: 'Custom GPT', score: 74, tone: 'amber' },
-    { name: 'HR Onboarding Flow', platform: 'n8n', score: 58, tone: 'amber' },
-    { name: 'GitHub PR Reviewer', platform: 'GitHub', score: 22, tone: 'green' },
-  ]
-  return (
-    <TourVisual>
-      <TourWindow title="app.orbita.io / inventory" badge="LIVE SCAN">
-        <div className="flex items-center gap-2 border-b border-line/50 px-3.5 py-2">
-          <div className="flex h-6 flex-1 items-center rounded-md bg-muted/70 px-2 text-[9px] text-sub/70">
-            Search 147 agents…
-          </div>
-          {['All', 'Flagged'].map((f, i) => (
-            <span
-              key={f}
-              className={`rounded-md px-2 py-1 text-[9px] font-semibold ${i === 1 ? 'bg-forest text-brand' : 'bg-muted/70 text-sub'}`}
-            >
-              {f}
-            </span>
-          ))}
-        </div>
-        <ul className="divide-y divide-line/40">
-          {rows.map((r) => {
-            const t = tourRiskTone[r.tone]
-            return (
-              <li key={r.name} className={`flex items-center gap-2.5 px-3.5 py-2 ${r.isNew ? 'bg-brand-soft/40' : ''}`}>
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-muted text-[8px] font-bold text-sub">
-                  {r.platform.slice(0, 2)}
-                </span>
-                <span className="min-w-0 flex-1 truncate text-[10.5px] font-semibold text-ink">{r.name}</span>
-                {r.isNew && (
-                  <span className="flex items-center gap-1 text-[8px] font-bold text-forest">
-                    <span className="h-1 w-1 animate-pulse rounded-full bg-brand" aria-hidden="true" />
-                    NEW
-                  </span>
-                )}
-                <span className="hidden w-14 sm:block" aria-hidden="true">
-                  <span className="block h-1 overflow-hidden rounded-full bg-muted">
-                    <span className="block h-full rounded-full" style={{ width: `${r.score}%`, background: t.bar }} />
-                  </span>
-                </span>
-                <span className={`w-7 rounded-md py-0.5 text-center text-[9px] font-bold tabular-nums ${t.bg} ${t.text}`}>
-                  {r.score}
-                </span>
-              </li>
-            )
-          })}
-        </ul>
-      </TourWindow>
-    </TourVisual>
-  )
-}
-
-/* Panel 2: session trace timeline */
-function TourTraceUI() {
-  const steps = [
-    { time: '09:41:02', label: 'trigger:webhook', status: 'ok', tone: 'sub' },
-    { time: '09:41:03', label: 'read_invoices', status: '200 OK', tone: 'green' },
-    { time: '09:41:04', label: 'parse_amounts', status: '142 rows', tone: 'sub' },
-    { time: '09:41:05', label: 'grant_oauth', status: 'flagged', tone: 'amber' },
-    { time: '09:41:05', label: 'ace_intercept', status: 'blocked', tone: 'forest' },
-  ]
-  const dot = { sub: 'bg-[#c9cdc5]', green: 'bg-brand', amber: 'bg-amber-500', forest: 'bg-forest' }
-  const stat = {
-    sub: 'text-sub/70',
-    green: 'text-forest',
-    amber: 'text-amber-600',
-    forest: 'text-brand bg-forest rounded px-1.5 py-px',
-  }
-  return (
-    <TourVisual>
-      <TourWindow title="audit ledger / session tr-88a2" badge="RECORDING">
-        <ol className="px-4 py-3">
-          {steps.map((s, i) => (
-            <li key={s.label} className="flex items-center gap-2.5">
-              <span className="w-[52px] shrink-0 font-mono text-[8.5px] text-sub/60 tabular-nums">{s.time}</span>
-              <span className="relative flex w-3 shrink-0 flex-col items-center self-stretch" aria-hidden="true">
-                {i > 0 && <span className="absolute top-0 bottom-1/2 w-px bg-line" />}
-                {i < steps.length - 1 && <span className="absolute top-1/2 bottom-0 w-px bg-line" />}
-                <span className={`relative top-1/2 h-2 w-2 -translate-y-1/2 rounded-full ${dot[s.tone]} ${s.tone === 'amber' ? 'ring-4 ring-amber-500/15' : ''}`} />
-              </span>
-              <span className="flex-1 py-1.5 font-mono text-[10.5px] font-medium text-ink">{s.label}</span>
-              <span className={`font-mono text-[8.5px] font-semibold ${stat[s.tone]}`}>{s.status}</span>
-            </li>
-          ))}
-        </ol>
-        <div className="flex items-center justify-between border-t border-line/50 bg-[#fafbf9] px-4 py-2">
-          <span className="text-[9px] font-semibold text-ink/70">12 events · 1 flagged</span>
-          <span className="font-mono text-[8.5px] text-sub/70">replay ▸</span>
-        </div>
-      </TourWindow>
-    </TourVisual>
-  )
-}
-
-/* Panel 3: ranked risk queue */
-function TourRiskUI() {
-  const rows = [
-    { name: 'Payroll Sync Agent', score: 92, tone: 'red', chips: ['orphaned', 'PII'] },
-    { name: 'Zapier Invoice Bot', score: 87, tone: 'red', chips: ['over-scoped'] },
-    { name: 'Sales Outreach GPT', score: 74, tone: 'amber', chips: ['PII'] },
-    { name: 'GitHub PR Reviewer', score: 22, tone: 'green', chips: ['healthy'] },
-  ]
-  return (
-    <TourVisual>
-      <TourWindow title="risk queue — sorted by score">
-        <ul className="divide-y divide-line/40">
-          {rows.map((r, i) => {
-            const t = tourRiskTone[r.tone]
-            return (
-              <li key={r.name} className="relative flex items-center gap-3 px-3.5 py-2.5">
-                <span
-                  aria-hidden="true"
-                  className="absolute inset-y-1 left-0 w-[3px] rounded-r-full"
-                  style={{ background: t.bar, opacity: i === 0 ? 1 : 0.45 }}
-                />
-                <span className={`flex h-8 w-9 shrink-0 items-center justify-center rounded-lg text-[13px] font-bold tabular-nums ${t.bg} ${t.text}`}>
-                  {r.score}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[10.5px] font-semibold text-ink">{r.name}</span>
-                  <span className="mt-0.5 flex gap-1">
-                    {r.chips.map((c) => (
-                      <span key={c} className="rounded-full bg-muted px-1.5 py-px text-[7.5px] font-semibold text-sub">
-                        {c}
-                      </span>
-                    ))}
-                  </span>
-                </span>
-                <span aria-hidden="true" className="hidden w-16 sm:block">
-                  <span className="block h-1.5 overflow-hidden rounded-full bg-muted">
-                    <span
-                      className="block h-full rounded-full"
-                      style={{ width: `${r.score}%`, background: `linear-gradient(90deg, ${t.bar}88, ${t.bar})` }}
-                    />
-                  </span>
-                </span>
-              </li>
-            )
-          })}
-        </ul>
-        <div className="flex items-center gap-1.5 border-t border-line/50 bg-[#fafbf9] px-3.5 py-2">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand" aria-hidden="true" />
-          <span className="text-[9px] font-semibold text-ink/70">Scores refresh as behavior drifts</span>
-        </div>
-      </TourWindow>
-    </TourVisual>
-  )
-}
-
-/* Panel 4: signed evidence pack */
-function TourReportUI() {
-  const checks = [
-    ['Access reviews', '24 items'],
-    ['Agent inventory', '147 agents'],
-    ['Session logs', '12,882 traces'],
-    ['Key rotation', 'compliant'],
-  ]
-  return (
-    <TourVisual>
-      <TourWindow title="exports / evidence-pack-Q3.pdf">
-        <div className="flex items-center justify-between gap-2 border-b border-line/50 px-3.5 py-2.5">
-          <span className="text-[11px] font-bold text-ink">SOC 2 Type II — Evidence Pack</span>
-          <span className="flex gap-1" aria-hidden="true">
-            {['SOC 2', 'ISO', 'GDPR', 'DPDP'].map((f) => (
-              <span key={f} className="rounded-md border border-line bg-muted/60 px-1.5 py-0.5 text-[7.5px] font-bold text-sub">
-                {f}
-              </span>
-            ))}
-          </span>
-        </div>
-        <ul className="divide-y divide-line/40">
-          {checks.map(([label, meta]) => (
-            <li key={label} className="flex items-center gap-2.5 px-3.5 py-2">
-              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-brand-soft text-[8px] font-bold text-forest" aria-hidden="true">
-                ✓
-              </span>
-              <span className="flex-1 text-[10.5px] font-semibold text-ink">{label}</span>
-              <span className="font-mono text-[8.5px] text-sub/80 tabular-nums">{meta}</span>
-            </li>
-          ))}
-        </ul>
-        <div className="flex items-center justify-between bg-forest px-3.5 py-2">
-          <span className="flex items-center gap-1.5 text-[9px] font-bold text-brand">
-            <ShieldCheck size={11} aria-hidden="true" />
-            Signed · SHA-256
-          </span>
-          <span className="font-mono text-[8px] text-white/60">sig 88a2…99f1</span>
-        </div>
-      </TourWindow>
-    </TourVisual>
-  )
-}
-
-const tourStops = [
-  {
-    tab: 'Live agent inventory',
-    h3: 'Every agent in one inventory, minutes after connecting.',
-    p: 'Connect Slack, GitHub, Zapier, Make, and your cloud accounts. Orbita fingerprints every agent it finds and keeps the inventory live — including the ones nobody registered.',
-    bg: (
-      <svg viewBox="0 0 400 300" fill="none" className="h-full max-h-[280px] w-auto opacity-70">
-        <path
-          d="M 80 150 L 170 80 M 80 150 L 160 210 M 80 150 L 200 150 M 200 150 L 290 90 M 200 150 L 300 200 M 170 80 L 290 90"
-          stroke="rgba(23,7,2,0.12)"
-          strokeWidth="1"
-        />
-        {[
-          [80, 150],
-          [170, 80],
-          [160, 210],
-          [290, 90],
-          [300, 200],
-        ].map(([x, y]) => (
-          <circle key={`${x}-${y}`} cx={x} cy={y} r="5" fill="rgba(23,7,2,0.16)" />
-        ))}
-        <circle cx="200" cy="150" r="7" fill="rgba(255,77,0,0.85)" className="animate-pulse" />
-        <circle cx="200" cy="150" r="16" stroke="rgba(255,77,0,0.3)" strokeWidth="1" />
-      </svg>
-    ),
-    card: (
-      <TourCard
-        icon={Bot}
-        title="Payroll Sync Agent"
-        sub="Make · Finance workspace"
-        dot="red"
-        footerLeft={
-          <>
-            <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
-            Flagged
-          </>
-        }
-        footerRight="Last seen 2m ago"
-      >
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <TourStat label="Risk score" value="92 / 100" tone="red" />
-          <TourStat label="Owner" value="unassigned" tone="amber" />
-          <TourStat label="Platform" value="Make (EU tenant)" wide />
-        </div>
-      </TourCard>
-    ),
-  },
-  {
-    tab: 'Session tracing',
-    h3: 'Trace every agent action from trigger to outcome.',
-    p: 'Every run is recorded to the audit ledger: prompts, tool calls, permissions touched. Replay any session and see exactly what an agent did — and why.',
-    bg: (
-      <svg viewBox="0 0 400 300" fill="none" className="h-full max-h-[280px] w-auto opacity-70">
-        {[70, 130, 190, 250].map((y, i) => (
-          <g key={y}>
-            <path d={`M 30 ${y} H 370`} stroke="rgba(23,7,2,0.1)" strokeWidth="1" />
-            {[80, 170, 260, 330].slice(0, 4 - i).map((x) => (
-              <circle key={x} cx={x} cy={y} r="4" fill="rgba(23,7,2,0.18)" />
-            ))}
-          </g>
-        ))}
-        <circle cx="330" cy="70" r="6" fill="rgba(255,77,0,0.8)" className="animate-pulse" />
-      </svg>
-    ),
-    card: (
-      <TourCard
-        icon={FileText}
-        title="Session #tr-88a2"
-        sub="Zapier Invoice Bot"
-        dot="emerald"
-        footerLeft={
-          <>
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-            Recording
-          </>
-        }
-        footerRight="12 events"
-      >
-        <div className="mt-3 space-y-1.5 font-mono text-[10.5px] leading-tight sm:text-[11px]">
-          <p className="flex justify-between gap-2 text-sub">
-            <span>09:41:02 trigger:webhook</span>
-            <span className="text-sub/50">ok</span>
-          </p>
-          <p className="flex justify-between gap-2 text-sub">
-            <span>09:41:03 read_invoices</span>
-            <span className="text-emerald-600">✓</span>
-          </p>
-          <p className="flex justify-between gap-2 text-ink/80">
-            <span>09:41:05 grant_oauth</span>
-            <span className="text-amber-600">⚠ flagged</span>
-          </p>
-        </div>
-      </TourCard>
-    ),
-  },
-  {
-    tab: 'Risk scoring',
-    h3: 'Know which agents can hurt you before they do.',
-    p: 'Each agent gets a live risk score built from permissions, data access, ownership, and behavioral drift. Orphaned and over-privileged agents rise to the top of the queue.',
-    bg: (
-      <svg viewBox="0 0 400 300" fill="none" className="h-full max-h-[280px] w-auto opacity-70">
-        {[50, 85, 120].map((r, i) => (
-          <circle
-            key={r}
-            cx="200"
-            cy="150"
-            r={r}
-            stroke={i === 0 ? 'rgba(255,77,0,0.35)' : 'rgba(23,7,2,0.11)'}
-            strokeWidth="1"
-            strokeDasharray={i === 2 ? '3 6' : 'none'}
-          />
-        ))}
-        <path d="M 200 150 L 200 30" stroke="rgba(23,7,2,0.08)" strokeWidth="1" />
-        <path d="M 200 150 L 316 90" stroke="rgba(23,7,2,0.08)" strokeWidth="1" />
-        <circle cx="200" cy="65" r="5" fill="rgba(248,113,113,0.8)" />
-        <circle cx="258" cy="120" r="5" fill="rgba(251,191,36,0.75)" />
-        <circle cx="180" cy="185" r="5" fill="rgba(23,7,2,0.22)" />
-      </svg>
-    ),
-    card: (
-      <TourCard
-        icon={ShieldCheck}
-        title="Risk profile"
-        sub="Sales Outreach GPT"
-        dot="amber"
-        footerLeft={
-          <>
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-            Review required
-          </>
-        }
-        footerRight="Score 87 / 100"
-      >
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <TourStat label="Permissions" value="High" tone="amber" />
-          <TourStat label="Data access" value="PII" tone="red" />
-          <TourStat label="Blast radius" value="3 connected systems" wide />
-        </div>
-      </TourCard>
-    ),
-  },
-  {
-    tab: 'Compliance reports',
-    h3: 'Ship auditor-ready evidence in one click.',
-    p: 'Export signed evidence packs mapped to SOC 2, ISO 27001, GDPR, and DPDP. Your auditor gets verifiable JSON and PDFs — not screenshots.',
-    bg: (
-      <svg viewBox="0 0 400 300" fill="none" className="h-full max-h-[280px] w-auto opacity-70">
-        {[0, 1, 2].map((i) => (
-          <rect
-            key={i}
-            x={120 + i * 14}
-            y={60 + i * 14}
-            width="150"
-            height="180"
-            rx="10"
-            stroke={i === 2 ? 'rgba(255,77,0,0.35)' : 'rgba(23,7,2,0.12)'}
-            strokeWidth="1"
-            fill={i === 2 ? 'rgba(255,77,0,0.04)' : 'none'}
-          />
-        ))}
-        {[100, 122, 144].map((y) => (
-          <path key={y} d={`M 165 ${y} H 255`} stroke="rgba(23,7,2,0.13)" strokeWidth="1" />
-        ))}
-      </svg>
-    ),
-    card: (
-      <TourCard
-        icon={FileText}
-        title="Q3 Evidence Pack"
-        sub="SOC 2 · ISO 27001 · DPDP"
-        dot="emerald"
-        footerLeft={
-          <>
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            Signed
-          </>
-        }
-        footerRight="SHA-256"
-      >
-        <div className="mt-3 space-y-1.5 text-[11px] sm:text-[12px]">
-          {['Access review', 'Agent inventory', 'Session logs'].map((row) => (
-            <p key={row} className="flex items-center justify-between gap-2 text-sub">
-              <span>{row}</span>
-              <span className="text-emerald-600">✓</span>
-            </p>
-          ))}
-        </div>
-      </TourCard>
-    ),
-  },
-]
-
-function TbProductTour() {
-  const [active, setActive] = useState(0)
-  const panelRefs = useRef([])
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActive(Number(e.target.dataset.idx))
-        })
-      },
-      { rootMargin: '-45% 0px -45% 0px' }
-    )
-    panelRefs.current.forEach((el) => el && obs.observe(el))
-    return () => obs.disconnect()
-  }, [])
-  const goTo = (i) => {
-    setActive(i)
-    panelRefs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }
-  return (
-    <div className="mt-12 grid min-w-0 gap-10 sm:mt-14 lg:grid-cols-12 lg:gap-8">
-      {/* Sticky tab rail */}
-      <aside className="min-w-0 lg:col-span-3">
-        <div className="min-w-0 lg:sticky lg:top-24">
-          <ul className="scrollbar-none flex w-full gap-2 overflow-x-auto pb-1 lg:flex-col lg:gap-1.5">
-            {tourStops.map((s, i) => (
-              <li key={s.tab} className="shrink-0 lg:shrink">
-                <button
-                  type="button"
-                  onClick={() => goTo(i)}
-                  aria-current={active === i ? 'true' : undefined}
-                  className="group flex w-full items-center gap-2.5 rounded-md px-1 py-1.5 text-left transition-colors"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="relative flex h-2.5 w-2.5 shrink-0 items-center justify-center rounded-full border border-ink/25"
-                  >
-                    <span
-                      className="h-1.5 w-1.5 rounded-full bg-forest transition-opacity duration-300"
-                      style={{ opacity: active === i ? 1 : 0 }}
-                    />
-                  </span>
-                  <span
-                    className={`text-[13px] leading-snug font-medium whitespace-nowrap transition-colors sm:text-[14px] lg:whitespace-normal ${
-                      active === i ? 'text-ink' : 'text-sub/70 group-hover:text-sub'
-                    }`}
-                  >
-                    {s.tab}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </aside>
-      {/* Panels */}
-      <div className="min-w-0 lg:col-span-8 lg:col-start-5">
-        <div className="space-y-10 lg:space-y-20">
-          {tourStops.map((s, i) => (
-            <article
-              key={s.tab}
-              data-idx={i}
-              ref={(el) => {
-                panelRefs.current[i] = el
-              }}
-              className="relative flex scroll-mt-28 flex-col overflow-hidden rounded-2xl border border-line bg-muted p-5 transition-colors sm:p-6 lg:p-7"
-            >
-              <div className="max-w-2xl">
-                <h3 className="text-[22px] leading-tight font-medium tracking-tight text-ink sm:text-[28px]">
-                  {s.h3}
-                </h3>
-                <p className="mt-3 max-w-[54ch] text-[14px] leading-relaxed text-sub sm:text-[15px]">
-                  {s.p}
-                </p>
-              </div>
-              {/* Full-bleed visual */}
-              <div className="-mx-5 mt-6 -mb-5 sm:-mx-6 sm:-mb-6 lg:-mx-7 lg:-mb-7">
-                <div className="relative min-h-[340px]">
-                  <div className="pointer-events-none absolute inset-0 flex items-center justify-start pl-6 sm:pl-10">
-                    {s.bg}
-                  </div>
-                  {/* top fade */}
-                  <div className="pointer-events-none absolute inset-x-0 top-0 z-[5] h-24 bg-gradient-to-b from-muted to-transparent" />
-                  {s.card}
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
     </div>
   )
 }
@@ -1388,166 +380,10 @@ function TbLogoMarquee() {
   )
 }
 
-function Kpi({ value, label, tone }) {
-  return (
-    <div className="rounded-2xl bg-muted/80 px-3 py-2.5">
-      <p className={`text-lg font-bold tabular-nums tracking-tight ${tone}`}>{value}</p>
-      <p className="text-[10px] font-medium text-sub">{label}</p>
-    </div>
-  )
-}
-
-/** Animated mini replica of the Orbita dashboard */
-function DashboardStage() {
-  const [tick, setTick] = useState(0)
-
-  useEffect(() => {
-    const id = setInterval(() => setTick((t) => t + 1), 2400)
-    return () => clearInterval(id)
-  }, [])
-
-  const rows = Array.from({ length: 4 }, (_, i) => feedPool[(tick + i) % feedPool.length])
-
-  return (
-    <div className="relative mx-auto mt-14 max-w-5xl sm:mt-16">
-      {/* Soft fabric / mist backdrop */}
-      <div
-        className="pointer-events-none absolute -inset-x-8 -top-10 bottom-8 -z-10 overflow-hidden sm:-inset-x-16"
-        aria-hidden="true"
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(255,77,0,0.18),transparent_55%)]" />
-        <div className="absolute inset-0 opacity-40 [background:repeating-linear-gradient(90deg,transparent,transparent_48px,rgba(23,7,2,0.03)_48px,rgba(23,7,2,0.03)_49px)]" />
-        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-canvas to-transparent" />
-      </div>
-
-      <div className="relative overflow-hidden rounded-[28px] border border-line bg-card pb-16 shadow-lift sm:pb-20">
-        {/* Chrome */}
-        <div className="flex items-center gap-3 border-b border-line px-4 py-3">
-          <span className="flex gap-1.5" aria-hidden="true">
-            <span className="h-2.5 w-2.5 rounded-full bg-line" />
-            <span className="h-2.5 w-2.5 rounded-full bg-line" />
-            <span className="h-2.5 w-2.5 rounded-full bg-brand/70" />
-          </span>
-          <span className="rounded-full bg-muted px-3 py-1 text-[10px] font-medium text-sub">
-            app.orbita.io / dashboard
-          </span>
-          <span className="ml-auto flex items-center gap-1.5 text-[10px] font-semibold text-forest">
-            <span className="live-dot h-1.5 w-1.5 rounded-full bg-brand" aria-hidden="true" />
-            Live scan
-          </span>
-        </div>
-
-        <div className="grid sm:grid-cols-[72px_1fr]">
-          {/* Mini sidebar */}
-          <aside className="hidden border-r border-line bg-muted/40 p-3 sm:block" aria-hidden="true">
-            <div className="mb-4 flex h-8 w-8 items-center justify-center overflow-hidden rounded-md">
-              <BrandMark size={32} />
-            </div>
-            {[ScanSearch, Waypoints, ShieldCheck, ServerCog, Bot].map((Icon, i) => (
-              <div
-                key={i}
-                className={`mb-1.5 flex h-9 w-9 items-center justify-center rounded-xl ${
-                  i === 0 ? 'bg-forest text-brand' : 'text-sub'
-                }`}
-              >
-                <Icon size={15} />
-              </div>
-            ))}
-          </aside>
-
-          <div className="space-y-3 p-4 sm:p-5">
-            <div className="grid grid-cols-3 gap-2.5">
-              <Kpi value={147} label="Agents" tone="text-forest" />
-              <Kpi value={8} label="Orphaned" tone="text-danger" />
-              <Kpi value={23} label="High risk" tone="text-warn" />
-            </div>
-
-            <div className="grid gap-3 lg:grid-cols-[1.2fr_1fr]">
-              <div className="rounded-2xl border border-line bg-canvas p-3.5">
-                <div className="flex items-center justify-between">
-                  <p className="text-[11px] font-semibold text-ink">Discoveries / week</p>
-                  <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[10px] font-bold text-forest">
-                    +38
-                  </span>
-                </div>
-                <svg viewBox="0 0 280 100" className="mt-2 h-24 w-full" aria-hidden="true">
-                  <defs>
-                    <linearGradient id="stageArea" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#FF4D00" stopOpacity="0.3" />
-                      <stop offset="100%" stopColor="#FF4D00" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path d={areaPath} fill="url(#stageArea)" className="area-fade" />
-                  <path
-                    d={linePath}
-                    fill="none"
-                    stroke="#170702"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    pathLength="1"
-                    className="draw-line"
-                  />
-                </svg>
-              </div>
-
-              <div className="rounded-2xl border border-line bg-canvas p-3.5">
-                <div className="mb-2 flex items-center justify-between">
-                  <p className="text-[11px] font-semibold">Discovery feed</p>
-                  <span className="text-[10px] font-medium text-sub">scanning…</span>
-                </div>
-                <ul className="space-y-1.5">
-                  {rows.map((r, i) => (
-                    <li
-                      key={`${r.name}-${tick}-${i}`}
-                      className={`flex items-center gap-2 rounded-xl bg-card px-2.5 py-2 ${
-                        i === 0 ? 'feed-in ring-1 ring-brand/30' : ''
-                      }`}
-                    >
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-muted">
-                        <Bot size={11} className="text-forest" aria-hidden="true" />
-                      </span>
-                      <span className="min-w-0 flex-1 truncate text-[11px] font-semibold">{r.name}</span>
-                      <span
-                        className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold ${
-                          r.risk >= 75
-                            ? 'bg-danger-soft text-danger'
-                            : r.risk >= 50
-                              ? 'bg-warn-soft text-warn'
-                              : 'bg-brand-soft text-forest'
-                        }`}
-                      >
-                        {r.risk}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Overlay CTA — Timbal style */}
-        <div className="absolute inset-x-0 bottom-5 flex justify-center sm:bottom-6">
-          <Link
-            to="/app"
-            className="ox-btn ox-btn-primary gap-3 px-6 py-3.5 shadow-lift transition-transform hover:-translate-y-0.5"
-          >
-            <span className="text-left">
-              <span className="block text-sm font-semibold">Experience it now</span>
-              <span className="block text-[11px] text-white/55">No credit card · live demo</span>
-            </span>
-            <ArrowRight size={16} aria-hidden="true" />
-          </Link>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 const modules = [
   {
     name: 'Discovery',
-    text: 'OAuth, audit logs, DNS and MCP — every agent surfaced in one living inventory.',
+    text: 'OAuth, audit logs, DNS and MCP. Every agent surfaced in one living inventory.',
     visual: 'scan',
   },
   {
@@ -1562,7 +398,7 @@ const modules = [
   },
   {
     name: 'Compliance',
-    text: 'DPDP, SOC 2, ISO 27001 evidence — auditor-ready on demand.',
+    text: 'DPDP, SOC 2, ISO 27001 evidence, auditor-ready on demand.',
     visual: 'comp',
   },
   {
@@ -1577,7 +413,7 @@ const modules = [
   },
   {
     name: 'Agent Passport',
-    text: 'Portable trust score per agent — shareable with auditors and vendors.',
+    text: 'Portable trust score per agent, shareable with auditors and vendors.',
     visual: 'passport',
   },
   {
@@ -1878,153 +714,84 @@ function ModuleVisual({ kind }) {
   )
 }
 
-const steps = [
-  { icon: Plug, title: 'Connect', text: 'OAuth into Workspace, Slack, GitHub, Zoho. Read-only. 15 minutes.' },
-  { icon: ScanSearch, title: 'Discover', text: 'Grants, logs, DNS and fingerprints surface every agent and MCP.' },
-  { icon: ShieldCheck, title: 'Govern', text: 'Owner, risk score, kill switch. Drift alerts in real time.' },
-]
+const MARQUEE_LOGOS = ['Orbita', 'BharatFin', 'MedSync', 'CloudKart', 'Kirana+', 'NovaPay', 'SkyDesk', 'FinLoop']
 
-/* Auditor use cases, grouped by risk area (timbal sector-tabs pattern) */
-const tbCaseTabs = [
-  {
-    label: 'Ownership & identity',
-    cases: [
-      { icon: UserX, title: 'Orphaned agents', text: 'Owner leaves IdP — agents flagged, one click from revocation.', apps: ['Okta', 'Auth0', 'Slack'] },
-      { icon: Waypoints, title: 'Identity graph', text: 'Blast radius and drift become simple graph queries.', apps: ['GitHub', 'Salesforce', 'AWS'] },
-      { icon: ScanSearch, title: 'Owner mapping', text: 'Every workflow tied to a human owner — or flagged for one.', apps: ['Zapier', 'Make', 'Notion'] },
-      { icon: UserX, title: 'Leaver sweep', text: 'Agents on departed-user credentials, found before IT closes the ticket.', apps: ['Okta', 'Gmail', 'Jira'] },
-    ],
-  },
-  {
-    label: 'Discovery & fingerprinting',
-    cases: [
-      { icon: ServerCog, title: 'Shadow MCP', text: 'Map every server, launcher, and the data it can reach.', apps: ['MCP', 'GitHub', 'Postgres'] },
-      { icon: Fingerprint, title: 'Fingerprinting', text: '24/7 heatmap separates machine cadence from human rhythm.', apps: ['Slack', 'GitHub', 'Linear'] },
-      { icon: Bot, title: 'Unregistered GPTs', text: 'Custom GPTs surface the moment they touch company data.', apps: ['OpenAI', 'Gmail', 'Notion'] },
-      { icon: Plug, title: 'Workflow sprawl', text: 'Zapier, Make, and n8n flows inventoried across every workspace.', apps: ['Zapier', 'Make', 'n8n'] },
-    ],
-  },
-  {
-    label: 'Access & control',
-    cases: [
-      { icon: KeyRound, title: 'Credential sprawl', text: 'OAuth grants and tokens tracked as agents multiply.', apps: ['Auth0', 'AWS', 'GCP'] },
-      { icon: Power, title: 'Kill switch', text: 'Revoke every grant from one button. Stops in one sync.', apps: ['Okta', 'Slack', 'GitHub'] },
-      { icon: ShieldCheck, title: 'Over-privileged scopes', text: 'Write access nobody uses, ranked by blast radius.', apps: ['Salesforce', 'HubSpot', 'Snowflake'] },
-      { icon: Radar, title: 'Drift alerts', text: 'Behavior that shifts from baseline gets flagged in minutes.', apps: ['Datadog', 'Slack', 'PagerDuty'] },
-    ],
-  },
-]
+function LogoMarquee() {
+  const trackRef = useRef(null)
+  const offsetRef = useRef(0)
+  const halfWidthRef = useRef(0)
 
-/* Live-incrementing discovery counter (timbal counter-pill pattern) */
-function TbLiveCounter({ start = 12847 }) {
-  const [n, setN] = useState(start)
   useEffect(() => {
-    const id = setInterval(() => setN((v) => v + 1 + ((Math.random() * 3) | 0)), 4500)
-    return () => clearInterval(id)
-  }, [])
-  return (
-    <output
-      aria-label="Live shadow-agent discovery counter"
-      className="inline-flex h-9 items-center gap-2 rounded-full border border-[#efefef] bg-white py-0.5 pr-3.5 pl-1 align-middle text-[22px] leading-none font-medium shadow-[0_1px_2px_rgba(15,23,42,0.06)] sm:h-11 sm:pr-4 sm:pl-1.5 sm:text-[26px]"
-      style={{ fontVariantNumeric: 'tabular-nums', color: TB.ink }}
-    >
-      <span
-        aria-hidden="true"
-        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f5f5f7] sm:h-8 sm:w-8"
-        style={{ color: TB.ink }}
-      >
-        <Radar size={16} />
-      </span>
-      <span>{n.toLocaleString('en-US')}</span>
-    </output>
-  )
-}
+    const track = trackRef.current
+    if (!track) return
 
-function TbSectorCases() {
-  const [tab, setTab] = useState(0)
+    const measure = () => {
+      halfWidthRef.current = track.scrollWidth / 2
+    }
+    measure()
+
+    const ro = new ResizeObserver(measure)
+    ro.observe(track)
+
+    let raf = 0
+    let last = performance.now()
+    const SPEED = 40 // px per second
+
+    const tick = (now) => {
+      const dt = Math.min(0.05, (now - last) / 1000)
+      last = now
+      const half = halfWidthRef.current
+      if (half > 0) {
+        offsetRef.current = (offsetRef.current + SPEED * dt) % half
+        track.style.transform = `translate3d(${-offsetRef.current}px, 0, 0)`
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      ro.disconnect()
+    }
+  }, [])
+
+  const copies = [0, 1]
+
   return (
-    <div>
-      {/* Segmented pill tabs */}
-      <div className="mt-8 flex justify-center">
-        <div className="scrollbar-none inline-flex max-w-full items-center gap-1 overflow-x-auto rounded-full bg-[#f5f5f7] p-1">
-          {tbCaseTabs.map((t, i) => (
-            <button
-              key={t.label}
-              type="button"
-              onClick={() => setTab(i)}
-              aria-pressed={tab === i}
-              className="relative rounded-full px-3 py-1 text-[11px] font-medium tracking-wide whitespace-nowrap transition-colors"
-              style={{ color: tab === i ? TB.ink : TB.sub }}
-            >
-              {tab === i && <span className="absolute inset-0 rounded-full bg-white shadow-sm" />}
-              <span className="relative z-10">{t.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-      {/* Case cards */}
-      <ul key={tab} className="tb-cases-in mt-8 grid grid-cols-1 gap-3 sm:mt-9 sm:grid-cols-2 lg:grid-cols-4">
-        {tbCaseTabs[tab].cases.map((c) => (
-          <li
-            key={c.title}
-            className="group relative flex min-h-[15rem] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0c] px-4 pt-5 pb-5 transition-all hover:border-white/20 sm:min-h-[17rem] sm:px-5"
-          >
-            {/* faint per-card accent + big topic glyph */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 z-0"
-              style={{ background: 'radial-gradient(110% 70% at 80% 0%, rgba(255,77,0,0.08), transparent 55%)' }}
-            />
-            <c.icon
-              aria-hidden="true"
-              className="pointer-events-none absolute -top-3 -right-3 z-0 h-24 w-24 text-white/[0.05] transition-colors duration-300 group-hover:text-white/[0.09]"
-              strokeWidth={1.2}
-            />
-            <Link to="/signup" aria-label={`${c.title} · ${c.apps.join(', ')}`} className="absolute inset-0 z-20 rounded-2xl" />
-            <h3 className="pointer-events-none relative z-10 max-w-[24ch] text-[18px] leading-snug font-medium tracking-[-0.02em] text-white">
-              {c.title}
-            </h3>
-            <div className="pointer-events-none relative z-10 mt-auto">
-              <p className="mb-3 max-w-[30ch] text-[12.5px] leading-relaxed text-white/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100 motion-reduce:opacity-100">
-                {c.text}
-              </p>
-              <ul className="flex items-center pl-0.5" role="list" aria-label={c.apps.join(', ')}>
-                {c.apps.map((app, i) => (
-                  <li
-                    key={app}
-                    title={app}
-                    className="relative flex h-9 w-9 shrink-0 translate-y-1.5 scale-[0.92] items-center justify-center rounded-full border border-white/12 bg-white/[0.06] opacity-0 shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] first:ml-0 -ml-2 group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100 motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:opacity-100 motion-reduce:transition-none"
-                    style={{ transitionDelay: `${i * 52}ms` }}
-                  >
-                    <span className="text-[11px] font-bold text-white/85">{app.slice(0, 2)}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </li>
+    <div className="logo-marquee mt-5 overflow-hidden" aria-hidden="true">
+      <div ref={trackRef} className="logo-marquee__track flex w-max will-change-transform">
+        {copies.map((copy) => (
+          <div key={copy} className="logo-marquee__group flex shrink-0 items-center gap-16 pr-16">
+            {MARQUEE_LOGOS.map((n) => (
+              <span
+                key={`${copy}-${n}`}
+                className="shrink-0 text-lg font-semibold whitespace-nowrap text-sub/45"
+              >
+                {n}
+              </span>
+            ))}
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   )
 }
 
-const marquee = ['Zintellix', 'BharatFin', 'MedSync', 'CloudKart', 'Kirana+', 'NovaPay', 'SkyDesk', 'FinLoop']
-
-const testimonials = [
-  {
-    quote:
-      "First scan found 31 agents we didn't know existed — including two on a former employee's credentials.",
-    who: 'CISO, Indian fintech · 400 employees',
-  },
-  {
-    quote: 'AI governance went from a quarterly spreadsheet to a live control. Auditor pulls evidence herself.',
-    who: 'Head of Security, healthcare SaaS · 250 employees',
-  },
-]
-
 export default function Home() {
   const scrollRef = useRef(null)
   const [activeIndex, setActiveIndex] = useState(0)
+  const heroMouse = useRef({ x: 0, y: 0 })
+
+  const onHeroPointerMove = (e) => {
+    const r = e.currentTarget.getBoundingClientRect()
+    heroMouse.current.x = ((e.clientX - r.left) / r.width) * 2 - 1
+    heroMouse.current.y = -(((e.clientY - r.top) / r.height) * 2 - 1)
+  }
+
+  const onHeroPointerLeave = () => {
+    heroMouse.current.x = 0
+    heroMouse.current.y = 0
+  }
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -2058,26 +825,31 @@ export default function Home() {
 
   return (
     <main>
-      {/* Hero — Oximy dark plate */}
-      <section className="ox-plate relative overflow-hidden px-4 pt-20 pb-16 sm:px-6 sm:pt-28 sm:pb-20">
-        <div className="ox-aurora" aria-hidden="true" />
-        <div className="ox-grid" aria-hidden="true" />
-        <div className="ox-grain" aria-hidden="true" />
-        <div className="ox-hero-in relative mx-auto max-w-5xl">
-          <p className="ox-label text-white/55">Shadow agent discovery</p>
-          <h1 className="font-display mt-5 max-w-4xl text-[2.6rem] leading-[1.05] text-balance sm:text-5xl lg:text-[4.15rem]">
+      <section
+        className="on-dark relative overflow-hidden bg-[#170702] px-4 pt-[66px] pb-[70px] text-[#fffaf8] sm:px-8"
+        onPointerMove={onHeroPointerMove}
+        onPointerLeave={onHeroPointerLeave}
+      >
+        <HeroAsciiBackground mouse={heroMouse} />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#170702] via-[#170702]/55 to-transparent"
+        />
+        <div className="ox-hero-in relative z-10 mx-auto max-w-[1200px]">
+          <p className="ox-label !text-white/55">Shadow agent discovery</p>
+          <h1 className="mt-3.5 max-w-[17ch] text-[clamp(38px,4.3vw,58px)] font-normal leading-[1.03] tracking-[-0.038em] text-balance text-white">
             See every AI agent your company already runs.
           </h1>
-          <p className="mt-6 max-w-xl text-[1.05rem] leading-relaxed text-white/70 sm:text-lg">
-            Zapier bots, custom GPTs, rogue MCP servers — Orbita finds the invisible workforce in 24
+          <p className="mt-[18px] max-w-[48ch] text-[15px] leading-[1.65] text-white/[0.84]">
+            Zapier bots, custom GPTs, rogue MCP servers. Orbita finds the invisible workforce in 24
             hours, names an owner, and scores every risk.
           </p>
-          <div className="mt-9 flex flex-wrap items-center gap-3">
-            <Link to="/signup" className="ox-btn ox-btn-primary ox-glow">
+          <div className="mt-7 flex flex-wrap items-center gap-2.5">
+            <Link to="/signup" className="ox-btn ox-btn-primary">
               Get started
               <ArrowRight size={15} aria-hidden="true" />
             </Link>
-            <Link to="/app" className="ox-btn ox-btn-ghost text-white">
+            <Link to="/app" className="ox-btn ox-btn-ghost">
               Get a demo
             </Link>
           </div>
@@ -2085,33 +857,33 @@ export default function Home() {
       </section>
 
       {/* Ledger */}
-      <section className="border-b border-line bg-canvas" aria-label="Orbita in numbers">
-        <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 sm:grid-cols-3 sm:px-6 sm:py-12">
+      <section className="border-b border-[rgba(31,30,28,0.11)] bg-canvas" aria-label="Orbita in numbers">
+        <div className="mx-auto grid max-w-[1200px] gap-8 px-4 py-10 sm:grid-cols-3 sm:px-8 sm:py-12">
           {[
             ['31+', 'agents found on first scan'],
             ['under 24 hours', 'to a live inventory'],
             ['0', 'SDKs to install'],
           ].map(([stat, label]) => (
             <div key={label}>
-              <p className="font-display text-3xl text-ink sm:text-4xl">{stat}</p>
-              <p className="ox-label mt-2 text-sub">{label}</p>
+              <p className="font-display text-[clamp(28px,3vw,40px)] text-ink">{stat}</p>
+              <p className="ox-label mt-2">{label}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Thesis */}
-      <section className="border-b border-line">
-        <div className="mx-auto grid max-w-5xl gap-10 px-4 py-16 sm:px-6 sm:py-20 md:grid-cols-2 md:gap-16">
+      <section className="border-b border-[rgba(31,30,28,0.11)]">
+        <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-16 sm:px-8 sm:py-20 md:grid-cols-2 md:gap-16">
           <div>
-            <p className="ox-label text-sub">The shift</p>
-            <h2 className="font-display mt-3 text-3xl leading-tight text-ink sm:text-4xl">
+            <p className="ox-label">The shift</p>
+            <h2 className="font-display mt-3.5 text-[clamp(28px,3vw,40px)] text-ink">
               Frontier agents. Without becoming a tenant.
             </h2>
           </div>
-          <div className="space-y-4 text-[15px] leading-relaxed text-sub sm:text-base">
+          <div className="space-y-4 text-[15px] leading-[1.65] text-ink-2">
             <p>
-              Every technology shift fragments, then consolidates. AI is consolidating now — and the
+              Every technology shift fragments, then consolidates. AI is consolidating now, and the
               agents nobody registered are already doing work on your stack.
             </p>
             <p>
@@ -2123,7 +895,7 @@ export default function Home() {
       </section>
 
       <section className="px-4 pb-6 sm:px-6">
-        <DashboardStage />
+        <DiscoveryRoomStage />
       </section>
 
       {/* Logo strip */}
@@ -2131,18 +903,10 @@ export default function Home() {
         <p className="ox-label text-center text-sub">
           Trusted by security teams across industries
         </p>
-        <div className="mt-5 overflow-hidden">
-          <div className="marquee-track flex w-max gap-16">
-            {[...marquee, ...marquee].map((n, i) => (
-              <span key={i} className="text-lg font-semibold whitespace-nowrap text-sub/45">
-                {n}
-              </span>
-            ))}
-          </div>
-        </div>
+        <LogoMarquee />
       </section>
 
-      {/* Stack modules — Timbal-scale 8-up */}
+      {/* Stack modules: Timbal-scale 8-up */}
       <section id="platform" className="mx-auto max-w-7xl px-4 py-24 sm:px-6" aria-label="Platform">
         <Reveal>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
@@ -2152,7 +916,7 @@ export default function Home() {
                 See it. Own it. Shut it down.
               </h2>
               <p className="mt-4 text-base text-sub sm:text-lg">
-                Discovery, ownership, risk, and revocation — built for shadow AI.
+                Discovery, ownership, risk, and revocation, built for shadow AI.
               </p>
             </div>
             {/* Carousel navigation controls */}
@@ -2213,7 +977,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* We built the features everybody missed — timbal-style bento */}
+      {/* We built the features everybody missed: timbal-style bento */}
       <section
         className="border-t border-line/40 bg-white py-20 sm:py-24"
         style={{ fontFamily: "'Inter Tight', ui-sans-serif, system-ui, sans-serif" }}
@@ -2233,7 +997,7 @@ export default function Home() {
 
           <Reveal>
             <ul className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-12">
-              {/* 1. Exportable code — draggable-style code stack */}
+              {/* 1. Exportable code: draggable-style code stack */}
               <li className="group relative isolate flex flex-col overflow-hidden rounded-2xl border border-[#efefef] bg-white p-6 sm:p-7 lg:col-span-6 lg:min-h-[440px]">
                 <div
                   aria-hidden="true"
@@ -2255,7 +1019,7 @@ export default function Home() {
                 </div>
               </li>
 
-              {/* 2. ACE — rising stat bars */}
+              {/* 2. ACE: rising stat bars */}
               <li className="group relative isolate flex flex-col overflow-hidden rounded-2xl border border-[#efefef] bg-white p-6 sm:p-7 lg:col-span-6 lg:min-h-[440px]">
                 <div
                   aria-hidden="true"
@@ -2277,7 +1041,7 @@ export default function Home() {
                 </div>
               </li>
 
-              {/* 3. Proprietary tech — scramble text */}
+              {/* 3. Proprietary tech: scramble text */}
               <li className="group relative isolate flex flex-col overflow-hidden rounded-2xl border border-[#efefef] bg-white p-6 sm:p-7 lg:col-span-5 lg:min-h-[320px]">
                 <div
                   aria-hidden="true"
@@ -2301,7 +1065,7 @@ export default function Home() {
                 </div>
               </li>
 
-              {/* 4. Three layers — isometric stack */}
+              {/* 4. Three layers: isometric stack */}
               <li className="relative isolate flex flex-col overflow-hidden rounded-2xl border border-[#efefef] bg-white p-6 sm:p-7 lg:col-span-7 lg:min-h-[320px]">
                 <div className="relative z-10 flex h-full flex-col justify-between">
                   <div>
@@ -2309,7 +1073,7 @@ export default function Home() {
                       Three layers. One platform.
                     </h3>
                     <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-[#7d756d] sm:text-[15px]">
-                      Data, intelligence, and interface — a clean separation of security layers that
+                      Data, intelligence, and interface: a clean separation of security layers that
                       scales from a single agent to enterprise-wide AI infrastructure.
                     </p>
                   </div>
@@ -2317,7 +1081,7 @@ export default function Home() {
                 </div>
               </li>
 
-              {/* 5. Deploy anywhere — cycling tiles */}
+              {/* 5. Deploy anywhere: cycling tiles */}
               <li className="relative isolate flex flex-col overflow-hidden rounded-2xl border border-[#efefef] bg-white p-6 sm:p-7 lg:col-span-6 lg:min-h-[320px]">
                 <div className="relative z-10 flex h-full flex-col">
                   <div>
@@ -2333,7 +1097,7 @@ export default function Home() {
                 </div>
               </li>
 
-              {/* 6. Integrations — masked logo marquee */}
+              {/* 6. Integrations: masked logo marquee */}
               <li className="relative isolate flex flex-col overflow-hidden rounded-2xl border border-[#efefef] bg-white p-6 sm:p-7 lg:col-span-6 lg:min-h-[320px]">
                 <div className="relative z-10 flex h-full flex-col">
                   <div>
@@ -2351,430 +1115,6 @@ export default function Home() {
               </li>
             </ul>
           </Reveal>
-        </div>
-      </section>
-
-      {/* Built to pass the security review (timbal-style bento) */}
-      <section className="bg-white" style={{ fontFamily: TB_FONT }}>
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24">
-          <Reveal>
-            <header className="mx-auto max-w-3xl text-center">
-              <h2
-                className="text-[1.9rem] leading-[1.15] font-medium tracking-[-0.015em] sm:text-[2.25rem]"
-                style={{ color: TB_INK }}
-              >
-                Built to pass the security review.
-              </h2>
-              <p
-                className="mt-1 text-[1.9rem] leading-[1.15] font-medium tracking-[-0.015em] sm:text-[2.25rem]"
-                style={{ color: TB_SUB }}
-              >
-                Evidence your security team can verify.
-              </p>
-            </header>
-          </Reveal>
-
-          <ul className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-3 lg:grid-cols-12">
-            {/* Card 1: Cloud, VPC, or on-prem (span 5) */}
-            <li className="lg:col-span-5">
-              <Reveal className="h-full">
-                <article className="group flex h-full flex-col rounded-2xl border border-[#efefef] bg-white p-6 transition-colors duration-200 hover:border-[#e2e2e2] sm:p-7">
-                  <h3 className="text-[18px] leading-snug font-medium sm:text-[19px]" style={{ color: TB_INK }}>
-                    Cloud, VPC, or on-prem
-                  </h3>
-                  <p className="mt-2.5 max-w-[56ch] text-[14px] leading-[1.65] sm:text-[15px] sm:leading-[1.6]" style={{ color: TB_SUB }}>
-                    Run Orbita on AWS, Azure, GCP, inside your VPC, or fully on-premises. The same
-                    API and governance model follow every deployment.
-                  </p>
-                  <div className="mt-6 flex-1">
-                    <CloudCycler />
-                  </div>
-                </article>
-              </Reveal>
-            </li>
-
-            {/* Card 2: Governance and compliance (span 7) */}
-            <li className="lg:col-span-7">
-              <Reveal className="h-full" delay={70}>
-                <article className="group flex h-full flex-col rounded-2xl border border-[#efefef] bg-white p-6 transition-colors duration-200 hover:border-[#e2e2e2] sm:p-7">
-                  <h3 className="text-[18px] leading-snug font-medium sm:text-[19px]" style={{ color: TB_INK }}>
-                    Governance and compliance
-                  </h3>
-                  <p className="mt-2.5 max-w-[56ch] text-[14px] leading-[1.65] sm:text-[15px] sm:leading-[1.6]" style={{ color: TB_SUB }}>
-                    Security evidence, encryption at rest and in transit, audit logs, and compliance
-                    documentation are ready for review without slowing the rollout.
-                  </p>
-                  <div className="mt-6 flex flex-1 flex-col items-center justify-center py-2">
-                    <ul className="flex w-full flex-wrap items-start justify-center gap-4 sm:gap-5 lg:justify-around">
-                      <TbSeal variant="soc2" label="SOC 2 Type II*" />
-                      <TbSeal variant="iso" label="ISO 27001" />
-                      <TbSeal variant="gdpr" label="GDPR" />
-                      <TbSeal variant="dpdp" label="DPDP Act" />
-                    </ul>
-                    <p className="mt-5 max-w-[42ch] text-center text-[9px] leading-snug sm:text-[10px]" style={{ color: '#a8a8ac' }}>
-                      * SOC 2 Type II audit in progress.
-                    </p>
-                  </div>
-                </article>
-              </Reveal>
-            </li>
-
-            {/* Card 3: India data hosting (span 7, dark) */}
-            <li className="lg:col-span-7">
-              <Reveal className="h-full">
-                <article className="group flex h-full flex-col rounded-2xl border border-[#efefef] bg-white p-6 transition-colors duration-200 hover:border-[#e2e2e2] sm:p-7">
-                  <h3 className="text-[18px] leading-snug font-medium sm:text-[19px]" style={{ color: TB_INK }}>
-                    India data hosting
-                  </h3>
-                  <p className="mt-2.5 max-w-[56ch] text-[14px] leading-[1.65] sm:text-[15px] sm:leading-[1.6]" style={{ color: TB_SUB }}>
-                    Choose India region deployments for storage and processing. Keep data residency
-                    aligned with DPDP requirements and your contractual controls.
-                  </p>
-                  <div className="mt-6 flex-1">
-                    <IndiaRings />
-                  </div>
-                </article>
-              </Reveal>
-            </li>
-
-            {/* Card 4: Platform agnostic (span 5) */}
-            <li className="lg:col-span-5">
-              <Reveal className="h-full" delay={70}>
-                <article className="group flex h-full flex-col rounded-2xl border border-[#efefef] bg-white p-6 transition-colors duration-200 hover:border-[#e2e2e2] sm:p-7">
-                  <h3 className="text-[18px] leading-snug font-medium sm:text-[19px]" style={{ color: TB_INK }}>
-                    Platform agnostic
-                  </h3>
-                  <p className="mt-2.5 max-w-[56ch] text-[14px] leading-[1.65] sm:text-[15px] sm:leading-[1.6]" style={{ color: TB_SUB }}>
-                    Discover agents wherever they run: Zapier, Make, n8n, Custom GPTs, MCP servers,
-                    or any platform that leaves an audit trail. Add sources without re-instrumenting
-                    a thing.
-                  </p>
-                  <div className="mt-6 flex-1">
-                    <PlatformWheel />
-                  </div>
-                </article>
-              </Reveal>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      {/* Built for Developers (timbal-style dark bento) */}
-      <section id="developers" className="bg-muted/60" style={{ fontFamily: TB_FONT }}>
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24">
-          <Reveal>
-            <header className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-              <div className="max-w-2xl">
-                <p className="text-[14px] leading-none font-medium text-forest">Built for Developers</p>
-                <h2 className="mt-4 text-[28px] leading-tight font-medium tracking-tight text-ink sm:text-[36px]">
-                  Built by developers, for developers.
-                </h2>
-              </div>
-              <div className="flex flex-shrink-0 flex-wrap items-center gap-2">
-                {/* TODO: point at the real repo / docs once public */}
-                <a
-                  href="https://github.com/orbita-ai"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex h-9 items-center justify-center rounded-full border border-line bg-card px-4 text-[13px] font-medium text-ink shadow-soft transition-colors hover:bg-white"
-                >
-                  View on GitHub
-                </a>
-                <a
-                  href="#developers"
-                  className="inline-flex h-9 items-center justify-center rounded-full bg-brand px-4 text-[13px] font-bold text-white transition-opacity hover:opacity-90"
-                >
-                  Read the docs
-                </a>
-              </div>
-            </header>
-          </Reveal>
-
-          <ul className="mt-12 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-flow-dense lg:grid-cols-12">
-            {/* ACE: big card, span 7 × 2 rows */}
-            <li className="col-span-1 h-full min-h-0 md:col-span-2 lg:col-span-7 lg:row-span-2">
-              <Reveal className="h-full">
-                <article className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-line bg-card p-5 transition-[border-color,box-shadow] duration-200 hover:border-ink/15 hover:shadow-soft sm:p-6">
-                  <div className="flex min-h-[300px] flex-shrink-0 items-center justify-center overflow-hidden sm:min-h-[380px]">
-                    <TbRadarSweep />
-                  </div>
-                  <div className="mt-5 flex flex-1 flex-col justify-end">
-                    <h3 className="text-[15px] leading-snug font-medium text-ink sm:text-[16px]">Discovery Engine</h3>
-                    <p className="mt-2 text-[13px] leading-[1.55] text-sub sm:text-[14px]">
-                      Point Orbita at your stack and every agent surfaces — fingerprinted,
-                      risk-scored, and written to the audit ledger. Shadow agents included.
-                    </p>
-                  </div>
-                </article>
-              </Reveal>
-            </li>
-
-            {/* Python framework: span 5 */}
-            <li className="col-span-1 h-full min-h-0 lg:col-span-5">
-              <Reveal className="h-full" delay={60}>
-                <article className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-line bg-card p-5 transition-[border-color,box-shadow] duration-200 hover:border-ink/15 hover:shadow-soft sm:p-6">
-                  <div className="flex min-h-[150px] flex-shrink-0 items-center justify-center overflow-hidden lg:min-h-[180px]">
-                    <div className="flex w-full max-w-[260px] flex-col gap-3 rounded-xl border border-line bg-[#f5f6f4] p-4 font-mono">
-                      <div className="flex items-center gap-2 text-[12px]">
-                        <span className="inline-block h-2 w-2 rounded-full bg-brand" />
-                        <span className="text-forest">v0.7.0</span>
-                      </div>
-                      <div className="text-[10px] tracking-[0.08em] text-sub/70">PYTHON · TYPESCRIPT</div>
-                      <div className="flex h-5 items-end justify-between gap-[3px]" aria-hidden="true">
-                        {tbBars.map((bh, i) => (
-                          <span
-                            key={i}
-                            className="rounded-[1px]"
-                            style={{
-                              width: 1,
-                              height: bh,
-                              background:
-                                i === tbBars.length - 1
-                                  ? '#ff4d00'
-                                  : i === tbBars.length - 2
-                                    ? 'rgba(255,77,0,0.55)'
-                                    : 'rgba(23,7,2,0.14)',
-                            }}
-                          />
-                        ))}
-                      </div>
-                      <div className="text-[10px] text-sub/70">Released Jun 2026</div>
-                    </div>
-                  </div>
-                  <div className="mt-5 flex flex-1 flex-col justify-end">
-                    <h3 className="text-[15px] leading-snug font-medium text-ink sm:text-[16px]">Python framework</h3>
-                    <p className="mt-2 text-[13px] leading-[1.55] text-sub sm:text-[14px]">
-                      The fastest Python stack for discovery and audit workflows. Open source,
-                      stream-native, tracing and MCP included.
-                    </p>
-                  </div>
-                </article>
-              </Reveal>
-            </li>
-
-            {/* Hybrid DB: span 5 */}
-            <li className="col-span-1 h-full min-h-0 lg:col-span-5">
-              <Reveal className="h-full" delay={120}>
-                <article className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-line bg-card p-5 transition-[border-color,box-shadow] duration-200 hover:border-ink/15 hover:shadow-soft sm:p-6">
-                  <div className="flex min-h-[150px] flex-shrink-0 items-center justify-center overflow-hidden lg:min-h-[180px]">
-                    <div className="relative h-[150px] w-full overflow-hidden rounded-xl border border-line bg-[#f5f6f4] lg:h-[180px]">
-                      <TbDataCanvas />
-                    </div>
-                  </div>
-                  <div className="mt-5 flex flex-1 flex-col justify-end">
-                    <h3 className="text-[15px] leading-snug font-medium text-ink sm:text-[16px]">Hybrid DB</h3>
-                    <p className="mt-2 text-[13px] leading-[1.55] text-sub sm:text-[14px]">
-                      Vectors, full-text, and SQL together. Agent fingerprints, session traces, and
-                      rollups in one query plan.
-                    </p>
-                  </div>
-                </article>
-              </Reveal>
-            </li>
-
-            {/* TypeScript SDK: span 4 */}
-            <li className="col-span-1 h-full min-h-0 lg:col-span-4">
-              <Reveal className="h-full">
-                <article className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-line bg-card p-5 transition-[border-color,box-shadow] duration-200 hover:border-ink/15 hover:shadow-soft sm:p-6">
-                  <div className="flex min-h-[132px] flex-shrink-0 items-center justify-center overflow-hidden lg:min-h-[156px]">
-                    <div className="relative h-full min-h-[132px] w-full lg:min-h-[156px]">
-                      <div className="absolute inset-x-0 top-0 overflow-hidden rounded-xl border border-line bg-[#f5f6f4]">
-                        <div className="flex items-center gap-2 border-b border-[#e7e9e4] bg-white/70 px-4 py-2">
-                          <div className="flex items-center gap-1.5" aria-hidden="true">
-                            <span className="h-2 w-2 rounded-full bg-[#d9dcd5]" />
-                            <span className="h-2 w-2 rounded-full bg-[#d9dcd5]" />
-                            <span className="h-2 w-2 rounded-full bg-[#d9dcd5]" />
-                          </div>
-                          <span className="ml-1 truncate text-[11px] font-medium text-sub">audit.ts</span>
-                        </div>
-                        <div className="flex px-4 py-3 font-mono">
-                          <div
-                            className="flex shrink-0 select-none flex-col items-end pr-2.5 text-[10.5px] text-[#b3b8ae]"
-                            style={{ lineHeight: '19.8px' }}
-                            aria-hidden="true"
-                          >
-                            {[1, 2, 3, 4, 5, 6].map((n) => (
-                              <span key={n}>{n}</span>
-                            ))}
-                          </div>
-                          <pre className="m-0 min-w-0 flex-1 overflow-hidden whitespace-pre text-[12px] leading-[1.65]">
-                            <span className="text-[#7c3aed]">import</span>
-                            <span className="text-ink"> Orbita </span>
-                            <span className="text-[#7c3aed]">from</span>
-                            <span className="text-[#15803d]"> "@orbita/sdk"</span>
-                            <span className="text-[#8a8f86]">;</span>
-                            {'\n\n'}
-                            <span className="text-[#7c3aed]">const</span>
-                            <span className="text-[#3a3f38]"> res </span>
-                            <span className="text-[#8a8f86]">= </span>
-                            <span className="text-[#7c3aed]">await</span>
-                            <span className="text-[#3a3f38]"> orbita.scan(</span>
-                            <span className="text-[#15803d]">"workspace"</span>
-                            <span className="text-[#3a3f38]">, {'{'}</span>
-                            {'\n'}
-                            <span className="text-[#3a3f38]">  target: </span>
-                            <span className="text-[#15803d]">"zapier-prod"</span>
-                            <span className="text-[#8a8f86]">,</span>
-                            {'\n'}
-                            <span className="text-[#3a3f38]">{'}'});</span>
-                          </pre>
-                        </div>
-                      </div>
-                      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white to-transparent" />
-                    </div>
-                  </div>
-                  <div className="mt-5 flex flex-1 flex-col justify-end">
-                    <h3 className="text-[15px] leading-snug font-medium text-ink sm:text-[16px]">TypeScript SDK</h3>
-                    <p className="mt-2 text-[13px] leading-[1.55] text-sub sm:text-[14px]">
-                      Your inventory and risk scores from React, Node, or Bun. One client
-                      everywhere.
-                    </p>
-                  </div>
-                </article>
-              </Reveal>
-            </li>
-
-            {/* MCP: span 4 */}
-            <li className="col-span-1 h-full min-h-0 lg:col-span-4">
-              <Reveal className="h-full" delay={60}>
-                <article className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-line bg-card p-5 transition-[border-color,box-shadow] duration-200 hover:border-ink/15 hover:shadow-soft sm:p-6">
-                  <div className="flex min-h-[132px] flex-shrink-0 items-center justify-center overflow-hidden lg:min-h-[156px]">
-                    <div className="flex h-full w-full items-center justify-center px-3">
-                      <div className="flex w-full max-w-[300px] items-center gap-2.5 rounded-full border border-line bg-[#f5f6f4] px-3 py-2 shadow-soft">
-                        <span className="relative flex h-2 w-2 flex-shrink-0" aria-hidden="true">
-                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand/50" />
-                          <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
-                        </span>
-                        <span className="flex-1 truncate font-mono text-[12px] leading-none tracking-tight">
-                          <span className="text-sub/60">https://</span>
-                          <span className="text-ink">api.orbita.dev</span>
-                          <span className="text-sub">/mcp</span>
-                        </span>
-                        <span className="font-mono text-[9px] tracking-tight text-sub/70">MCP</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-5 flex flex-1 flex-col justify-end">
-                    <h3 className="text-[15px] leading-snug font-medium text-ink sm:text-[16px]">MCP</h3>
-                    <p className="mt-2 text-[13px] leading-[1.55] text-sub sm:text-[14px]">
-                      Point tools at api.orbita.dev/mcp. Your inventory and audit ledger, no glue
-                      code.
-                    </p>
-                  </div>
-                </article>
-              </Reveal>
-            </li>
-
-            {/* CLI: span 4 */}
-            <li className="col-span-1 h-full min-h-0 md:col-span-2 lg:col-span-4">
-              <Reveal className="h-full" delay={120}>
-                <article className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-line bg-card p-5 transition-[border-color,box-shadow] duration-200 hover:border-ink/15 hover:shadow-soft sm:p-6">
-                  <div className="flex min-h-[132px] flex-shrink-0 items-center justify-center overflow-hidden lg:min-h-[156px]">
-                    <pre className="w-full max-w-md overflow-hidden rounded-xl bg-forest px-4 py-3 font-mono text-[12px] leading-[1.8] shadow-soft">
-                      <code>
-                        <span className="block text-white/60">$ orbita connect slack</span>
-                        <span className="block text-white/60">$ orbita scan --all</span>
-                        <span className="block text-brand/90">→ discovered: 147 agents</span>
-                        <span className="block text-brand/90">→ report: orbita.dev/r/scan-4471</span>
-                      </code>
-                    </pre>
-                  </div>
-                  <div className="mt-5 flex flex-1 flex-col justify-end">
-                    <h3 className="text-[15px] leading-snug font-medium text-ink sm:text-[16px]">CLI</h3>
-                    <p className="mt-2 text-[13px] leading-[1.55] text-sub sm:text-[14px]">
-                      Auth, connect, scan locally, push reports to the cloud. One binary, no Docker
-                      or Python.
-                    </p>
-                  </div>
-                </article>
-              </Reveal>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      {/* Product tour (timbal-style scroll-spy) */}
-      <section id="tour" className="bg-white" style={{ fontFamily: TB_FONT }}>
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24">
-          <Reveal>
-            <header className="max-w-3xl">
-              <p className="ox-label text-sub">Product tour</p>
-              <h2 className="font-display mt-3 text-3xl leading-tight text-ink sm:text-4xl">
-                Everything you need to see and govern agents in production.
-              </h2>
-            </header>
-          </Reveal>
-          <TbProductTour />
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section id="how" className="bg-muted/60 py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <Reveal>
-            <h2 className="font-display text-center text-3xl leading-tight text-ink sm:text-4xl">
-              Visible in an afternoon
-            </h2>
-            <p className="mx-auto mt-3 max-w-lg text-center text-sm text-sub">
-              No SDKs. No agent instrumentation. Orbita watches where agents already leave footprints.
-            </p>
-          </Reveal>
-          <div className="mt-12 grid gap-4 md:grid-cols-3">
-            {steps.map((s, i) => (
-              <Reveal key={s.title} delay={i * 80}>
-                <article className="h-full rounded-[22px] bg-card p-6 shadow-soft">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-forest text-brand">
-                      <s.icon size={18} aria-hidden="true" />
-                    </span>
-                    <span className="ox-label text-sub">Step {i + 1}</span>
-                  </div>
-                  <h3 className="mt-4 text-lg font-bold">{s.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-sub">{s.text}</p>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features: auditor use cases by risk area (timbal sector-tabs) */}
-      <section
-        id="features"
-        className="bg-white py-20 sm:py-24"
-        style={{ fontFamily: "'Inter Tight', ui-sans-serif, system-ui, sans-serif" }}
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <Reveal>
-            <header className="mx-auto max-w-4xl text-center">
-              <p className="ox-label text-sub">Use cases</p>
-              <h2 className="font-display mt-3 text-3xl leading-tight text-ink sm:text-4xl lg:whitespace-nowrap">
-                <TbLiveCounter /> shadow agents discovered.
-              </h2>
-              <p className="font-display mt-2 text-3xl leading-tight text-sub sm:text-4xl">
-                Built for the questions your auditor asks.
-              </p>
-            </header>
-          </Reveal>
-          <Reveal>
-            <TbSectorCases />
-          </Reveal>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6" aria-label="Testimonials">
-        <div className="grid gap-4 md:grid-cols-2">
-          {testimonials.map((t) => (
-            <Reveal key={t.who}>
-              <figure className="h-full rounded-[22px] bg-muted p-8">
-                <blockquote className="font-display text-lg leading-relaxed">
-                  “{t.quote}”
-                </blockquote>
-                <figcaption className="mt-5 text-sm text-sub">{t.who}</figcaption>
-              </figure>
-            </Reveal>
-          ))}
         </div>
       </section>
 
@@ -2814,20 +1154,20 @@ export default function Home() {
 
       {/* Final CTA */}
       <Reveal>
-        <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
+        <section className="mx-auto max-w-[1200px] px-4 pb-24 sm:px-8">
           <div className="ox-plate relative overflow-hidden px-8 py-16 text-center sm:px-12 sm:py-20">
-            <h2 className="font-display relative text-3xl leading-tight sm:text-4xl lg:text-5xl">
+            <h2 className="font-display relative text-[clamp(28px,3vw,40px)] leading-[1.05] tracking-[-0.03em]">
               Take command of the agents your company already runs.
             </h2>
-            <p className="relative mx-auto mt-4 max-w-md text-sm text-white/60 sm:text-base">
+            <p className="relative mx-auto mt-4 max-w-md text-[15px] text-white/[0.84]">
               Free discovery scan · read-only access · data stays in India
             </p>
-            <div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">
+            <div className="relative mt-7 flex flex-wrap items-center justify-center gap-2.5">
               <Link to="/signup" className="ox-btn ox-btn-primary">
                 Get started
                 <ArrowRight size={15} aria-hidden="true" />
               </Link>
-              <Link to="/app" className="ox-btn ox-btn-ghost text-white">
+              <Link to="/app" className="ox-btn ox-btn-ghost">
                 Get a demo
               </Link>
             </div>

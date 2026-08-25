@@ -39,7 +39,7 @@ export default function PolicyBar() {
           <p className="text-sm font-semibold">We keep cookies minimal</p>
           <p className="mt-1 text-xs leading-relaxed text-sub">
             Essential cookies keep you signed in securely. Optional analytics cookies help us
-            improve the product — nothing is used for advertising or cross-site tracking. Details
+            improve the product. Nothing is used for advertising or cross-site tracking. Details
             in our{' '}
             <Link to="/privacy#cookies" className="font-semibold text-forest hover:underline">
               privacy policy

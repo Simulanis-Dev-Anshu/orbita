@@ -13,7 +13,7 @@ const sections = [
     id: 'service',
     h: 'The service',
     body: [
-      'Orbita discovers, inventories and risk-scores AI agents, automations and MCP servers operating within your organisation, using read-only connectors you authorise. Risk scores, classifications and compliance summaries are decision-support information — they assist, but do not replace, your own security judgment.',
+      'Orbita discovers, inventories and risk-scores AI agents, automations and MCP servers operating within your organisation, using read-only connectors you authorise. Risk scores, classifications and compliance summaries are decision-support information. They assist, but do not replace, your own security judgment.',
     ],
   },
   {
@@ -97,7 +97,7 @@ const sections = [
 
 export default function Terms() {
   useSeo({
-    title: 'Terms & Conditions — Orbita',
+    title: 'Terms & Conditions | Orbita',
     description:
       'The terms governing your use of Orbita: accounts, acceptable use, customer data, fees, disclaimers, liability and governing law.',
     path: '/terms',

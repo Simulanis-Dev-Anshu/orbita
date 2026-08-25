@@ -8,7 +8,7 @@ const values = [
   {
     icon: Eye,
     title: 'Visibility before control',
-    text: "You can't govern what you can't see. Every Orbita feature starts with an honest, complete inventory — controls come second.",
+    text: "You can't govern what you can't see. Every Orbita feature starts with an honest, complete inventory. Controls come second.",
   },
   {
     icon: ShieldCheck,
@@ -18,12 +18,12 @@ const values = [
   {
     icon: Handshake,
     title: 'Built for the mid-market',
-    text: 'Enterprise-grade agent governance at a price Indian and global mid-market teams can actually justify — not a $200K platform.',
+    text: 'Enterprise-grade agent governance at a price Indian and global mid-market teams can actually justify, not a $200K platform.',
   },
 ]
 
 const milestones = [
-  ['2025', 'Founded in India after watching mid-market security teams discover orphaned AI agents the hard way — in incident reviews.'],
+  ['2025', 'Founded in India after watching mid-market security teams discover orphaned AI agents the hard way, in incident reviews.'],
   ['Early 2026', 'First discovery engine ships: OAuth grants, audit logs and DNS egress stitched into a single agent inventory.'],
   ['Mid 2026', 'Identity graph, Sentinel Copilot and DPDP compliance packs launch. 40+ security teams run weekly scans on Orbita.'],
 ]
@@ -46,7 +46,7 @@ function Section({ children, className = '' }) {
 
 export default function About() {
   useSeo({
-    title: 'About Orbita — the AI agent discovery company',
+    title: 'About Orbita, the AI agent discovery company',
     description:
       'Orbita discovers, inventories and risk-scores every AI agent in your company. Learn about our mission, values and the team building agent governance from India.',
     path: '/about',
@@ -55,18 +55,18 @@ export default function About() {
   return (
     <main>
       {/* Hero */}
-      <Section className="mx-auto max-w-4xl px-4 pt-16 pb-12 text-center sm:px-6">
-        <p className="ox-label text-sub">About Orbita</p>
-        <h1 className="font-display mt-5 text-4xl sm:text-5xl">
+      <Section className="mx-auto max-w-4xl px-4 pt-16 pb-12 text-center sm:px-8">
+        <p className="ox-label">About Orbita</p>
+        <h1 className="font-display mt-3.5 text-[clamp(38px,4.3vw,58px)] tracking-[-0.038em]">
           Every company just hired an{' '}
-          <span className="font-accent text-forest">invisible workforce.</span>
+          <span className="text-brand">invisible workforce.</span>
           <br />
           We make it visible.
         </h1>
-        <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-sub">
+        <p className="ox-lead mx-auto mt-[18px] text-center">
           Orbita is the discovery and governance layer for AI agents. We find every agent,
           automation, custom GPT and MCP server running in your company, map who owns it and what
-          it can touch, and keep that inventory alive — so security teams can say yes to AI
+          it can touch, and keep that inventory alive so security teams can say yes to AI
           without losing sleep.
         </p>
       </Section>
@@ -138,27 +138,21 @@ export default function About() {
       </Section>
 
       {/* CTA */}
-      <Section className="mx-auto max-w-4xl px-4 pb-20 text-center sm:px-6">
-        <div className="rounded-card bg-card p-8 shadow-soft sm:p-12">
-          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+      <Section className="mx-auto max-w-4xl px-4 pb-20 text-center sm:px-8">
+        <div className="border border-[rgba(31,30,28,0.11)] bg-card p-8 sm:p-12">
+          <h2 className="font-display text-[clamp(28px,3vw,40px)]">
             See your invisible workforce in 24 hours
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-sub">
+          <p className="ox-lead mx-auto mt-3.5 text-center">
             Connect one read-only source and get your first agent inventory tomorrow. No SDKs, no
             sales call required.
           </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              to="/signup"
-              className="ox-btn ox-btn-primary"
-            >
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-2.5">
+            <Link to="/signup" className="ox-btn ox-btn-primary">
               Get your free scan
               <ArrowRight size={16} aria-hidden="true" />
             </Link>
-            <Link
-              to="/pricing"
-              className="ox-btn ox-btn-ghost text-ink"
-            >
+            <Link to="/pricing" className="ox-btn ox-btn-ghost">
               View pricing
             </Link>
           </div>
