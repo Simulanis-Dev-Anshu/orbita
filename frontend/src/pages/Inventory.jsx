@@ -28,7 +28,7 @@ export default function Inventory() {
   const highRisk = agents.filter((a) => a.risk >= 75).length
 
   return (
-    <div className="mt-6 space-y-4">
+    <div className="mt-4 space-y-4">
       <div className="flex flex-wrap items-center gap-3">
         <label className="relative min-w-0 flex-1 sm:max-w-sm">
           <span className="sr-only">Search inventory</span>

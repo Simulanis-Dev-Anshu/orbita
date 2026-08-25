@@ -1,27 +1,33 @@
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard,
-  Waypoints,
-  Bot,
   BellRing,
-  ShieldCheck,
-  Plug,
   Settings,
   LifeBuoy,
   ChevronDown,
-  Sparkles,
   X,
+  Fingerprint,
+  Boxes,
+  Radar,
+  Share2,
+  ShieldAlert,
+  Sparkles,
+  Wrench,
+  Landmark,
 } from 'lucide-react'
 import BrandMark from './BrandMark.jsx'
 
 const mainNav = [
   { to: '/app', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/app/copilot', label: 'Sentinel Copilot', icon: Sparkles },
-  { to: '/app/graph', label: 'Agent Graph', icon: Waypoints },
-  { to: '/app/inventory', label: 'Inventory', icon: Bot },
+  { to: '/app/identity', label: 'Identity', icon: Fingerprint },
+  { to: '/app/discovery', label: 'Discovery', icon: Radar },
+  { to: '/app/assets', label: 'Assets', icon: Boxes },
+  { to: '/app/relationships', label: 'Relationships', icon: Share2 },
+  { to: '/app/risk', label: 'Risk', icon: ShieldAlert },
+  { to: '/app/intelligence', label: 'Intelligence', icon: Sparkles },
+  { to: '/app/remediation', label: 'Remediation', icon: Wrench },
+  { to: '/app/governance', label: 'Governance', icon: Landmark },
   { to: '/app/alerts', label: 'Alerts', icon: BellRing, badge: 5 },
-  { to: '/app/compliance', label: 'Compliance', icon: ShieldCheck },
-  { to: '/app/connectors', label: 'Connectors', icon: Plug },
 ]
 
 const bottomNav = [
@@ -66,7 +72,6 @@ function NavItem({ to, label, icon: Icon, badge, end, onNavigate }) {
 export default function Sidebar({ open, onClose }) {
   return (
     <>
-      {/* Mobile overlay */}
       {open && (
         <div
           className="fixed inset-0 z-40 bg-black/40 lg:hidden"
@@ -82,7 +87,6 @@ export default function Sidebar({ open, onClose }) {
         aria-label="Primary navigation"
       >
         <div className="flex h-full flex-col border-r border-line px-4 py-6">
-          {/* Logo */}
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-2.5">
               <BrandMark size={36} />
@@ -100,7 +104,6 @@ export default function Sidebar({ open, onClose }) {
             </button>
           </div>
 
-          {/* User profile */}
           <button
             type="button"
             className="mt-6 flex w-full cursor-pointer items-center gap-3 rounded-card bg-card p-3 text-left shadow-soft transition-shadow hover:shadow-lift"
@@ -115,11 +118,8 @@ export default function Sidebar({ open, onClose }) {
             <ChevronDown size={16} className="text-sub" aria-hidden="true" />
           </button>
 
-          {/* Main nav */}
           <nav className="mt-8 flex flex-1 flex-col gap-1.5">
-            <p className="ox-label px-4 pb-2 text-sub">
-              Main
-            </p>
+            <p className="ox-label px-4 pb-2 text-sub">Main</p>
             {mainNav.map((item) => (
               <NavItem key={item.to} {...item} onNavigate={onClose} />
             ))}
@@ -131,16 +131,12 @@ export default function Sidebar({ open, onClose }) {
             </div>
           </nav>
 
-          {/* Scan CTA */}
           <div className="ox-plate mt-6 rounded-card p-4">
             <p className="text-sm font-semibold text-white">Weekly scan ready</p>
             <p className="mt-1 text-xs leading-relaxed text-white/60">
               12 sources connected. Run a fresh discovery sweep.
             </p>
-            <button
-              type="button"
-              className="ox-btn ox-btn-primary mt-3 w-full cursor-pointer"
-            >
+            <button type="button" className="ox-btn ox-btn-primary mt-3 w-full cursor-pointer">
               Run scan
             </button>
           </div>

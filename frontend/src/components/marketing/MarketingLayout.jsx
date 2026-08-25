@@ -46,17 +46,21 @@ const footerCols = [
   {
     h: 'Product',
     links: [
-      ['Inventory', '/app'],
-      ['Identity graph', '/app/graph'],
-      ['Compliance', '/app/compliance'],
-      ['Pricing', '/pricing'],
+      ['Identity', '/app/identity'],
+      ['Discovery', '/app/discovery'],
+      ['Assets', '/app/assets'],
+      ['Relationships', '/app/relationships'],
+      ['Risk', '/app/risk'],
+      ['Intelligence', '/app/intelligence'],
+      ['Remediation', '/app/remediation'],
+      ['Governance', '/app/governance'],
     ],
   },
   {
     h: 'Resources',
     links: [
       ['Blog', '/blog'],
-      ['Shadow MCP', '/blog/shadow-mcp-servers'],
+      ['Pricing', '/pricing'],
       ['DPDP guide', '/blog/dpdp-act-ai-agents'],
       ['Get a demo', '/app'],
     ],

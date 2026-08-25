@@ -10,12 +10,12 @@ import PlatformChart from '../components/PlatformChart.jsx'
 import ActivityPulse from '../components/ActivityPulse.jsx'
 import ScopeExposure from '../components/ScopeExposure.jsx'
 
-function CopilotTeaser() {
+function GraphTeaser() {
   return (
     <Link
-      to="/app/copilot"
+      to="/app/relationships"
       className="card-hover ox-plate group relative block h-full overflow-hidden rounded-card p-5 shadow-lift"
-      aria-label="Open Sentinel Copilot"
+      aria-label="Open relationship graph"
     >
       <div
         className="absolute -top-8 -right-8 h-32 w-32 rounded-full bg-brand/20 blur-2xl"
@@ -26,8 +26,8 @@ function CopilotTeaser() {
           <Sparkles size={20} className="text-white" aria-hidden="true" />
         </span>
         <div className="flex-1">
-          <p className="text-base font-semibold">Sentinel Copilot</p>
-          <p className="text-xs text-white/60">Ask anything about your agent fleet</p>
+          <p className="text-base font-semibold">Relationship Graph</p>
+          <p className="text-xs text-white/60">USER → DEVICE → APP → AGENT → DATA</p>
         </div>
         <ArrowUpRight
           size={20}
@@ -36,7 +36,7 @@ function CopilotTeaser() {
         />
       </div>
       <p className="relative mt-3 rounded-2xl bg-white/10 p-3 text-xs leading-relaxed text-white/80">
-        "Which agents can access customer PII?" Get answers grounded in your live identity graph.
+        See how Anshu, Cursor, GitHub, and production data connect — beyond a flat inventory.
       </p>
     </Link>
   )
@@ -77,7 +77,7 @@ export default function Dashboard() {
         </div>
         <div className="flex h-full flex-col gap-4 xl:col-span-5">
           <div className="card-in" style={{ '--i': 8 }}>
-            <CopilotTeaser />
+            <GraphTeaser />
           </div>
           <div className="card-in min-h-0 flex-1" style={{ '--i': 9 }}>
             <ApprovalsWidget />
