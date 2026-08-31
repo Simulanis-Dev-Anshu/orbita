@@ -8,5 +8,5 @@ email-validator==2.2.*
 PyJWT==2.9.*
 bcrypt==4.2.*
 
-# Postgres (production) — uncomment when DATABASE_URL points at Postgres
+# Postgres (production): uncomment when DATABASE_URL points at Postgres
 # asyncpg==0.30.*

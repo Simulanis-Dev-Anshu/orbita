@@ -1,4 +1,4 @@
-// Behavioral fingerprint: 7 days × 24 hours activity intensity (0–3).
+// Behavioral fingerprint: 7 days x 24 hours activity intensity (0-3).
 // Agents show flat machine-like patterns; humans cluster in business hours.
 
 const DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S']

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Sparkles, ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, Share2 } from 'lucide-react'
 import KpiSection from '../components/KpiSection.jsx'
 import DiscoveryChart from '../components/DiscoveryChart.jsx'
 import AgentsTable from '../components/AgentsTable.jsx'
@@ -23,7 +23,7 @@ function GraphTeaser() {
       />
       <div className="flex items-center gap-3">
         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand">
-          <Sparkles size={20} className="text-white" aria-hidden="true" />
+          <Share2 size={20} className="text-white" aria-hidden="true" />
         </span>
         <div className="flex-1">
           <p className="text-base font-semibold">Relationship Graph</p>
@@ -36,7 +36,7 @@ function GraphTeaser() {
         />
       </div>
       <p className="relative mt-3 rounded-2xl bg-white/10 p-3 text-xs leading-relaxed text-white/80">
-        See how Anshu, Cursor, GitHub, and production data connect — beyond a flat inventory.
+        See how Anshu, Cursor, GitHub, and production data connect, beyond a flat inventory.
       </p>
     </Link>
   )

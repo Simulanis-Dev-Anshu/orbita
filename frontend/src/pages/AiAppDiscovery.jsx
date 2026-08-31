@@ -62,7 +62,7 @@ export default function Discovery() {
               Detect ChatGPT, Claude, Cursor, and more
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-sub">
-              Signals from browser, network, OAuth grants, and endpoints — no agent SDKs required.
+              Signals from browser, network, OAuth grants, and endpoints. No agent SDKs required.
             </p>
           </div>
           <div className="flex flex-wrap gap-2 text-xs font-semibold">

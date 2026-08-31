@@ -52,7 +52,7 @@ export default function IdentityCorrelation() {
               Employee + Device + App + Account + OAuth + Activity
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-sub">
-              Stitch every signal into one chain — e.g. Anshu → MacBook → Cursor → GitHub → Production
+              Stitch every signal into one chain, e.g. Anshu → MacBook → Cursor → GitHub → Production
               Repo.
             </p>
           </div>

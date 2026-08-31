@@ -115,7 +115,7 @@ export default function RelationshipGraph() {
               USER → DEVICE → AI APP → AGENT → MCP → TOOL → DATA
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-sub">
-              Connection intelligence beyond inventory — how people, endpoints, agents, and data bind
+              Connection intelligence beyond inventory: how people, endpoints, agents, and data bind
               together.
             </p>
           </div>

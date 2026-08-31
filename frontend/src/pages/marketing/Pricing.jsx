@@ -40,7 +40,7 @@ export default function Pricing() {
           Flat pricing. <span className="text-brand">No per-agent tax.</span>
         </h1>
         <p className="ox-lead mx-auto mt-[18px] text-center">
-          Global platforms charge $50–200K a year for this. We built Orbita for the mid-market.
+          Global platforms charge $50-200K a year for this. We built Orbita for the mid-market.
           Start free, see everything, then pick a plan.
         </p>
 

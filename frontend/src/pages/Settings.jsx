@@ -144,7 +144,7 @@ export default function Settings() {
         </ul>
       </section>
 
-      {/* Billing — subscribed state (Cursor-style) */}
+      {/* Billing: subscribed state (Cursor-style) */}
       <section aria-label="Billing" className="rounded-card bg-card p-5 shadow-soft sm:p-6">
         <div className="flex flex-wrap items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-forest">

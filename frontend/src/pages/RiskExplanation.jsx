@@ -29,7 +29,7 @@ export default function RiskExplanation() {
           <div className="min-w-0 flex-1">
             <p className="ox-label text-sub">Risk Explanation</p>
             <h2 className="mt-1 text-xl font-semibold tracking-tight text-ink">
-              Don’t just show 91/100 — show why
+              Don’t just show 91/100. Show why
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-sub">
               Adoption dies on unexplained scores. Every number ships with plain-language drivers.

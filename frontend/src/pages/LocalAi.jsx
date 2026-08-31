@@ -51,7 +51,7 @@ export default function LocalAi() {
               Models and runtimes on managed endpoints
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-sub">
-              Ollama, LM Studio, GPT4All, vLLM, Jan, Llama, Mistral, Qwen — endpoint-layer visibility
+              Ollama, LM Studio, GPT4All, vLLM, Jan, Llama, Mistral, Qwen. Endpoint-layer visibility
               for locally running models (Netskope-class coverage, Orbita inventory).
             </p>
           </div>

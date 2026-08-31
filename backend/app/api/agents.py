@@ -50,7 +50,7 @@ async def create_agent(
         name=body.name,
         platform=body.platform,
         owner_name=body.owner_name or "Unassigned",
-        owner_role=body.owner_role or "—",
+        owner_role=body.owner_role or "-",
         scopes=body.scopes,
         risk=risk,
         status="orphaned" if orphaned else body.status,

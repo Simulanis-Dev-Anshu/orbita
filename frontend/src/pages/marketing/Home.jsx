@@ -8,8 +8,13 @@ import {
   ServerCog,
   Radar,
   FileText,
+  Link2,
+  ScanSearch,
+  Ban,
+  ChevronDown,
 } from 'lucide-react'
 import useReveal from '../../hooks/useReveal.js'
+import useSeo from '../../hooks/useSeo.js'
 import { posts } from '../../data/blog.js'
 import HeroAsciiBackground from '../../components/hero/HeroAsciiBackground.jsx'
 import DiscoveryRoomStage from '../../components/marketing/DiscoveryRoomStage.jsx'
@@ -130,11 +135,13 @@ function TbAceStats() {
   const ref = useRef(null)
   const [on, setOn] = useState(false)
   useEffect(() => {
+    const el = ref.current
+    if (!el) return
     const io = new IntersectionObserver(
       ([e]) => e.isIntersecting && setOn(true),
       { threshold: 0.3 }
     )
-    if (ref.current) io.observe(ref.current)
+    io.observe(el)
     return () => io.disconnect()
   }, [])
   const stats = [
@@ -175,7 +182,7 @@ function TbScrambleText({ words, interval = 2600 }) {
   )
   const idxRef = useRef(0)
   useEffect(() => {
-    let frame
+    let frame = 0
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const cycle = setInterval(() => {
       idxRef.current = (idxRef.current + 1) % words.length
@@ -383,72 +390,147 @@ function TbLogoMarquee() {
 const modules = [
   {
     name: 'Discovery',
-    text: 'OAuth, audit logs, DNS and MCP. Every agent surfaced in one living inventory.',
+    text: 'Connect Slack, Google, GitHub, and Zapier. Orbita lists every bot and AI app it finds, with no install on the agents themselves.',
     visual: 'scan',
   },
   {
     name: 'Identity graph',
-    text: 'Human to agent to credential to data. Blast radius in one click.',
+    text: 'See who owns each agent, which keys it holds, and what data it can reach. One click shows the blast radius.',
     visual: 'graph',
   },
   {
     name: 'Kill switch',
-    text: 'Revoke every grant an orphaned agent holds. Stops in one sync cycle.',
+    text: 'If someone leaves and their bot stays, revoke every grant in one action. The agent stops on the next sync.',
     visual: 'kill',
   },
   {
     name: 'Compliance',
-    text: 'DPDP, SOC 2, ISO 27001 evidence, auditor-ready on demand.',
+    text: 'Export DPDP, SOC 2, and ISO 27001 evidence when an auditor asks, not after a week of screenshots.',
     visual: 'comp',
   },
   {
     name: 'Fingerprinting',
-    text: '24/7 activity heatmap separates machine cadence from human rhythm.',
+    text: 'A 24-hour heatmap shows whether an account acts like a person or a machine. Auditors get it in seconds.',
     visual: 'finger',
   },
   {
     name: 'Shadow MCP',
-    text: 'Map every MCP server, its launcher, and the data scopes it can reach.',
+    text: 'Find Model Context Protocol servers on laptops and in the cloud, who launched them, and which databases they can query.',
     visual: 'mcp',
   },
   {
     name: 'Agent Passport',
-    text: 'Portable trust score per agent, shareable with auditors and vendors.',
+    text: 'A portable trust score per agent you can share with auditors and vendors without opening the whole inventory.',
     visual: 'passport',
   },
   {
     name: 'Connectors',
-    text: 'Read-only OAuth into Workspace, Slack, GitHub, Zoho and your automation stack.',
+    text: 'Read-only OAuth into Workspace, Slack, GitHub, Zoho, and your automation stack. Nothing writes back.',
     visual: 'connectors',
   },
 ]
 
 const pill = 'rounded-btn bg-card shadow-[0_10px_28px_rgba(23,7,2,0.09)]'
 
+function ModuleCard({ name, text, visual }) {
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const target = { x: 0.5, y: 0.5, on: 0 }
+    const cur = { x: 0.5, y: 0.5, on: 0 }
+    let raf = 0
+    let running = false
+
+    const apply = () => {
+      const k = 0.16
+      cur.x += (target.x - cur.x) * k
+      cur.y += (target.y - cur.y) * k
+      cur.on += (target.on - cur.on) * k
+      el.style.setProperty('--mx', `${(cur.x * 100).toFixed(2)}%`)
+      el.style.setProperty('--my', `${(cur.y * 100).toFixed(2)}%`)
+      el.style.setProperty('--on', cur.on.toFixed(3))
+      const rx = (0.5 - cur.y) * 4.5 * cur.on
+      const ry = (cur.x - 0.5) * 6.5 * cur.on
+      el.style.transform = `perspective(920px) rotateX(${rx.toFixed(3)}deg) rotateY(${ry.toFixed(3)}deg)`
+      const settled =
+        Math.abs(cur.on - target.on) < 0.008 &&
+        Math.abs(cur.x - target.x) < 0.004 &&
+        Math.abs(cur.y - target.y) < 0.004
+      if (!settled || target.on > 0) raf = requestAnimationFrame(apply)
+      else running = false
+    }
+
+    const start = () => {
+      if (running) return
+      running = true
+      raf = requestAnimationFrame(apply)
+    }
+
+    const onMove = (e) => {
+      const r = el.getBoundingClientRect()
+      target.x = (e.clientX - r.left) / r.width
+      target.y = (e.clientY - r.top) / r.height
+      target.on = 1
+      start()
+    }
+    const onLeave = () => {
+      target.x = 0.5
+      target.y = 0.5
+      target.on = 0
+      start()
+    }
+
+    el.addEventListener('pointermove', onMove)
+    el.addEventListener('pointerleave', onLeave)
+    return () => {
+      cancelAnimationFrame(raf)
+      el.removeEventListener('pointermove', onMove)
+      el.removeEventListener('pointerleave', onLeave)
+    }
+  }, [])
+
+  return (
+    <article
+      ref={ref}
+      className="mod-card group flex h-[380px] flex-col rounded-[22px] bg-muted p-7 sm:p-8 select-none"
+    >
+      <h3 className="relative z-[1] font-display text-[1.35rem] tracking-tight text-ink sm:text-2xl">{name}</h3>
+      <p className="relative z-[1] mt-3 text-[14px] leading-relaxed text-sub line-clamp-3">{text}</p>
+      <div className="relative z-[1] mt-10 flex flex-1 flex-col justify-end">
+        <ModuleVisual kind={visual} />
+      </div>
+    </article>
+  )
+}
+
 function ModuleVisual({ kind }) {
   if (kind === 'scan') {
     return (
-      <div className="mt-auto space-y-4 w-full text-center">
-        {/* Chips fade in and drop on hover */}
-        <div className="flex justify-center gap-1.5 opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
+      <div className="mt-auto w-full space-y-3.5 text-center">
+        <div className="flex justify-center gap-1.5">
           {['Zapier', 'Slack', 'MCP', 'GitHub'].map((s, i) => (
             <span
               key={s}
-              className="rounded-full bg-card/90 px-2 py-0.5 text-[9px] font-semibold text-sub shadow-soft border border-line transition-all duration-300 hover:scale-105"
-              style={{ transitionDelay: `${i * 65}ms` }}
+              className="mod-wave rounded-full border border-line bg-card/90 px-2 py-0.5 text-[9px] font-semibold text-sub shadow-soft"
+              style={{ animationDelay: `${i * 180}ms` }}
             >
               {s}
             </span>
           ))}
         </div>
-        {/* Scan Agents Input */}
-        <div className={`flex items-center gap-2.5 ${pill} px-4 py-3 border border-line/40 transition-all duration-300 group-hover:border-brand/60 group-hover:scale-[1.02] group-hover:shadow-[0_12px_32px_rgba(255,77,0,0.08)]`}>
-          <span className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-forest transition-colors duration-300 group-hover:bg-forest/80">
-            <span className="absolute inset-0 rounded-full bg-brand/40 opacity-0 group-hover:opacity-100 group-hover:mod-ping" />
-            <Radar size={13} className="relative text-brand group-hover:rotate-12 transition-transform duration-300" />
+        <div className={`relative overflow-hidden ${pill} flex items-center gap-2.5 border border-line/40 px-4 py-3`}>
+          <span className="mod-scan-x pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-transparent via-brand/25 to-transparent opacity-0 group-hover:opacity-100" />
+          <span className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-forest">
+            <Radar size={13} className="text-brand transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-[40deg]" />
           </span>
-          <span className="text-[13px] text-sub/70 font-semibold group-hover:text-ink transition-colors">Scan agents</span>
-          <span className="mod-caret ml-0.5 inline-block h-4 w-[2px] bg-forest group-hover:animate-pulse" />
+          <span className="relative text-[13px] font-semibold text-sub/70 transition-colors duration-500 group-hover:text-ink">
+            Scan agents
+          </span>
+          <span className="mod-caret relative ml-0.5 inline-block h-4 w-[2px] bg-forest" />
         </div>
       </div>
     )
@@ -456,56 +538,49 @@ function ModuleVisual({ kind }) {
 
   if (kind === 'graph') {
     return (
-      <div className="relative mt-auto flex flex-col items-center gap-3.5 py-1 w-full text-center">
-        <span className={`${pill} px-4 py-2 text-[12px] font-semibold border border-line/40 transition-all duration-300 group-hover:-translate-y-2 group-hover:border-brand/20 group-hover:scale-105`}>
-          Owner · IdP
-        </span>
-        <svg className="h-5 w-8 text-sub/30" viewBox="0 0 32 20" fill="none">
-          <path className="transition-colors duration-300 group-hover:text-brand group-hover:mod-dash" d="M16 0 V20" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 4" />
+      <div className="relative mt-auto flex w-full flex-col items-center gap-2.5 py-1 text-center">
+        <span className={`${pill} border border-line/40 px-4 py-2 text-[12px] font-semibold`}>Owner · IdP</span>
+        <svg className="h-5 w-8 text-sub/35" viewBox="0 0 32 20" fill="none">
+          <path d="M16 0 V20" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 4" />
+          <path className="mod-flow text-brand opacity-0 group-hover:opacity-100" d="M16 0 V20" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 6" />
         </svg>
-        <span className={`${pill} px-4 py-2 text-[12px] font-semibold border border-line/40 relative transition-all duration-300 group-hover:scale-110 group-hover:border-brand group-hover:shadow-[0_8px_24px_rgba(255,77,0,0.06)]`}>
-          <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-brand align-middle group-hover:animate-ping" />
+        <span className={`${pill} relative border border-line/40 px-4 py-2 text-[12px] font-semibold`}>
+          <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-brand align-middle" />
           Agent
         </span>
-        <svg className="h-5 w-8 text-sub/30" viewBox="0 0 32 20" fill="none">
-          <path className="transition-colors duration-300 group-hover:text-brand group-hover:mod-dash" d="M16 0 V20" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 4" />
+        <svg className="h-5 w-8 text-sub/35" viewBox="0 0 32 20" fill="none">
+          <path d="M16 0 V20" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 4" />
+          <path className="mod-flow text-brand opacity-0 group-hover:opacity-100" d="M16 0 V20" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 6" />
         </svg>
-        <span className={`${pill} px-4 py-2 text-[12px] font-semibold border border-line/40 transition-all duration-300 group-hover:translate-y-2 group-hover:border-brand/20 group-hover:scale-105`}>
-          Scope · PII
-        </span>
+        <span className={`${pill} border border-line/40 px-4 py-2 text-[12px] font-semibold`}>Scope · PII</span>
       </div>
     )
   }
 
   if (kind === 'kill') {
     return (
-      <div className="mt-auto space-y-3 w-full text-center">
-        {/* Mock agent listing */}
-        <div className="rounded-btn border border-line bg-card/60 p-2.5 h-[56px] flex items-center justify-between transition-all duration-300 group-hover:border-danger/30 group-hover:bg-card">
+      <div className="mt-auto w-full space-y-3 text-center">
+        <div className="flex h-[56px] items-center justify-between rounded-btn border border-line bg-card/60 p-2.5 transition-colors duration-500 group-hover:border-danger/25">
           <div className="flex items-center gap-2">
-            <span className="h-7 w-7 rounded-full bg-forest flex items-center justify-center text-[10px] font-bold text-brand transition-all duration-300 group-hover:bg-danger/10 group-hover:text-danger group-hover:scale-105">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-forest text-[10px] font-bold text-brand transition-colors duration-500 group-hover:bg-danger/15 group-hover:text-danger">
               ZB
             </span>
             <div className="text-left">
-              <p className="text-[11px] font-bold text-ink transition-colors group-hover:text-danger">Zapier Invoice</p>
+              <p className="text-[11px] font-bold text-ink transition-colors duration-500 group-hover:text-danger">Zapier Invoice</p>
               <p className="text-[9px] text-sub/70">Last active 2m ago</p>
             </div>
           </div>
-          <span className="rounded-full bg-forest/20 px-2 py-0.5 text-[9px] font-semibold text-forest group-hover:hidden transition-all duration-300">
-            Active
-          </span>
-          <span className="hidden rounded-full bg-danger-soft px-2 py-0.5 text-[9px] font-semibold text-danger group-hover:inline-block transition-all duration-300 animate-pulse">
-            Orphaned
+          <span className="relative h-[18px] w-[34px] overflow-hidden rounded-full bg-forest/15 text-center text-[9px] font-semibold leading-[18px] text-forest">
+            <span className="absolute inset-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-full">Active</span>
+            <span className="absolute inset-0 translate-y-full text-danger transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0">Orphan</span>
           </span>
         </div>
-
-        {/* Action switch */}
-        <div className={`flex items-center justify-between ${pill} px-3.5 py-2.5 border border-line/40 transition-all duration-300 group-hover:border-danger/40 group-hover:scale-[1.01]`}>
-          <span className="text-[12px] font-semibold text-sub transition-colors duration-300 group-hover:text-danger">
+        <div className={`flex items-center justify-between ${pill} border border-line/40 px-3.5 py-2.5`}>
+          <span className="text-[12px] font-semibold text-sub transition-colors duration-500 group-hover:text-danger">
             Orphan · revoke
           </span>
-          <span className="rounded-full bg-line/80 px-3 py-1 text-[10px] font-bold text-sub transition-all duration-300 group-hover:bg-danger group-hover:text-white group-hover:scale-105 group-hover:shadow-[0_4px_12px_rgba(239,68,68,0.22)] active:scale-95">
-            Kill
+          <span className="relative h-6 w-11 rounded-full bg-line/80 transition-colors duration-500 group-hover:bg-danger">
+            <span className="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-5" />
           </span>
         </div>
       </div>
@@ -514,16 +589,17 @@ function ModuleVisual({ kind }) {
 
   if (kind === 'comp') {
     return (
-      <div className="mt-auto space-y-3.5 w-full text-center">
-        <div className={`mx-auto flex w-fit items-center gap-1.5 ${pill} px-3.5 py-2 text-[11px] font-semibold border border-line/40 transition-all duration-300 group-hover:-translate-y-2 group-hover:border-brand/40 group-hover:scale-105`}>
-          <FileText size={12} className="text-sub transition-colors group-hover:text-forest" />
+      <div className="mt-auto w-full space-y-3.5 text-center">
+        <div className={`${pill} mx-auto flex w-fit items-center gap-1.5 border border-line/40 px-3.5 py-2 text-[11px] font-semibold`}>
+          <FileText size={12} className="text-sub transition-colors duration-500 group-hover:text-forest" />
           evidence-pack.pdf
         </div>
-        <div className={`flex items-center gap-2.5 ${pill} px-4 py-3 border border-line/40 transition-all duration-300 group-hover:border-brand/40 group-hover:scale-[1.02]`}>
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-soft transition-all duration-300 group-hover:scale-115">
-            <ShieldCheck size={13} className="text-forest group-hover:rotate-12 transition-transform duration-300" />
+        <div className={`relative overflow-hidden ${pill} flex items-center gap-2.5 border border-line/40 px-4 py-3`}>
+          <span className="absolute inset-x-0 bottom-0 h-[2px] origin-left scale-x-0 bg-brand transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100" />
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-soft">
+            <ShieldCheck size={13} className="text-forest" />
           </span>
-          <span className="text-[13px] text-sub/70 font-semibold group-hover:text-ink transition-colors">Ask evidence</span>
+          <span className="text-[13px] font-semibold text-sub/70 transition-colors duration-500 group-hover:text-ink">Ask evidence</span>
           <span className="mod-caret ml-0.5 inline-block h-4 w-[2px] bg-forest" />
         </div>
       </div>
@@ -533,74 +609,42 @@ function ModuleVisual({ kind }) {
   if (kind === 'finger') {
     const rowMachine = [1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0]
     const rowHuman = [0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0]
-    
+
     return (
-      <div className="relative w-full h-[142px] flex flex-col justify-end overflow-hidden text-center">
-        {/* Skeleton Shimmer */}
-        <div className="absolute inset-0 flex flex-col justify-between rounded-btn border border-line bg-card/60 p-3.5 opacity-100 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none animate-pulse">
-          <div className="flex items-center justify-between text-[10px] text-sub/40 font-semibold">
-            <span className="h-3 w-16 rounded bg-line/50" />
-            <span className="h-3 w-20 rounded bg-line/50" />
-          </div>
-          {/* Gray Grid */}
-          <div className="grid grid-cols-12 gap-1 my-1.5">
-            {Array.from({ length: 36 }).map((_, i) => (
-              <span
-                key={i}
-                className="w-full aspect-square rounded-sm bg-line/40"
-              />
-            ))}
-          </div>
-          <div className="flex justify-between items-center h-3">
-            <span className="h-2.5 w-24 rounded bg-line/40" />
-          </div>
+      <div className={`${pill} w-full border border-line/40 p-3.5 text-center`}>
+        <div className="flex items-center justify-between text-[10px] font-bold tracking-wider text-sub uppercase">
+          <span className="text-brand">Machine</span>
+          <span className="text-sub/50">vs</span>
+          <span className="text-forest">Human</span>
         </div>
-
-        {/* Active Heat-Matrix Cadence Classifier */}
-        <div className={`opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${pill} p-3.5 border border-line/40 w-full group-hover:scale-[1.02] group-hover:border-brand/30 transition-all`}>
-          <div className="flex items-center justify-between text-[10px] text-sub font-bold uppercase tracking-wider">
-            <span className="text-brand">Machine Cadence</span>
-            <span className="text-sub/50">vs</span>
-            <span className="text-forest">Human Rhythm</span>
-          </div>
-
-          {/* Grid Layout of Cadence Matrices */}
-          <div className="grid grid-cols-12 gap-1 my-2.5">
-            {rowMachine.map((val, i) => (
-              <span
-                key={`m1-${i}`}
-                className={`w-full aspect-square rounded-sm transition-all duration-300 ${
-                  val ? 'bg-brand shadow-[0_0_8px_#ff4d00] animate-pulse group-hover:scale-105' : 'bg-line/25'
-                }`}
-                style={{ animationDelay: `${i * 120}ms` }}
-              />
-            ))}
-            {rowHuman.map((val, i) => (
-              <span
-                key={`h1-${i}`}
-                className={`w-full aspect-square rounded-sm transition-all duration-500 ${
-                  val ? 'bg-forest/80 scale-95 group-hover:scale-105 group-hover:bg-forest' : 'bg-line/25'
-                }`}
-              />
-            ))}
-            {rowMachine.map((val, i) => (
-              <span
-                key={`m2-${i}`}
-                className={`w-full aspect-square rounded-sm transition-all duration-300 ${
-                  val ? 'bg-brand shadow-[0_0_8px_#ff4d00] animate-pulse group-hover:scale-105' : 'bg-line/25'
-                }`}
-                style={{ animationDelay: `${(i + 3) * 120}ms` }}
-              />
-            ))}
-          </div>
-
-          <div className="flex items-center justify-between text-[11px] font-semibold text-sub">
-            <span className="flex items-center gap-1.5">
-              <span className="live-dot h-1.5 w-1.5 rounded-full bg-brand" />
-              Machine cadence · 98%
-            </span>
-            <span className="text-[10px] text-sub/50">24h telemetry</span>
-          </div>
+        <div className="my-2.5 grid grid-cols-12 gap-1">
+          {rowMachine.map((val, i) => (
+            <span
+              key={`m1-${i}`}
+              className={`aspect-square w-full rounded-sm ${val ? 'mod-heat-on bg-brand' : 'bg-line/25'}`}
+              style={{ animationDelay: `${i * 90}ms` }}
+            />
+          ))}
+          {rowHuman.map((val, i) => (
+            <span
+              key={`h1-${i}`}
+              className={`aspect-square w-full rounded-sm ${val ? 'bg-forest/80' : 'bg-line/25'}`}
+            />
+          ))}
+          {rowMachine.map((val, i) => (
+            <span
+              key={`m2-${i}`}
+              className={`aspect-square w-full rounded-sm ${val ? 'mod-heat-on bg-brand' : 'bg-line/25'}`}
+              style={{ animationDelay: `${(i + 4) * 90}ms` }}
+            />
+          ))}
+        </div>
+        <div className="flex items-center justify-between text-[11px] font-semibold text-sub">
+          <span className="flex items-center gap-1.5">
+            <span className="live-dot h-1.5 w-1.5 rounded-full bg-brand" />
+            Cadence · 98%
+          </span>
+          <span className="text-[10px] text-sub/50">24h telemetry</span>
         </div>
       </div>
     )
@@ -608,27 +652,20 @@ function ModuleVisual({ kind }) {
 
   if (kind === 'mcp') {
     return (
-      <div className="relative mt-auto flex h-28 items-center justify-center w-full text-center">
-        <span className={`${pill} absolute top-1 left-3 px-2.5 py-1.5 text-[10px] font-semibold border border-line/30 transition-transform duration-300 group-hover:-translate-x-2.5 group-hover:-translate-y-1.5 group-hover:border-brand/35`}>
+      <div className="relative mt-auto flex h-28 w-full items-center justify-center text-center">
+        <span className={`${pill} absolute top-1 left-3 border border-line/30 px-2.5 py-1.5 text-[10px] font-semibold`}>
           Claude
         </span>
-        <span
-          className={`${pill} absolute top-2 right-4 px-2.5 py-1.5 text-[10px] font-semibold border border-line/30 transition-transform duration-300 group-hover:translate-x-2.5 group-hover:-translate-y-1.5 group-hover:border-brand/35`}
-        >
+        <span className={`${pill} absolute top-2 right-4 border border-line/30 px-2.5 py-1.5 text-[10px] font-semibold`}>
           Cursor
         </span>
-        <span className="relative z-[1] flex h-12 w-12 items-center justify-center rounded-2xl bg-forest shadow-lift transition-transform duration-300 group-hover:scale-115">
-          <span className="absolute inset-0 rounded-2xl bg-brand/30 opacity-0 group-hover:opacity-100 group-hover:mod-ping" />
-          <ServerCog size={20} className="relative text-brand group-hover:rotate-45 transition-transform duration-500" />
+        <span className="relative z-[1] flex h-12 w-12 items-center justify-center rounded-2xl bg-forest shadow-lift">
+          <ServerCog size={20} className="mod-spin-hover text-brand" />
         </span>
-        <span
-          className={`${pill} absolute bottom-1 left-6 px-2.5 py-1.5 text-[10px] font-semibold border border-line/30 transition-transform duration-300 group-hover:-translate-x-2.5 group-hover:translate-y-1.5 group-hover:border-brand/35`}
-        >
+        <span className={`${pill} absolute bottom-1 left-6 border border-line/30 px-2.5 py-1.5 text-[10px] font-semibold`}>
           Postgres
         </span>
-        <span
-          className={`absolute right-5 bottom-0 px-2.5 py-1.5 text-[10px] font-semibold text-sub rounded-btn bg-card/60 border border-line/20 scale-95 opacity-40 transition-all duration-500 group-hover:opacity-100 group-hover:scale-100 group-hover:bg-card group-hover:border-danger/40 group-hover:text-danger group-hover:shadow-[0_12px_32px_rgba(239,68,68,0.1)]`}
-        >
+        <span className="absolute right-5 bottom-0 rounded-btn border border-line/30 bg-card/80 px-2.5 py-1.5 text-[10px] font-semibold text-sub transition-colors duration-500 group-hover:border-danger/40 group-hover:text-danger">
           Unregistered
         </span>
       </div>
@@ -637,47 +674,34 @@ function ModuleVisual({ kind }) {
 
   if (kind === 'passport') {
     return (
-      <div className={`relative overflow-hidden mt-auto ${pill} p-4 border border-line/40 transition-all duration-300 group-hover:border-brand/40 group-hover:scale-[1.02] group-hover:shadow-[0_12px_32px_rgba(255,77,0,0.08)] text-left`}>
-        {/* Glowing sweep scanner line on hover */}
-        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-brand to-transparent opacity-0 group-hover:animate-scan-sweep pointer-events-none" />
-        
-        {/* Passport header */}
-        <div className="flex items-center justify-between border-b border-line/35 pb-2 mb-2 text-[10px] font-bold text-sub/55 tracking-widest uppercase">
+      <div className={`relative mt-auto overflow-hidden ${pill} border border-line/40 p-4 text-left`}>
+        <div className="mod-sweep-idle pointer-events-none absolute top-0 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-brand to-transparent" />
+        <div className="flex items-center justify-between border-b border-line/35 pb-2 mb-2 text-[10px] font-bold tracking-widest text-sub/55 uppercase">
           <span>Orbita Secure ID</span>
-          <span className="text-brand flex items-center gap-1 font-extrabold">
+          <span className="flex items-center gap-1 font-extrabold text-brand">
             <span className="live-dot inline-block h-1.5 w-1.5 rounded-full bg-brand" />
             Verified
           </span>
         </div>
-
-        {/* Chip & Tier */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            {/* Security Chip Sim */}
-            <div className="h-8 w-11 rounded-md bg-sub/10 border border-line/40 relative overflow-hidden flex flex-col justify-between p-1 transition-all duration-500 group-hover:bg-brand/10 group-hover:border-brand/35">
-              <div className="h-full w-full flex gap-0.5">
-                <span className="flex-1 bg-sub/20 rounded-sm group-hover:bg-brand/30 transition-colors duration-300" />
-                <span className="flex-1 bg-sub/20 rounded-sm group-hover:bg-brand/30 transition-colors duration-300 delay-75" />
-                <span className="flex-1 bg-sub/20 rounded-sm group-hover:bg-brand/30 transition-colors duration-300 delay-150" />
+            <div className="relative flex h-8 w-11 flex-col justify-between overflow-hidden rounded-md border border-line/40 bg-sub/10 p-1">
+              <div className="flex h-full w-full gap-0.5">
+                <span className="flex-1 rounded-sm bg-sub/20 transition-colors duration-500 group-hover:bg-brand/35" />
+                <span className="flex-1 rounded-sm bg-sub/20 transition-colors delay-75 duration-500 group-hover:bg-brand/35" />
+                <span className="flex-1 rounded-sm bg-sub/20 transition-colors delay-150 duration-500 group-hover:bg-brand/35" />
               </div>
             </div>
             <div className="text-left">
-              <p className="text-[12px] font-extrabold text-ink group-hover:text-forest transition-colors duration-300">TIER · EXCELLENT</p>
+              <p className="text-[12px] font-extrabold text-ink">TIER · EXCELLENT</p>
               <p className="text-[9px] text-sub/70">ID: #ORB-882-01</p>
             </div>
           </div>
-
-          {/* Segmented rating display */}
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4, 5].map((idx) => (
               <span
                 key={idx}
-                className={`h-4.5 w-2 rounded-sm transition-all duration-500 ${
-                  idx <= 4
-                    ? 'bg-brand/80 scale-100 group-hover:scale-y-115 group-hover:bg-brand shadow-[0_0_6px_#ff4d00]'
-                    : 'bg-line/30 scale-95'
-                }`}
-                style={{ transitionDelay: `${idx * 45}ms` }}
+                className={`h-4.5 w-2 rounded-sm ${idx <= 4 ? 'bg-brand/80' : 'bg-line/30'}`}
               />
             ))}
           </div>
@@ -686,35 +710,27 @@ function ModuleVisual({ kind }) {
     )
   }
 
-  // connectors (default fallback)
   return (
     <div className="mt-auto w-full text-center">
       <div className="flex flex-wrap justify-center gap-2">
-        {[
-          { n: 'Workspace', hover: 'group-hover:bg-[#4a154b]/10 group-hover:text-[#4a154b] group-hover:border-[#4a154b]/30' },
-          { n: 'Slack', hover: 'group-hover:bg-[#4a154b]/10 group-hover:text-[#4a154b] group-hover:border-[#4a154b]/30 group-hover:scale-105' },
-          { n: 'GitHub', hover: 'group-hover:bg-[#24292e] group-hover:text-white group-hover:scale-105' },
-          { n: 'Zapier', hover: 'group-hover:bg-[#ff4f00]/10 group-hover:text-[#ff4f00] group-hover:border-[#ff4f00]/30 group-hover:scale-105' },
-          { n: 'Zoho', hover: 'group-hover:bg-[#e21a22]/10 group-hover:text-[#e21a22] group-hover:border-[#e21a22]/30' },
-          { n: 'n8n', hover: 'group-hover:bg-[#ff6d5a]/10 group-hover:text-[#ff6d5a] group-hover:border-[#ff6d5a]/30 group-hover:scale-105' }
-        ].map((item, i) => (
+        {['Workspace', 'Slack', 'GitHub', 'Zapier', 'Zoho', 'n8n'].map((n, i) => (
           <span
-            key={item.n}
-            className={`rounded-btn bg-card px-2.5 py-1.5 text-[10.5px] font-semibold text-sub border border-line/40 transition-all duration-300 cursor-default hover:scale-105 ${item.hover}`}
-            style={{ transitionDelay: `${i * 30}ms` }}
+            key={n}
+            className="rounded-btn border border-line/40 bg-card px-2.5 py-1.5 text-[10.5px] font-semibold text-sub transition-colors duration-500 hover:border-brand/40 hover:text-ink"
+            style={{ transitionDelay: `${i * 40}ms` }}
           >
-            {item.n}
+            {n}
           </span>
         ))}
       </div>
-      <p className="mt-3 text-center text-[10px] font-bold tracking-wide text-sub/60 uppercase transition-colors duration-300 group-hover:text-forest">
+      <p className="mt-3 text-center text-[10px] font-bold tracking-wide text-sub/60 uppercase">
         Read-only · 15 min
       </p>
     </div>
   )
 }
 
-const MARQUEE_LOGOS = ['Orbita', 'BharatFin', 'MedSync', 'CloudKart', 'Kirana+', 'NovaPay', 'SkyDesk', 'FinLoop']
+const MARQUEE_LOGOS = ['Slack', 'GitHub', 'Zapier', 'Google Workspace', 'Okta', 'Salesforce', 'n8n', 'Make']
 
 function LogoMarquee() {
   const trackRef = useRef(null)
@@ -724,6 +740,7 @@ function LogoMarquee() {
   useEffect(() => {
     const track = trackRef.current
     if (!track) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const measure = () => {
       halfWidthRef.current = track.scrollWidth / 2
@@ -777,10 +794,114 @@ function LogoMarquee() {
   )
 }
 
+const HOW_STEPS = [
+  {
+    n: '01',
+    Icon: Link2,
+    title: 'Connect what you already use',
+    text: 'Read-only OAuth into Google, Slack, GitHub, and Zapier. About 15 minutes. Nothing is installed on the agents themselves.',
+  },
+  {
+    n: '02',
+    Icon: ScanSearch,
+    title: 'See every agent, with an owner',
+    text: 'Orbita lists bots, custom GPTs, and MCP servers, names who owns them, and scores risk. Typical first scan finishes in under 24 hours.',
+  },
+  {
+    n: '03',
+    Icon: Ban,
+    title: 'Shut down what should not run',
+    text: 'Revoke grants for orphaned bots, export auditor evidence, and keep a live inventory so new shadow AI cannot hide.',
+  },
+]
+
+const HOME_FAQS = [
+  {
+    q: 'What is an AI agent in this context?',
+    a: 'Anything acting on your systems without a person clicking each time: Zapier workflows, custom GPTs with tools, IDE agents, MCP servers, and similar automations.',
+  },
+  {
+    q: 'Do we have to install software on those agents?',
+    a: 'No. Orbita reads OAuth grants, audit logs, and DNS traffic the agents already leave. There is no SDK and nothing to deploy onto the bots.',
+  },
+  {
+    q: 'How long until we see results?',
+    a: 'A first inventory is typically live within 24 hours of connecting sources. Many teams see the first agents within the first hour.',
+  },
+  {
+    q: 'Is the connection read-only?',
+    a: 'Yes. Discovery uses read-only access. The kill switch is a separate, explicit action you choose. It is never on by default.',
+  },
+  {
+    q: 'Where is data stored?',
+    a: 'India (AWS Mumbai) by default, aligned with DPDP residency. EU and US regions are available, and Enterprise can self-host.',
+  },
+]
+
+const HOME_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Orbita',
+      applicationCategory: 'SecurityApplication',
+      operatingSystem: 'Web',
+      url: 'https://www.orbita.io/',
+      description:
+        'AI agent discovery platform that inventories Zapier bots, custom GPTs, and shadow MCP servers, scores risk, and revokes orphaned grants.',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+        description: 'Free discovery scan',
+      },
+    },
+    {
+      '@type': 'Organization',
+      name: 'Orbita',
+      url: 'https://www.orbita.io/',
+      description: 'AI agent discovery and governance for mid-market security teams.',
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: HOME_FAQS.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: item.a },
+      })),
+    },
+  ],
+}
+
 export default function Home() {
   const scrollRef = useRef(null)
   const [activeIndex, setActiveIndex] = useState(0)
+  const [openFaq, setOpenFaq] = useState(0)
   const heroMouse = useRef({ x: 0, y: 0 })
+
+  useSeo({
+    title: 'Orbita | Discover every AI agent your company already runs',
+    description:
+      'Orbita finds Zapier bots, custom GPTs, and shadow MCP servers in 24 hours. Inventory, risk-score, name an owner, and shut orphaned agents down. No SDK.',
+    path: '/',
+    jsonLd: HOME_JSON_LD,
+  })
+
+  useEffect(() => {
+    const go = () => {
+      if (window.location.hash === '#how-it-works') {
+        document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+    go()
+    window.addEventListener('hashchange', go)
+    return () => window.removeEventListener('hashchange', go)
+  }, [])
+
+  const strideOf = (el) => {
+    const card = el?.querySelector('[data-module-card]')
+    return (card?.getBoundingClientRect().width || 340) + 20
+  }
 
   const onHeroPointerMove = (e) => {
     const r = e.currentTarget.getBoundingClientRect()
@@ -794,33 +915,23 @@ export default function Home() {
   }
 
   const scroll = (direction) => {
-    if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current
-      const cardWidth = 340 + 20 // width + gap
-      const scrollTo = direction === 'left' ? scrollLeft - cardWidth * 2 : scrollLeft + cardWidth * 2
-      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' })
-    }
-  }
-
-  const handleScroll = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current
-      const cardWidth = 340 + 20
-      const index = Math.round(scrollLeft / cardWidth)
-      setActiveIndex(Math.min(Math.max(index, 0), modules.length - 1))
-    }
+    const el = scrollRef.current
+    if (!el) return
+    const stride = strideOf(el)
+    const next = direction === 'left' ? el.scrollLeft - stride * 2 : el.scrollLeft + stride * 2
+    el.scrollTo({ left: next, behavior: 'smooth' })
   }
 
   useEffect(() => {
     const el = scrollRef.current
-    if (el) {
-      el.addEventListener('scroll', handleScroll, { passive: true })
+    if (!el) return
+    const onScroll = () => {
+      const stride = strideOf(el)
+      const index = Math.round(el.scrollLeft / stride)
+      setActiveIndex(Math.min(Math.max(index, 0), modules.length - 1))
     }
-    return () => {
-      if (el) {
-        el.removeEventListener('scroll', handleScroll)
-      }
-    }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => el.removeEventListener('scroll', onScroll)
   }, [])
 
   return (
@@ -836,23 +947,26 @@ export default function Home() {
           className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#170702] via-[#170702]/55 to-transparent"
         />
         <div className="ox-hero-in relative z-10 mx-auto max-w-[1200px]">
-          <p className="ox-label !text-white/55">Shadow agent discovery</p>
-          <h1 className="mt-3.5 max-w-[17ch] text-[clamp(38px,4.3vw,58px)] font-normal leading-[1.03] tracking-[-0.038em] text-balance text-white">
-            See every AI agent your company already runs.
+          <p className="ox-label !text-white/55">AI agent discovery</p>
+          <h1 className="mt-3.5 max-w-[18ch] text-[clamp(38px,4.3vw,58px)] font-normal leading-[1.03] tracking-[-0.038em] text-balance text-white">
+            Find every AI agent your company already runs.
           </h1>
-          <p className="mt-[18px] max-w-[48ch] text-[15px] leading-[1.65] text-white/[0.84]">
-            Zapier bots, custom GPTs, rogue MCP servers. Orbita finds the invisible workforce in 24
-            hours, names an owner, and scores every risk.
+          <p className="mt-[18px] max-w-[52ch] text-[15px] leading-[1.65] text-white/[0.84]">
+            Zapier bots, custom GPTs, and shadow MCP servers keep working after people leave.
+            Orbita lists them in 24 hours, names an owner, and scores the risk, with no SDK to install.
           </p>
           <div className="mt-7 flex flex-wrap items-center gap-2.5">
             <Link to="/signup" className="ox-btn ox-btn-primary">
-              Get started
+              Start a free scan
               <ArrowRight size={15} aria-hidden="true" />
             </Link>
-            <Link to="/app" className="ox-btn ox-btn-ghost">
-              Get a demo
+            <Link to="/app/intelligence?tab=analyst" className="ox-btn ox-btn-ghost">
+              Watch a live demo
             </Link>
           </div>
+          <p className="mt-4 text-[12.5px] text-white/50">
+            Read-only access · no credit card · data hosted in India by default
+          </p>
         </div>
       </section>
 
@@ -860,7 +974,7 @@ export default function Home() {
       <section className="border-b border-[rgba(31,30,28,0.11)] bg-canvas" aria-label="Orbita in numbers">
         <div className="mx-auto grid max-w-[1200px] gap-8 px-4 py-10 sm:grid-cols-3 sm:px-8 sm:py-12">
           {[
-            ['31+', 'agents found on first scan'],
+            ['147', 'agents on a typical first scan'],
             ['under 24 hours', 'to a live inventory'],
             ['0', 'SDKs to install'],
           ].map(([stat, label]) => (
@@ -876,33 +990,64 @@ export default function Home() {
       <section className="border-b border-[rgba(31,30,28,0.11)]">
         <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-16 sm:px-8 sm:py-20 md:grid-cols-2 md:gap-16">
           <div>
-            <p className="ox-label">The shift</p>
+            <p className="ox-label">The problem</p>
             <h2 className="font-display mt-3.5 text-[clamp(28px,3vw,40px)] text-ink">
-              Frontier agents. Without becoming a tenant.
+              Shadow AI is already inside your company.
             </h2>
           </div>
           <div className="space-y-4 text-[15px] leading-[1.65] text-ink-2">
             <p>
-              Every technology shift fragments, then consolidates. AI is consolidating now, and the
-              agents nobody registered are already doing work on your stack.
+              Employees connect ChatGPT, Cursor, Zapier, and MCP servers to real systems: payroll,
+              GitHub, customer data, without telling security. When someone leaves, the bot often stays.
             </p>
             <p>
-              When you cannot see the map, you are a tenant in your own estate. Keeping inventory,
-              ownership, and revocation yours is what keeps that from happening.
+              Orbita gives you one inventory: every agent, its owner, its risk, and a way to turn it
+              off. You keep the map. You are not a tenant in your own stack.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="px-4 pb-6 sm:px-6">
+      <section id="how-it-works" className="border-b border-[rgba(31,30,28,0.11)]" aria-labelledby="how-heading">
+        <div className="mx-auto max-w-[1200px] px-4 py-16 sm:px-8 sm:py-20">
+          <Reveal>
+            <p className="ox-label">How it works</p>
+            <h2 id="how-heading" className="font-display mt-3.5 max-w-[20ch] text-[clamp(28px,3vw,40px)] text-ink">
+              Three steps. No agents to install.
+            </h2>
+          </Reveal>
+          <ol className="mt-12 grid gap-8 md:grid-cols-3 md:gap-10">
+            {HOW_STEPS.map((step) => (
+              <li key={step.n}>
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-forest">
+                  <step.Icon size={18} aria-hidden="true" />
+                </span>
+                <p className="ox-label mt-4">{step.n}</p>
+                <h3 className="mt-2 text-[18px] font-medium tracking-tight text-ink">{step.title}</h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-ink-2">{step.text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="px-4 pb-6 sm:px-6" aria-labelledby="sentinel-heading">
+        <div className="mx-auto max-w-[1100px] px-0 pt-16 sm:pt-20">
+          <p className="ox-label">See it run</p>
+          <h2 id="sentinel-heading" className="font-display mt-3.5 text-[clamp(28px,3vw,40px)] text-ink">
+            Watch a first scan, as it happens.
+          </h2>
+          <p className="ox-lead mt-3">
+            Same Sentinel view you get in the product: connect sources, watch findings land, then open
+            the live inventory.
+          </p>
+        </div>
         <DiscoveryRoomStage />
       </section>
 
       {/* Logo strip */}
       <section className="border-y border-line py-10" aria-label="Trusted by">
-        <p className="ox-label text-center text-sub">
-          Trusted by security teams across industries
-        </p>
+        <p className="ox-label text-center text-sub">Works with the tools your agents already use</p>
         <LogoMarquee />
       </section>
 
@@ -911,17 +1056,18 @@ export default function Home() {
         <Reveal>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div className="max-w-2xl text-left">
-              <p className="ox-label text-sub">Three products</p>
+              <p className="ox-label text-sub">Platform</p>
               <h2 className="font-display mt-3 text-3xl leading-tight text-ink sm:text-4xl lg:text-[2.75rem]">
                 See it. Own it. Shut it down.
               </h2>
               <p className="mt-4 text-base text-sub sm:text-lg">
-                Discovery, ownership, risk, and revocation, built for shadow AI.
+                One inventory for discovery, ownership, risk, and revocation, built for shadow AI.
               </p>
             </div>
             {/* Carousel navigation controls */}
             <div className="flex gap-2.5">
               <button
+                type="button"
                 onClick={() => scroll('left')}
                 className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-card text-ink shadow-soft hover:bg-muted transition-colors"
                 aria-label="Previous slide"
@@ -929,6 +1075,7 @@ export default function Home() {
                 <ArrowLeft size={18} />
               </button>
               <button
+                type="button"
                 onClick={() => scroll('right')}
                 className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-card text-ink shadow-soft hover:bg-muted transition-colors"
                 aria-label="Next slide"
@@ -944,15 +1091,9 @@ export default function Home() {
           ref={scrollRef}
           className="mt-14 flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none pb-8 px-1"
         >
-          {modules.map((m, i) => (
-            <div key={m.name} className="w-[280px] sm:w-[340px] shrink-0 snap-start">
-              <article className="mod-card group flex h-[380px] flex-col rounded-[22px] bg-muted p-7 sm:p-8 cursor-pointer select-none">
-                <h3 className="font-display text-[1.35rem] tracking-tight text-ink sm:text-2xl">{m.name}</h3>
-                <p className="mt-3 text-[14px] leading-relaxed text-sub line-clamp-2">{m.text}</p>
-                <div className="mt-10 flex flex-1 flex-col justify-end">
-                  <ModuleVisual kind={m.visual} />
-                </div>
-              </article>
+          {modules.map((m) => (
+            <div key={m.name} data-module-card className="w-[280px] sm:w-[340px] shrink-0 snap-start">
+              <ModuleCard name={m.name} text={m.text} visual={m.visual} />
             </div>
           ))}
         </div>
@@ -961,12 +1102,12 @@ export default function Home() {
         <div className="mt-2 flex justify-center gap-2">
           {modules.map((_, idx) => (
             <button
+              type="button"
               key={idx}
               onClick={() => {
-                if (scrollRef.current) {
-                  const cardWidth = 340 + 20
-                  scrollRef.current.scrollTo({ left: idx * cardWidth, behavior: 'smooth' })
-                }
+                const el = scrollRef.current
+                if (!el) return
+                el.scrollTo({ left: idx * strideOf(el), behavior: 'smooth' })
               }}
               className={`h-1.5 rounded-full transition-all duration-300 ${
                 activeIndex === idx ? 'w-6 bg-forest' : 'w-1.5 bg-line'
@@ -985,9 +1126,9 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <Reveal>
             <header className="mx-auto max-w-3xl text-center">
-              <p className="ox-label text-sub">Platform</p>
+              <p className="ox-label text-sub">Capabilities</p>
               <h2 className="font-display mt-3 text-3xl leading-tight text-ink sm:text-4xl">
-                We built the features everybody missed.
+                What you get in one place
               </h2>
               <p className="font-display mt-2 text-3xl leading-tight text-sub sm:text-4xl">
                 All in one place. Owned by you.
@@ -1007,12 +1148,11 @@ export default function Home() {
                 <div className="relative z-10 flex h-full flex-col">
                   <div>
                     <h3 className="text-[20px] leading-snug font-medium tracking-tight text-[#1f1e1c] sm:text-[22px]">
-                      Everything you audit is exportable code.
+                      Exports you can read, not a black box.
                     </h3>
                     <p className="mt-2 max-w-[52ch] text-[13px] leading-relaxed text-[#7d756d] sm:text-[14px]">
-                      No black boxes. No vendor lock-in. Every event, session trace, and compliance
-                      checklist compiles down to clean, auditor-ready JSON and signed PDFs you can
-                      read, edit, run locally, and self-host.
+                      Every finding ships as JSON and signed PDFs. Your auditors can open them. You
+                      can self-host. Nothing is locked inside Orbita.
                     </p>
                   </div>
                   <TbCodeStack />
@@ -1029,12 +1169,11 @@ export default function Home() {
                 <div className="relative z-10 flex h-full flex-col">
                   <div>
                     <h3 className="text-[20px] leading-snug font-medium tracking-tight text-[#1f1e1c] sm:text-[22px]">
-                      ACE: Proven protection, at a fraction of the cost.
+                      Stop bad agent actions in real time.
                     </h3>
                     <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-[#7d756d] sm:text-[15px]">
-                      The Action Control Engine is a behavioral runtime that keeps every agent
-                      inside policy in production, dropped in as a security proxy in front of any
-                      LLM.
+                      The Action Control Engine (ACE) sits in front of any LLM and blocks moves that
+                      break policy, without adding noticeable delay.
                     </p>
                   </div>
                   <TbAceStats />
@@ -1051,12 +1190,11 @@ export default function Home() {
                 <div className="relative z-10 flex h-full flex-col">
                   <div>
                     <h3 className="text-[20px] leading-snug font-medium tracking-tight text-[#1f1e1c] sm:text-[22px]">
-                      Proprietary technology, not a wrapper.
+                      Built for agents, not bolted onto chat.
                     </h3>
                     <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-[#7d756d] sm:text-[15px]">
-                      Our set of developer-first security products covers the full agent
-                      lifecycle. Discovery Engine, Identity Graph, ACE, Hybrid DB, CLI, SDK, and
-                      MCP, all built in-house, all working together.
+                      Discovery, identity graph, ACE, and evidence export are one product. Not a
+                      chatbot wrapper around someone else’s logs.
                     </p>
                   </div>
                   <div aria-hidden="true" className="relative mt-6 flex w-full flex-1 items-center justify-center overflow-hidden px-2 text-center" style={{ minHeight: 140 }}>
@@ -1073,8 +1211,8 @@ export default function Home() {
                       Three layers. One platform.
                     </h3>
                     <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-[#7d756d] sm:text-[15px]">
-                      Data, intelligence, and interface: a clean separation of security layers that
-                      scales from a single agent to enterprise-wide AI infrastructure.
+                      Data, intelligence, and interface stay separate so you can start with one
+                      team and grow to company-wide AI without ripping out the stack.
                     </p>
                   </div>
                   <TbIsoStack />
@@ -1086,11 +1224,11 @@ export default function Home() {
                 <div className="relative z-10 flex h-full flex-col">
                   <div>
                     <h3 className="text-[20px] leading-snug font-medium tracking-tight text-[#1f1e1c] sm:text-[22px]">
-                      Deploy anywhere, no compromises.
+                      Run it in our cloud or yours.
                     </h3>
                     <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-[#7d756d] sm:text-[15px]">
-                      Our cloud, your VPC, or your own racks. Multi-tenant, dedicated, or fully
-                      on-premise. Optimized for portability, scalability and performance.
+                      Multi-tenant SaaS, a dedicated VPC, or fully on-premise. Same product, same
+                      kill switch, wherever your data has to live.
                     </p>
                   </div>
                   <TbDeployGrid />
@@ -1102,12 +1240,11 @@ export default function Home() {
                 <div className="relative z-10 flex h-full flex-col">
                   <div>
                     <h3 className="text-[20px] leading-snug font-medium tracking-tight text-[#1f1e1c] sm:text-[22px]">
-                      100+ integrations. Every MCP. Custom tools.
+                      Slack, GitHub, Zapier, and MCP, out of the box.
                     </h3>
                     <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-[#7d756d] sm:text-[15px]">
-                      Every connector doubles as a discovery surface. Connect your existing stack
-                      out of the box, securely plug in any MCP server, or build custom tools and
-                      integrations in minutes.
+                      Each connector is also a discovery surface. Plug in the stack you have, add
+                      any MCP server, or ship a custom tool without a long integration project.
                     </p>
                   </div>
                   <TbLogoMarquee />
@@ -1124,8 +1261,8 @@ export default function Home() {
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="ox-label text-sub">Resources</p>
-              <h2 className="font-display mt-3 text-3xl leading-tight text-ink sm:text-4xl">From the ledger</h2>
-              <p className="mt-2 text-sm text-sub">Field notes from the discovery team.</p>
+              <h2 className="font-display mt-3 text-3xl leading-tight text-ink sm:text-4xl">Guides for security teams</h2>
+              <p className="mt-2 text-sm text-sub">Shadow MCP, DPDP, and orphaned agents, in plain language.</p>
             </div>
             <Link to="/blog" className="inline-flex items-center gap-1.5 text-sm font-semibold hover:underline">
               All articles
@@ -1141,14 +1278,49 @@ export default function Home() {
                 className="group flex h-full flex-col rounded-[22px] border border-line bg-card p-6 transition-colors hover:border-ink/20"
               >
                 <p className="text-xs font-medium text-sub">
-                  {p.tag} · {p.readTime}
+                  {p.tag} · {p.readTime} read
                 </p>
                 <h3 className="mt-3 flex-1 text-base font-bold tracking-tight group-hover:underline">
                   {p.title}
                 </h3>
+                <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-sub">{p.excerpt}</p>
               </Link>
             </Reveal>
           ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-[800px] px-4 pb-16 sm:px-8" aria-labelledby="faq-heading">
+        <Reveal>
+          <p className="ox-label text-center">FAQ</p>
+          <h2 id="faq-heading" className="font-display mt-3 text-center text-3xl leading-tight text-ink sm:text-4xl">
+            Questions teams ask before the first scan
+          </h2>
+        </Reveal>
+        <div className="mt-8 divide-y divide-line border-y border-line">
+          {HOME_FAQS.map((item, i) => {
+            const open = openFaq === i
+            return (
+              <div key={item.q}>
+                <button
+                  type="button"
+                  aria-expanded={open}
+                  onClick={() => setOpenFaq(open ? -1 : i)}
+                  className="flex w-full cursor-pointer items-center justify-between gap-4 py-4 text-left"
+                >
+                  <span className="text-[16px] font-medium tracking-tight text-ink">{item.q}</span>
+                  <ChevronDown
+                    size={18}
+                    className={`shrink-0 text-sub transition-transform ${open ? 'rotate-180' : ''}`}
+                    aria-hidden="true"
+                  />
+                </button>
+                {open && (
+                  <p className="pb-4 text-[15px] leading-relaxed text-ink-2">{item.a}</p>
+                )}
+              </div>
+            )
+          })}
         </div>
       </section>
 
@@ -1157,18 +1329,18 @@ export default function Home() {
         <section className="mx-auto max-w-[1200px] px-4 pb-24 sm:px-8">
           <div className="ox-plate relative overflow-hidden px-8 py-16 text-center sm:px-12 sm:py-20">
             <h2 className="font-display relative text-[clamp(28px,3vw,40px)] leading-[1.05] tracking-[-0.03em]">
-              Take command of the agents your company already runs.
+              Get a live inventory of every AI agent you already run.
             </h2>
             <p className="relative mx-auto mt-4 max-w-md text-[15px] text-white/[0.84]">
               Free discovery scan · read-only access · data stays in India
             </p>
             <div className="relative mt-7 flex flex-wrap items-center justify-center gap-2.5">
               <Link to="/signup" className="ox-btn ox-btn-primary">
-                Get started
+                Start a free scan
                 <ArrowRight size={15} aria-hidden="true" />
               </Link>
-              <Link to="/app" className="ox-btn ox-btn-ghost">
-                Get a demo
+              <Link to="/pricing" className="ox-btn ox-btn-ghost">
+                See pricing
               </Link>
             </div>
           </div>

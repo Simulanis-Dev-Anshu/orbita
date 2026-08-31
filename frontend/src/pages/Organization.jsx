@@ -16,7 +16,7 @@ function initials(name) {
 }
 
 function roleName(roleId) {
-  return roles.find((r) => r.id === roleId)?.name ?? '—'
+  return roles.find((r) => r.id === roleId)?.name ?? '-'
 }
 
 export default function Organization() {

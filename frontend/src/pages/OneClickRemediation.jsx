@@ -31,7 +31,7 @@ export default function OneClickRemediation() {
               Recommend → Admin approves → Execute
             </h2>
             <p className="mt-1 text-sm text-sub">
-              Revoke OAuth, disable MCP, rotate tokens, open Jira — never fully autonomous at first.
+              Revoke OAuth, disable MCP, rotate tokens, open Jira. Never fully autonomous at first.
             </p>
           </div>
         </div>

@@ -32,7 +32,7 @@ export default function RiskScores() {
               Permission + sensitivity + identity + trust + exposure + action
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-sub">
-              Deterministic rules first — explainable totals your security team can audit.
+              Deterministic rules first: explainable totals your security team can audit.
             </p>
           </div>
         </div>

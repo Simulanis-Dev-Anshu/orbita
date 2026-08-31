@@ -35,7 +35,7 @@ class Agent(Base):
     name: Mapped[str] = mapped_column(String(200), index=True)
     platform: Mapped[str] = mapped_column(String(60))
     owner_name: Mapped[str] = mapped_column(String(120), default="Unassigned")
-    owner_role: Mapped[str] = mapped_column(String(120), default="—")
+    owner_role: Mapped[str] = mapped_column(String(120), default="-")
     scopes: Mapped[List[str]] = mapped_column(JSON, default=list)
     risk: Mapped[int] = mapped_column(Integer, default=50)
     status: Mapped[str] = mapped_column(String(20), default="pending")  # active | pending | orphaned

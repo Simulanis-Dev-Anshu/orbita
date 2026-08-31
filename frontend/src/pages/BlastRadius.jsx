@@ -22,7 +22,7 @@ export default function BlastRadius() {
               If this AI account is compromised, what can it reach?
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-sub">
-              Actionable reach counts — repos, DBs, Drive files, Slack channels — not just a map.
+              Actionable reach counts (repos, DBs, Drive files, Slack channels), not just a map.
             </p>
           </div>
         </div>

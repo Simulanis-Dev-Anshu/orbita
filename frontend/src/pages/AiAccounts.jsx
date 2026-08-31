@@ -62,7 +62,7 @@ export default function AiAccounts() {
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-sub">
               Knowing someone uses ChatGPT is not enough. See whether they are on the controlled
-              corporate account or a personal one — the visibility gap Netskope calls out for AI.
+              corporate account or a personal one, the visibility gap Netskope calls out for AI.
             </p>
           </div>
           <div className="flex flex-wrap gap-2 text-xs font-semibold">
