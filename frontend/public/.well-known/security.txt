@@ -1,0 +1,6 @@
+Contact: mailto:security@orbita.io
+Expires: 2027-08-25T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://www.orbita.io/.well-known/security.txt
+Policy: https://www.orbita.io/security
+Acknowledgments: https://www.orbita.io/security#report

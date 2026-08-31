@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { posts } from '../../data/blog.js'
 import useReveal from '../../hooks/useReveal.js'
+import useSeo from '../../hooks/useSeo.js'
 
 const tagColors = {
   Research: 'bg-brand-soft text-forest',
@@ -47,6 +48,20 @@ function PostCard({ post, featured }) {
 
 export default function Blog() {
   const [featured, ...rest] = posts
+  useSeo({
+    title: 'The Shadow Ledger — Orbita research on shadow AI',
+    description:
+      'Research and field notes on shadow AI, MCP servers, orphaned agents and DPDP compliance — from the Orbita discovery team.',
+    path: '/blog',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'Blog',
+      name: 'The Shadow Ledger',
+      url: 'https://www.orbita.io/blog',
+      description:
+        'Research and field notes on shadow AI, agent governance and DPDP compliance.',
+    },
+  })
   return (
     <main className="mx-auto max-w-[1200px] px-4 py-16 sm:px-8">
       <p className="ox-label">Journal</p>

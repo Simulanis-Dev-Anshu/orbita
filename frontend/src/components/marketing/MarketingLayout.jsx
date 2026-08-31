@@ -40,6 +40,7 @@ const navLinks = [
   { to: '/#how-it-works', label: 'How it works' },
   { to: '/pricing', label: 'Pricing' },
   { to: '/blog', label: 'Blog' },
+  { to: '/security', label: 'Security' },
   { to: '/about', label: 'About' },
 ]
 
@@ -70,9 +71,11 @@ const footerCols = [
     h: 'Company',
     links: [
       ['About', '/about'],
+      ['Contact', '/contact'],
+      ['Security', '/security'],
       ['Privacy', '/privacy'],
       ['Terms', '/terms'],
-      ['Cookies', null],
+      ['Cookies', '/cookies'],
     ],
   },
 ]
@@ -279,6 +282,22 @@ export default function MarketingLayout() {
           <div className="mx-auto flex max-w-[1200px] flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-5">
             <p className="text-[12.5px] text-sub">© 2026 Orbita, Inc. All rights reserved.</p>
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] text-sub">
+              <Link to="/privacy" className="transition-colors hover:text-ink">
+                Privacy
+              </Link>
+              <Link to="/terms" className="transition-colors hover:text-ink">
+                Terms
+              </Link>
+              <Link to="/cookies" className="transition-colors hover:text-ink">
+                Cookies
+              </Link>
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new Event(COOKIE_PREFS_EVENT))}
+                className="cursor-pointer transition-colors hover:text-ink"
+              >
+                Cookie preferences
+              </button>
               <span className="inline-flex items-center gap-2">
                 Ask about Orbita on
                 {socials.slice(0, 2).map(({ Icon, label, href }) => (

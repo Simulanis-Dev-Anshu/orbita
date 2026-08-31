@@ -18,6 +18,9 @@ import useSeo from '../../hooks/useSeo.js'
 import { posts } from '../../data/blog.js'
 import HeroAsciiBackground from '../../components/hero/HeroAsciiBackground.jsx'
 import DiscoveryRoomStage from '../../components/marketing/DiscoveryRoomStage.jsx'
+import useSeo from '../../hooks/useSeo.js'
+import SeoFaq from '../../components/marketing/SeoFaq.jsx'
+import { comparison, faqSchema, homeFaqs, softwareApp } from '../../data/seo.js'
 
 function Reveal({ children, className = '', delay = 0 }) {
   const ref = useReveal()
@@ -389,9 +392,16 @@ function TbLogoMarquee() {
 
 const modules = [
   {
+    name: 'Identity',
+    text: 'Organization, OAuth grants, AI accounts and correlation. Every non-human identity tied to a person.',
+    visual: 'graph',
+    to: '/app/identity',
+  },
+  {
     name: 'Discovery',
     text: 'Connect Slack, Google, GitHub, and Zapier. Orbita lists every bot and AI app it finds, with no install on the agents themselves.',
     visual: 'scan',
+    to: '/app/discovery',
   },
   {
     name: 'Identity graph',
@@ -412,6 +422,7 @@ const modules = [
     name: 'Fingerprinting',
     text: 'A 24-hour heatmap shows whether an account acts like a person or a machine. Auditors get it in seconds.',
     visual: 'finger',
+    to: '/app/risk',
   },
   {
     name: 'Shadow MCP',
@@ -509,6 +520,11 @@ function ModuleCard({ name, text, visual }) {
 
 function ModuleVisual({ kind }) {
   if (kind === 'scan') {
+    const blips = [
+      { t: 'Zapier', x: '78%', y: '28%', d: '0.4s' },
+      { t: 'MCP', x: '18%', y: '38%', d: '2.6s' },
+      { t: 'GPT', x: '72%', y: '68%', d: '4.8s' },
+    ]
     return (
       <div className="mt-auto w-full space-y-3.5 text-center">
         <div className="flex justify-center gap-1.5">
@@ -537,6 +553,11 @@ function ModuleVisual({ kind }) {
   }
 
   if (kind === 'graph') {
+    const nodes = [
+      ['Anshu · IdP', 'owner'],
+      ['Payroll bot', 'agent'],
+      ['Gmail · PII', 'scope'],
+    ]
     return (
       <div className="relative mt-auto flex w-full flex-col items-center gap-2.5 py-1 text-center">
         <span className={`${pill} border border-line/40 px-4 py-2 text-[12px] font-semibold`}>Owner · IdP</span>
@@ -588,6 +609,7 @@ function ModuleVisual({ kind }) {
   }
 
   if (kind === 'comp') {
+    const items = ['DPDP register', 'SOC 2 pack', 'ISO 27001']
     return (
       <div className="mt-auto w-full space-y-3.5 text-center">
         <div className={`${pill} mx-auto flex w-fit items-center gap-1.5 border border-line/40 px-3.5 py-2 text-[11px] font-semibold`}>
@@ -602,6 +624,25 @@ function ModuleVisual({ kind }) {
           <span className="text-[13px] font-semibold text-sub/70 transition-colors duration-500 group-hover:text-ink">Ask evidence</span>
           <span className="mod-caret ml-0.5 inline-block h-4 w-[2px] bg-forest" />
         </div>
+        {items.map((label, i) => (
+          <div key={label} className={`${pill} flex items-center gap-2.5 px-3 py-2`}>
+            <svg viewBox="0 0 16 16" className="h-4 w-4 shrink-0" fill="none">
+              <rect x="1.5" y="1.5" width="13" height="13" rx="3" stroke="rgba(23,7,2,0.2)" />
+              <path
+                className="hub-check"
+                style={{ animationDelay: `${i * 0.7}s` }}
+                d="M4 8.2l2.4 2.4L12 5.2"
+                stroke="#ff4d00"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeDasharray="12"
+                strokeDashoffset="12"
+              />
+            </svg>
+            <span className="text-[12px] font-medium text-ink">{label}</span>
+          </div>
+        ))}
       </div>
     )
   }
@@ -651,6 +692,12 @@ function ModuleVisual({ kind }) {
   }
 
   if (kind === 'mcp') {
+    const nodes = [
+      [40, 'User'],
+      [107, 'App'],
+      [174, 'Agent'],
+      [240, 'Data'],
+    ]
     return (
       <div className="relative mt-auto flex h-28 w-full items-center justify-center text-center">
         <span className={`${pill} absolute top-1 left-3 border border-line/30 px-2.5 py-1.5 text-[10px] font-semibold`}>
@@ -986,6 +1033,19 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="border-b border-[rgba(31,30,28,0.11)]" aria-label="What Orbita is">
+        <div className="mx-auto max-w-[1200px] px-4 py-16 sm:px-8 sm:py-20">
+          <p className="ox-label">Definition</p>
+          <h2 className="font-display mt-3.5 text-[clamp(28px,3vw,40px)] text-ink">What is Orbita?</h2>
+          <p className="mt-5 max-w-[62ch] text-[15px] leading-[1.65] text-ink-2">
+            Orbita is an AI agent discovery and governance platform that finds, inventories and
+            risk-scores every AI agent, automation, custom GPT and MCP server running in a company.
+            Security teams use it to assign a human owner, revoke orphaned agents, and export DPDP,
+            SOC 2 and ISO 27001 evidence — without installing an SDK.
+          </p>
+        </div>
+      </section>
+
       {/* Thesis */}
       <section className="border-b border-[rgba(31,30,28,0.11)]">
         <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-16 sm:px-8 sm:py-20 md:grid-cols-2 md:gap-16">
@@ -1118,12 +1178,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* We built the features everybody missed: timbal-style bento */}
-      <section
-        className="border-t border-line/40 bg-white py-20 sm:py-24"
-        style={{ fontFamily: "'Inter Tight', ui-sans-serif, system-ui, sans-serif" }}
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section className="border-y border-[rgba(31,30,28,0.11)] bg-canvas py-20" aria-label="Orbita compared">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-8">
           <Reveal>
             <header className="mx-auto max-w-3xl text-center">
               <p className="ox-label text-sub">Capabilities</p>
