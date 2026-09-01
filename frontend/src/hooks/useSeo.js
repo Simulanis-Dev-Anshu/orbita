@@ -1,63 +1,66 @@
 import { useEffect } from 'react'
 
-const SITE = 'https://www.orbita.io'
-
-function upsertMeta(attr, key, content) {
-  if (!content) return
+function upsertMeta(attr, key, value) {
+  if (!value) return
   let el = document.querySelector(`meta[${attr}="${key}"]`)
   if (!el) {
     el = document.createElement('meta')
     el.setAttribute(attr, key)
     document.head.appendChild(el)
   }
-  el.setAttribute('content', content)
+  el.setAttribute('content', value)
 }
 
-function upsertLink(rel, href) {
-  if (!href) return
-  let el = document.querySelector(`link[rel="${rel}"]`)
-  if (!el) {
-    el = document.createElement('link')
-    el.setAttribute('rel', rel)
-    document.head.appendChild(el)
-  }
-  el.setAttribute('href', href)
-}
+const SITE = 'https://www.orbita.io'
 
-export default function useSeo({ title, description, path, type = 'website', jsonLd, noindex }) {
-  const json = jsonLd ? JSON.stringify(jsonLd) : ''
+// Per-page SEO: title, description, canonical, Open Graph, optional JSON-LD.
+export default function useSeo({ title, description, path, jsonLd, type = 'website' }) {
+  const jsonLdKey = jsonLd ? JSON.stringify(jsonLd) : ''
 
   useEffect(() => {
     if (title) document.title = title
-    upsertMeta('name', 'description', description)
-    upsertMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow')
 
-    const url = path ? `${SITE}${path}` : undefined
-    upsertLink('canonical', url)
+    if (description) {
+      upsertMeta('name', 'description', description)
+      upsertMeta('property', 'og:description', description)
+      upsertMeta('name', 'twitter:description', description)
+    }
 
-    upsertMeta('property', 'og:title', title)
-    upsertMeta('property', 'og:description', description)
-    upsertMeta('property', 'og:url', url)
+    if (title) {
+      upsertMeta('property', 'og:title', title)
+      upsertMeta('name', 'twitter:title', title)
+    }
+
     upsertMeta('property', 'og:type', type)
     upsertMeta('property', 'og:site_name', 'Orbita')
-    upsertMeta('name', 'twitter:card', 'summary')
-    upsertMeta('name', 'twitter:title', title)
-    upsertMeta('name', 'twitter:description', description)
+    upsertMeta('name', 'twitter:card', 'summary_large_image')
 
-    document.querySelectorAll('script[data-seo-jsonld]').forEach((n) => n.remove())
-    if (json) {
-      const parsed = JSON.parse(json)
-      for (const block of Array.isArray(parsed) ? parsed : [parsed]) {
-        const script = document.createElement('script')
+    const url = path ? `${SITE}${path}` : undefined
+    if (url) {
+      upsertMeta('property', 'og:url', url)
+      let link = document.querySelector('link[rel="canonical"]')
+      if (!link) {
+        link = document.createElement('link')
+        link.setAttribute('rel', 'canonical')
+        document.head.appendChild(link)
+      }
+      link.setAttribute('href', url)
+    }
+
+    let script = document.getElementById('orbita-jsonld')
+    if (jsonLdKey) {
+      if (!script) {
+        script = document.createElement('script')
+        script.id = 'orbita-jsonld'
         script.type = 'application/ld+json'
-        script.dataset.seoJsonld = '1'
-        script.textContent = JSON.stringify(block)
         document.head.appendChild(script)
       }
+      script.textContent = jsonLdKey
     }
 
     return () => {
-      document.querySelectorAll('script[data-seo-jsonld]').forEach((n) => n.remove())
+      const leftover = document.getElementById('orbita-jsonld')
+      if (leftover && jsonLdKey) leftover.remove()
     }
-  }, [title, description, path, type, json, noindex])
+  }, [title, description, path, jsonLdKey, type])
 }

@@ -199,7 +199,7 @@ async def settings_overview(
     return {
         "workspace": {
             "companyName": "Zintellix",
-            "dataResidency": "India — AWS Mumbai (DPDP-aligned)",
+            "dataResidency": "India, AWS Mumbai (DPDP-aligned)",
         },
         "teamMembers": [
             {

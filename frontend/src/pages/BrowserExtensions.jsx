@@ -61,7 +61,7 @@ export default function BrowserExtensions() {
               Endpoint inventory across Chrome, Edge & Safari
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-sub">
-              Detect ChatGPT, Claude, Grammarly, Perplexity, Monica, Sider and other AI extensions —
+              Detect ChatGPT, Claude, Grammarly, Perplexity, Monica, Sider and other AI extensions,
               the same class of coverage Netskope provides for browser endpoints.
             </p>
           </div>

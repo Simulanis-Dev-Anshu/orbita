@@ -37,6 +37,7 @@ function StatusDot(props) {
 }
 
 const navLinks = [
+  { to: '/#how-it-works', label: 'How it works' },
   { to: '/pricing', label: 'Pricing' },
   { to: '/blog', label: 'Blog' },
   { to: '/security', label: 'Security' },
@@ -94,24 +95,32 @@ export default function MarketingLayout() {
       <header className="sticky top-0 z-40 border-b border-[rgba(31,30,28,0.11)] bg-[#fffaf8]/88 backdrop-blur-[14px]">
         <nav className="relative mx-auto flex h-14 max-w-[1200px] items-center px-4 sm:px-8" aria-label="Main">
           <Link to="/" className="relative z-10 flex items-center gap-2.5" onClick={() => setOpen(false)}>
-            <BrandMark size={28} />
+            <BrandMark size={32} />
             <span className="text-[15px] font-medium tracking-[-0.01em]">Orbita</span>
           </Link>
 
           <div className="absolute inset-x-0 hidden items-center justify-center gap-7 md:flex">
-            {navLinks.map((l) => (
-              <NavLink
-                key={l.to}
-                to={l.to}
-                className={({ isActive }) =>
-                  `text-[13.5px] font-medium tracking-[-0.01em] transition-colors ${
-                    isActive ? 'text-ink' : 'text-ink-2 hover:text-ink'
-                  }`
-                }
-              >
-                {l.label}
-              </NavLink>
-            ))}
+            {navLinks.map((l) => {
+              const className = 'text-[13.5px] font-medium tracking-[-0.01em] transition-colors'
+              if (l.to.includes('#')) {
+                return (
+                  <Link key={l.to} to={l.to} className={`${className} text-ink-2 hover:text-ink`}>
+                    {l.label}
+                  </Link>
+                )
+              }
+              return (
+                <NavLink
+                  key={l.to}
+                  to={l.to}
+                  className={({ isActive }) =>
+                    `${className} ${isActive ? 'text-ink' : 'text-ink-2 hover:text-ink'}`
+                  }
+                >
+                  {l.label}
+                </NavLink>
+              )
+            })}
           </div>
 
           <div className="relative z-10 ml-auto hidden items-center gap-2 md:flex">
@@ -261,11 +270,7 @@ export default function MarketingLayout() {
             ))}
           </div>
 
-          {/* Giant brand lockup */}
-          <div className="footer-brand mt-16 flex items-center gap-4 overflow-hidden sm:mt-20 sm:gap-6 md:gap-8">
-            <BrandMark size={72} className="footer-brand-mark shrink-0 sm:hidden" />
-            <BrandMark size={96} className="footer-brand-mark hidden shrink-0 sm:block md:hidden" />
-            <BrandMark size={120} className="footer-brand-mark hidden shrink-0 md:block" />
+          <div className="footer-brand mt-16 overflow-hidden sm:mt-20">
             <span className="footer-wordmark" aria-label="Orbita">
               Orbita
             </span>

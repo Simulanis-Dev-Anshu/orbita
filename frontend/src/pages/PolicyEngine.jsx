@@ -12,7 +12,7 @@ export default function PolicyEngine() {
           <div>
             <p className="ox-label text-sub">AI Policy Engine</p>
             <h2 className="mt-1 text-xl font-semibold tracking-tight text-ink">
-              Encode who may use what — then evaluate every asset
+              Encode who may use what, then evaluate every asset
             </h2>
             <p className="mt-1 text-sm text-sub">
               Engineering allowlists, ban personal accounts, block prod access, require MCP write approval.

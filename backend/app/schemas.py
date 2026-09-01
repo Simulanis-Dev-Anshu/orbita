@@ -45,7 +45,7 @@ class AgentIn(BaseModel):
     name: str = Field(min_length=1, max_length=200)
     platform: str = "Other"
     owner_name: str = "Unassigned"
-    owner_role: str = "—"
+    owner_role: str = "-"
     scopes: List[str] = []
     risk: Optional[int] = Field(default=None, ge=0, le=100)
     status: str = "pending"

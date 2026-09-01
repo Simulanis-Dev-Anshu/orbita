@@ -101,10 +101,6 @@ body {
 .footer-brand {
   padding-bottom: 1.25rem;
 }
-.footer-brand-mark {
-  border-radius: 14px;
-  box-shadow: 0 12px 40px rgba(23, 7, 2, 0.18);
-}
 .footer-wordmark {
   display: block;
   font-family: var(--font-display);
@@ -727,34 +723,90 @@ body {
   animation: live-pulse 2s ease-out infinite;
 }
 
-/* ---------- Module cards: always-on, meaning-bearing motion ---------- */
+/* ---------- Module cards: pointer-follow, no pop-in ---------- */
 
 .mod-card {
-  box-shadow: none;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transform-style: preserve-3d;
+  will-change: transform;
+  box-shadow: 0 1px 0 rgba(23, 7, 2, 0.04);
+  transition: box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mod-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: var(--on, 0);
+  background: radial-gradient(
+    240px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 77, 0, 0.16),
+    transparent 62%
+  );
+}
+.mod-card:hover {
+  box-shadow: 0 16px 36px rgba(23, 7, 2, 0.08);
 }
 
-@keyframes hub-spin {
+@keyframes mod-scan-x {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(420%); }
+}
+.mod-scan-x {
+  animation: mod-scan-x 1.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  animation-play-state: paused;
+}
+.group:hover .mod-scan-x {
+  animation-play-state: running;
+}
+
+@keyframes mod-flow {
+  to { stroke-dashoffset: -28; }
+}
+.mod-flow {
+  animation: mod-flow 1.8s linear infinite;
+}
+
+@keyframes mod-heat {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.35); }
+}
+.group:hover .mod-heat-on {
+  animation: mod-heat 1.4s ease-in-out infinite;
+}
+
+@keyframes mod-spin {
   to { transform: rotate(360deg); }
 }
-.hub-spin {
-  animation: hub-spin 7s linear infinite;
+.group:hover .mod-spin-hover {
+  animation: mod-spin 4.5s linear infinite;
 }
 
-@keyframes hub-ping {
-  0% { transform: translate(-50%, -50%) scale(0.35); opacity: 0.55; }
-  70% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
-  100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+@keyframes mod-sweep-y {
+  0% { transform: translateY(-100%); opacity: 0; }
+  12% { opacity: 0.85; }
+  88% { opacity: 0.85; }
+  100% { transform: translateY(220%); opacity: 0; }
 }
-.hub-ping {
-  animation: hub-ping 7s ease-out infinite;
+.mod-sweep-idle {
+  animation: mod-sweep-y 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  opacity: 0.45;
+}
+.group:hover .mod-sweep-idle {
+  animation-duration: 1.6s;
+  opacity: 1;
 }
 
-@keyframes hub-fall {
-  0% { top: 10%; }
-  100% { top: 86%; }
+@keyframes mod-wave {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
 }
-.hub-fall {
-  animation: hub-fall 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+.mod-wave {
+  animation: mod-wave 2.8s ease-in-out infinite;
 }
 
 @keyframes hub-lock {
@@ -905,22 +957,14 @@ body {
 
   .mod-caret,
   .mod-dash,
-  .hub-spin,
-  .hub-ping,
-  .hub-fall,
-  .hub-lock,
-  .hub-dash,
-  .hub-packet,
-  .hub-node,
-  .hub-scan-row,
-  .hub-type,
-  .hub-switch,
-  .hub-knob,
-  .hub-step,
-  .hub-dot,
-  .hub-bar,
-  .hub-fill,
-  .hub-check,
+  .mod-press,
+  .mod-ring,
+  .mod-scan-x,
+  .mod-flow,
+  .mod-heat-on,
+  .mod-spin-hover,
+  .mod-sweep-idle,
+  .mod-wave,
   .eq-bar,
   .live-dot,
   .mod-card {

@@ -194,8 +194,9 @@ const RAW_AGENTS = [
   },
   {
     id: 'app-04',
-    name: 'Gemini',
-    platform: 'Gemini',
+    name: 'Microsoft Copilot',
+    platform: 'Copilot',
+    vendor: 'Microsoft',
     owner: 'Priya Nair',
     ownerRole: 'HR Manager',
     scopes: ['Workspace'],
@@ -204,7 +205,7 @@ const RAW_AGENTS = [
     lastActive: '1 hr ago',
     device: 'Chrome · macOS',
     source: 'browser',
-    connections: ['google.com'],
+    connections: ['microsoft.com'],
     dataAccess: ['Drive', 'Gmail'],
   },
   {
@@ -485,7 +486,7 @@ export const teamMembers = [
 export const benchmark = {
   orphanedVsPeers: 2.1,
   riskPercentile: 68,
-  peerGroup: 'Indian mid-market SaaS · 200–500 employees',
+  peerGroup: 'Indian mid-market SaaS · 200-500 employees',
 }
 
 // Sparkline history for the KPI cards (last 8 weeks)

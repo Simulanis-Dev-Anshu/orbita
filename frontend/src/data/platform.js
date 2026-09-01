@@ -1,4 +1,4 @@
-/** Phase 1–3 platform mock: org hierarchy, AI asset DB, application discovery. */
+/** Phase 1-3 platform mock: org hierarchy, AI asset DB, application discovery. */
 
 export const organization = {
   id: 'org-1',
@@ -110,7 +110,7 @@ export const users = [
   },
 ]
 
-/** Central AI inventory — typed assets across the org. */
+/** Central AI inventory:  typed assets across the org. */
 export const aiAssets = [
   {
     id: 'as-1',
@@ -138,9 +138,9 @@ export const aiAssets = [
   },
   {
     id: 'as-3',
-    name: 'Gemini Advanced',
+    name: 'Microsoft Copilot',
     type: 'AI_APP',
-    vendor: 'Google',
+    vendor: 'Microsoft',
     owner: 'John',
     team: 'Marketing',
     status: 'active',
@@ -178,7 +178,7 @@ export const aiAssets = [
     type: 'AI_APP',
     vendor: 'xAI',
     owner: 'Unassigned',
-    team: '—',
+    team: '-',
     status: 'orphaned',
     risk: 78,
     source: 'Network',
@@ -202,7 +202,7 @@ export const aiAssets = [
     type: 'AI_AGENT',
     vendor: 'Zapier',
     owner: 'Unassigned',
-    team: '—',
+    team: '-',
     status: 'orphaned',
     risk: 92,
     source: 'OAuth',
@@ -296,7 +296,7 @@ export const aiAssets = [
 
 export const DISCOVERY_SOURCES = ['Browser', 'Network', 'OAuth', 'Endpoint']
 
-/** Phase 3 — AI application discovery events / detections. */
+/** Phase 3:  AI application discovery events / detections. */
 export const discoveredApps = [
   {
     id: 'disc-1',
@@ -324,8 +324,8 @@ export const discoveredApps = [
   },
   {
     id: 'disc-3',
-    name: 'Gemini',
-    vendor: 'Google',
+    name: 'Microsoft Copilot',
+    vendor: 'Microsoft',
     category: 'AI App',
     sources: ['OAuth', 'Browser'],
     users: 9,
@@ -422,7 +422,7 @@ export const discoveredApps = [
 
 export const BROWSERS = ['Chrome', 'Edge', 'Safari']
 
-/** Phase 4 — Browser extension discovery (Netskope-style endpoint coverage). */
+/** Phase 4:  Browser extension discovery (Netskope-style endpoint coverage). */
 export const browserExtensions = [
   {
     id: 'ext-1',
@@ -482,7 +482,7 @@ export const browserExtensions = [
   },
   {
     id: 'ext-5',
-    name: 'Monica — ChatGPT AI Assistant',
+    name: 'Monica:  ChatGPT AI Assistant',
     vendor: 'Monica',
     browsers: ['Chrome'],
     version: '5.2.1',
@@ -538,7 +538,7 @@ export const browserExtensions = [
   },
   {
     id: 'ext-9',
-    name: 'Wiseone — AI Reading',
+    name: 'Wiseone:  AI Reading',
     vendor: 'Wiseone',
     browsers: ['Chrome', 'Edge'],
     version: '2.0.4',
@@ -566,7 +566,7 @@ export const browserExtensions = [
   },
 ]
 
-/** Phase 6 — Local AI discovery (endpoint-layer models / runtimes). */
+/** Phase 6:  Local AI discovery (endpoint-layer models / runtimes). */
 export const localAiRuntimes = [
   {
     id: 'local-1',
@@ -645,7 +645,7 @@ export const localAiRuntimes = [
     models: ['llama-3.2-3b'],
     host: 'dev-sandbox-12',
     user: 'Unassigned',
-    team: '—',
+    team: '-',
     port: 8080,
     status: 'orphaned',
     risk: 82,
@@ -684,7 +684,7 @@ export const localAiRuntimes = [
 
 export const OAUTH_PROVIDERS = ['Google', 'Microsoft', 'GitHub', 'Slack', 'Notion', 'Atlassian']
 
-/** Phase 7 — OAuth discovery: User → OAuth App → Permissions → Resources */
+/** Phase 7:  OAuth discovery: User → OAuth App → Permissions → Resources */
 export const oauthGrants = [
   {
     id: 'oauth-1',
@@ -792,7 +792,7 @@ export const oauthGrants = [
   },
 ]
 
-/** Phase 8 — AI account detection: corporate vs personal */
+/** Phase 8:  AI account detection: corporate vs personal */
 export const aiAccounts = [
   {
     id: 'acct-user-1',
@@ -950,7 +950,7 @@ export const aiAccounts = [
         ],
       },
       {
-        name: 'Gemini',
+        name: 'Microsoft Copilot',
         accounts: [
           {
             id: 'aa-11',
@@ -976,7 +976,7 @@ export const aiAccounts = [
   },
 ]
 
-/** Phase 9 — Identity correlation chains */
+/** Phase 9:  Identity correlation chains */
 export const identityCorrelations = [
   {
     id: 'corr-1',
@@ -1038,7 +1038,7 @@ export const identityCorrelations = [
       { kind: 'Device', label: 'Windows 11 workstation', detail: 'rahul-win11' },
       { kind: 'AI App', label: 'Ollama + Qwen', detail: 'Local runtime :11434' },
       { kind: 'Account', label: 'Local-only', detail: 'No cloud account' },
-      { kind: 'OAuth', label: '—', detail: 'No cloud OAuth' },
+      { kind: 'OAuth', label: '-', detail: 'No cloud OAuth' },
       { kind: 'Activity', label: 'Ingested eng wiki dump', detail: 'Offline RAG index · 18 min ago' },
     ],
   },
@@ -1060,7 +1060,7 @@ export const identityCorrelations = [
   },
 ]
 
-/** Phase 10 — AI relationship graph (layered connections) */
+/** Phase 10:  AI relationship graph (layered connections) */
 export const RELATIONSHIP_LAYERS = ['USER', 'DEVICE', 'AI APP', 'AGENT', 'MCP', 'TOOL', 'DATA']
 
 export const relationshipGraph = {
@@ -1112,7 +1112,7 @@ export const relationshipGraph = {
   ],
 }
 
-/** Phase 11 — MCP discovery chains: AI app → MCP → system */
+/** Phase 11:  MCP discovery chains: AI app → MCP → system */
 export const mcpDiscoveries = [
   {
     id: 'mcpd-1',
@@ -1182,7 +1182,7 @@ export const mcpDiscoveries = [
   },
 ]
 
-/** Phase 12 — MCP tool inventory with severity class */
+/** Phase 12:  MCP tool inventory with severity class */
 export const mcpToolInventories = [
   {
     id: 'mcpt-1',
@@ -1234,7 +1234,7 @@ export const mcpToolInventories = [
   },
 ]
 
-/** Phase 13 — Data access mapping to PII / systems */
+/** Phase 13:  Data access mapping to PII / systems */
 export const dataAccessMaps = [
   {
     id: 'dam-1',
@@ -1298,7 +1298,7 @@ export const dataAccessMaps = [
   },
 ]
 
-/** Phase 14–15 — Deterministic AI risk scores + explanations */
+/** Phase 14-15: Deterministic AI risk scores + explanations */
 export const aiRiskScores = [
   {
     id: 'risk-1',
@@ -1367,7 +1367,7 @@ export const aiRiskScores = [
   },
 ]
 
-/** Phase 16 — AI attack paths */
+/** Phase 16:  AI attack paths */
 export const attackPaths = [
   {
     id: 'atk-1',
@@ -1403,7 +1403,7 @@ export const attackPaths = [
   },
 ]
 
-/** Phase 17 — Blast radius if AI account compromised */
+/** Phase 17:  Blast radius if AI account compromised */
 export const blastRadii = [
   {
     id: 'br-1',
@@ -1454,7 +1454,7 @@ export const blastRadii = [
   },
 ]
 
-/* ── Phases 18–25: Intelligence · Remediation · Governance ── */
+/* ── Phases 18-25: Intelligence · Remediation · Governance ── */
 
 export const analystSuggested = [
   'Show me every AI that can access customer data.',
@@ -1511,7 +1511,7 @@ export const analystReplies = {
     breakdown: [
       { label: 'Anshu · ChatGPT Plus', tone: 'high' },
       { label: 'Sarah · ChatGPT Free', tone: 'critical' },
-      { label: 'Priya · Gemini Advanced', tone: 'high' },
+      { label: 'Priya · Microsoft Copilot', tone: 'high' },
     ],
     highest: {
       title: 'Highest exposure',
@@ -1556,7 +1556,7 @@ export const analystReplies = {
     },
   },
   'What happens if Cursor gets compromised?': {
-    summary: 'Simulation complete — potential impact CRITICAL.',
+    summary: 'Simulation complete:  potential impact CRITICAL.',
     breakdown: [
       { label: '3 systems', tone: 'critical' },
       { label: '2 databases', tone: 'critical' },
@@ -1730,7 +1730,7 @@ export const aiPolicies = [
     name: 'Personal AI accounts',
     rule: 'Personal AI accounts are prohibited on corporate devices',
     allow: [],
-    deny: ['Personal ChatGPT', 'Personal Claude', 'Personal Gemini'],
+    deny: ['Personal ChatGPT', 'Personal Claude', 'Personal Copilot'],
     status: 'enforced',
     violations: 3,
   },

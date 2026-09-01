@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Orbital Arc: incomplete orbit + hollow core + hollow discovery node, no background -->
+  <path d="M74 38.2 A28 28 0 1 1 56.4 22.6" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="50" cy="50" r="9" stroke="currentColor" stroke-width="4"/>
+  <circle cx="68" cy="28" r="5.5" stroke="currentColor" stroke-width="3.5"/>
+</svg>
