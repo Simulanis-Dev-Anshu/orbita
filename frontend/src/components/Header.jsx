@@ -13,6 +13,7 @@ import {
   CheckCheck,
 } from 'lucide-react'
 import { notifications as seed } from '../data/mock.js'
+import { clearAuth } from '../auth.js'
 
 const severityDot = {
   critical: 'bg-danger',
@@ -129,7 +130,11 @@ function ProfileMenu({ onClose }) {
       <div className="border-t border-line p-1.5">
         <button
           type="button"
-          onClick={() => go('/login')}
+          onClick={() => {
+            onClose()
+            clearAuth()
+            navigate('/login')
+          }}
           className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-danger transition-colors hover:bg-danger-soft"
         >
           <LogOut size={16} aria-hidden="true" />

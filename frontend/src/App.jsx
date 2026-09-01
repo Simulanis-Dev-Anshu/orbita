@@ -11,6 +11,7 @@ import Home from './pages/marketing/Home.jsx'
 import RadarLoader from './components/RadarLoader.jsx'
 import PolicyBar from './components/PolicyBar.jsx'
 import useSeo from './hooks/useSeo.js'
+import { isAuthed } from './auth.js'
 
 const Identity = lazy(() => import('./pages/Identity.jsx'))
 const Assets = lazy(() => import('./pages/Assets.jsx'))
@@ -79,6 +80,14 @@ const pageMeta = {
   '/app/alerts': { title: 'Alerts', subtitle: 'Permission drift and new-agent notifications' },
   '/app/settings': { title: 'Settings', subtitle: 'Workspace, team and billing' },
   '/app/help': { title: 'Help Center', subtitle: 'Guides, docs and support' },
+}
+
+function RequireAuth({ children }) {
+  const location = useLocation()
+  if (!isAuthed()) {
+    return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />
+  }
+  return children
 }
 
 function AppShell() {
@@ -180,7 +189,14 @@ function App() {
           </Route>
           <Route path="/login" element={<AuthPage mode="login" />} />
           <Route path="/signup" element={<AuthPage mode="signup" />} />
-          <Route path="/app/*" element={<AppShell />} />
+          <Route
+            path="/app/*"
+            element={
+              <RequireAuth>
+                <AppShell />
+              </RequireAuth>
+            }
+          />
         </Routes>
       </Suspense>
       <PolicyBar />

@@ -1,8 +1,10 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Eye, EyeOff, ArrowRight } from 'lucide-react'
 import BrandMark from '../../components/BrandMark.jsx'
+import HeroAsciiBackground from '../../components/hero/HeroAsciiBackground.jsx'
 import useSeo from '../../hooks/useSeo.js'
+import { isAuthed, setAuthed } from '../../auth.js'
 
 function GoogleIcon() {
   return (
@@ -18,8 +20,21 @@ function GoogleIcon() {
 export default function AuthPage({ mode }) {
   const isSignup = mode === 'signup'
   const navigate = useNavigate()
+  const location = useLocation()
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
+  const panelMouse = useRef({ x: 0, y: 0 })
+
+  const onPanelPointerMove = (e) => {
+    const r = e.currentTarget.getBoundingClientRect()
+    panelMouse.current.x = ((e.clientX - r.left) / r.width) * 2 - 1
+    panelMouse.current.y = -(((e.clientY - r.top) / r.height) * 2 - 1)
+  }
+
+  const onPanelPointerLeave = () => {
+    panelMouse.current.x = 0
+    panelMouse.current.y = 0
+  }
   useSeo({
     title: isSignup ? 'Sign up — Orbita' : 'Log in — Orbita',
     description: isSignup
@@ -29,30 +44,46 @@ export default function AuthPage({ mode }) {
     noindex: true,
   })
 
+  useEffect(() => {
+    if (isAuthed()) navigate('/app', { replace: true })
+  }, [navigate])
+
   const submit = (e) => {
     e.preventDefault()
     setLoading(true)
-    setTimeout(() => navigate('/app'), 700) // mock auth
+    setTimeout(() => {
+      setAuthed()
+      const from = location.state?.from || '/app'
+      navigate(from, { replace: true })
+    }, 700)
   }
 
   return (
     <div className="grid min-h-dvh bg-canvas lg:grid-cols-2">
       {/* Brand panel */}
-      <div className="ox-plate relative hidden flex-col justify-between overflow-hidden p-10 lg:flex">
-        <div className="absolute -top-20 -right-16 h-72 w-72 rounded-full bg-brand/15 blur-3xl" aria-hidden="true" />
-        <Link to="/" className="relative flex w-fit items-center gap-2.5">
+      <div
+        className="relative hidden flex-col justify-between overflow-hidden bg-[#0a0402] p-10 text-[#fffaf8] lg:flex"
+        onPointerMove={onPanelPointerMove}
+        onPointerLeave={onPanelPointerLeave}
+      >
+        <HeroAsciiBackground mouse={panelMouse} />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0a0402]/75 via-[#0a0402]/35 to-[#0a0402]/85"
+        />
+        <Link to="/" className="relative z-10 flex w-fit items-center gap-2.5">
           <BrandMark size={36} invert />
           <span className="text-lg font-semibold">Orbita</span>
         </Link>
 
-        <div className="relative">
+        <div className="relative z-10">
           <p className="font-display text-3xl leading-snug">
             "The first scan found 31 agents we didn't know existed."
           </p>
           <p className="mt-4 text-sm text-white/60">CISO, Indian fintech · 400 employees</p>
         </div>
 
-        <div className="relative flex gap-8 text-sm">
+        <div className="relative z-10 flex gap-8 text-sm">
           {[
             ['24 hrs', 'to full inventory'],
             ['Read-only', 'connectors'],
