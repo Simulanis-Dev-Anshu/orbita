@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     refresh_token_days: int = 7
     cors_origins: str = "http://localhost:5174,http://localhost:5173"
     seed_demo_data: bool = True
+    allow_public_read: bool = True
+    demo_email: str = "prabhhav@zintellix.com"
+    demo_password: str = "orbita-demo-123"
 
     @property
     def cors_origin_list(self) -> List[str]:

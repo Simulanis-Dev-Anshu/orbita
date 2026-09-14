@@ -13,6 +13,7 @@ import {
   CheckCheck,
 } from 'lucide-react'
 import { notifications as seed } from '../data/mock.js'
+import { endpoints, mapNotification } from '../lib/api.js'
 
 const severityDot = {
   critical: 'bg-danger',
@@ -78,7 +79,7 @@ function NotificationsMenu({ items, onMarkAllRead, onClose }) {
       <Link
         to="/app/alerts"
         onClick={onClose}
-        className="block border-t border-line px-4 py-3 text-center text-sm font-semibold text-forest transition-colors hover:bg-canvas"
+        className="block border-t border-line px-4 py-3 text-center text-sm font-semibold text-ink transition-colors hover:bg-canvas"
       >
         View all alerts
       </Link>
@@ -103,7 +104,7 @@ function ProfileMenu({ onClose }) {
   return (
     <div className="pop-in absolute top-full right-0 z-50 mt-2 w-60 overflow-hidden rounded-card border border-line bg-card shadow-lift">
       <div className="flex items-center gap-3 border-b border-line px-4 py-3.5">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-forest text-sm font-semibold text-brand">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-ink">
           AN
         </span>
         <span className="min-w-0">
@@ -144,6 +145,15 @@ export default function Header({ title, subtitle, onMenuClick, onSearchClick }) 
   const navigate = useNavigate()
   const [openMenu, setOpenMenu] = useState(null) // 'notifications' | 'profile' | null
   const [items, setItems] = useState(seed)
+
+  useEffect(() => {
+    endpoints
+      .notifications()
+      .then((rows) => {
+        if (Array.isArray(rows) && rows.length) setItems(rows.map(mapNotification))
+      })
+      .catch(() => {})
+  }, [])
   const menusRef = useRef(null)
 
   const unread = items.filter((n) => n.unread).length
@@ -178,8 +188,8 @@ export default function Header({ title, subtitle, onMenuClick, onSearchClick }) 
         </button>
 
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-xl font-semibold tracking-tight sm:text-2xl">{title}</h1>
-          {subtitle && <p className="mt-0.5 hidden truncate text-sm text-sub sm:block">{subtitle}</p>}
+          <h1 className="truncate text-[17px] font-semibold tracking-tight">{title}</h1>
+          {subtitle && <p className="mt-0.5 hidden truncate text-xs text-sub sm:block">{subtitle}</p>}
         </div>
 
         {/* Search: opens the command palette */}
@@ -255,8 +265,8 @@ export default function Header({ title, subtitle, onMenuClick, onSearchClick }) 
             <button
               type="button"
               onClick={() => toggle('profile')}
-              className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-forest text-sm font-semibold text-brand ring-2 transition-shadow ${
-                openMenu === 'profile' ? 'ring-brand' : 'ring-transparent hover:ring-brand/50'
+              className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-ink ring-2 transition-shadow ${
+                openMenu === 'profile' ? 'ring-brand' : 'ring-transparent hover:ring-white/20'
               }`}
               aria-label="Account menu"
               aria-expanded={openMenu === 'profile'}

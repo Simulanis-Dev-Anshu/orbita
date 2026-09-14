@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, ArrowRight } from 'lucide-react'
 import BrandMark from '../../components/BrandMark.jsx'
 import useSeo from '../../hooks/useSeo.js'
+import { endpoints, setTokens } from '../../lib/api.js'
 
 function GoogleIcon() {
   return (
@@ -20,6 +21,10 @@ export default function AuthPage({ mode }) {
   const navigate = useNavigate()
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState(isSignup ? '' : 'prabhhav@zintellix.com')
+  const [password, setPassword] = useState(isSignup ? '' : 'orbita-demo-123')
   useSeo({
     title: isSignup ? 'Sign up — Orbita' : 'Log in — Orbita',
     description: isSignup
@@ -29,10 +34,21 @@ export default function AuthPage({ mode }) {
     noindex: true,
   })
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
+    setError('')
     setLoading(true)
-    setTimeout(() => navigate('/app'), 700) // mock auth
+    try {
+      const pair = isSignup
+        ? await endpoints.signup({ email, password, name: name || email.split('@')[0] })
+        : await endpoints.login({ email, password })
+      setTokens(pair)
+      navigate('/app')
+    } catch (err) {
+      setError(err.message || 'Could not sign in')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -85,7 +101,7 @@ export default function AuthPage({ mode }) {
 
           <button
             type="button"
-            onClick={submit}
+            onClick={() => setError('Google SSO is not enabled in this workspace yet. Use email login.')}
             className="mt-7 flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-btn border border-line bg-card px-4 py-3 text-sm font-semibold shadow-soft transition-colors hover:border-brand"
           >
             <GoogleIcon />
@@ -107,6 +123,8 @@ export default function AuthPage({ mode }) {
                     required
                     autoComplete="name"
                     placeholder="Anshu"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     className="mt-1.5 w-full rounded-btn border border-line bg-card px-3.5 py-3 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
                   />
                 </label>
@@ -128,6 +146,8 @@ export default function AuthPage({ mode }) {
                 required
                 autoComplete="email"
                 placeholder="you@company.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="mt-1.5 w-full rounded-btn border border-line bg-card px-3.5 py-3 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
               />
             </label>
@@ -147,6 +167,8 @@ export default function AuthPage({ mode }) {
                   minLength={8}
                   autoComplete={isSignup ? 'new-password' : 'current-password'}
                   placeholder="At least 8 characters"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full rounded-btn border border-line bg-card px-3.5 py-3 pr-11 text-sm shadow-soft outline-none transition-colors placeholder:text-sub/60 focus:border-brand"
                 />
                 <button
@@ -159,6 +181,8 @@ export default function AuthPage({ mode }) {
                 </button>
               </div>
             </label>
+
+            {error ? <p className="text-sm text-danger">{error}</p> : null}
 
             <button
               type="submit"

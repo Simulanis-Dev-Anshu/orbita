@@ -18,7 +18,6 @@ import useSeo from '../../hooks/useSeo.js'
 import { posts } from '../../data/blog.js'
 import HeroAsciiBackground from '../../components/hero/HeroAsciiBackground.jsx'
 import DiscoveryRoomStage from '../../components/marketing/DiscoveryRoomStage.jsx'
-import useSeo from '../../hooks/useSeo.js'
 import SeoFaq from '../../components/marketing/SeoFaq.jsx'
 import { comparison, faqSchema, homeFaqs, softwareApp } from '../../data/seo.js'
 

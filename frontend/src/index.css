@@ -1022,3 +1022,53 @@ body {
     animation: none !important;
   }
 }
+
+/* Product app: dark analytical chrome */
+.app-shell {
+  color-scheme: dark;
+  --color-canvas: #0c0c0e;
+  --color-card: #141416;
+  --color-muted: #1a1a1d;
+  --color-line: #26262b;
+  --color-ink: #f4f4f5;
+  --color-ink-2: #b4b4b8;
+  --color-sub: #8a8a90;
+  --color-brand-soft: rgba(255, 77, 0, 0.16);
+  --color-danger-soft: rgba(244, 63, 94, 0.16);
+  --color-warn-soft: rgba(249, 156, 0, 0.16);
+  --shadow-soft: none;
+  --shadow-lift: 0 18px 40px rgba(0, 0, 0, 0.35);
+  background: #0c0c0e;
+  color: #f4f4f5;
+}
+
+.app-shell .dash-card {
+  background: #141416;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+}
+
+.app-shell .dash-kpi {
+  background: #141416;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+}
+
+.app-shell .dash-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 7px 11px;
+  font-size: 12px;
+  color: #c4c4c8;
+}
+
+.app-shell .dash-dot-up {
+  color: #3ddc8a;
+}
+.app-shell .dash-dot-down {
+  color: #f43f5e;
+}

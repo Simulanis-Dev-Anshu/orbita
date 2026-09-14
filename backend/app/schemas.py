@@ -85,6 +85,7 @@ class AgentOut(BaseModel):
     source: str
     first_seen_at: datetime
     last_active_at: datetime
+    scored_at: Optional[datetime] = None
     asset_type: str = "AI_AGENT"
     vendor: str = ""
     device: str = ""
@@ -202,6 +203,18 @@ class BenchmarkOut(BaseModel):
 
 class DashboardMetricsOut(BaseModel):
     kpis: dict
+    dashKpis: list[dict] = []
+    hourlyActions: list[dict] = []
+    hourlyTotals: dict = {}
+    coverage: dict = {}
+    peakHours: dict = {}
+    discoveryFunnel: list[dict] = []
+    sourceMix: list[dict] = []
+    activityHeatmap: list[list[int]] = []
+    heatmapHours: list[str] = []
+    heatmapDays: list[str] = []
+    inventoryTrend: list[dict] = []
+    insight: dict = {}
     kpiTrends: dict
     discoveryTrend: list[DiscoveryPointOut]
     riskDistribution: list[RiskBucketOut]
@@ -209,6 +222,9 @@ class DashboardMetricsOut(BaseModel):
     fleetActivity: list[FleetActivityOut]
     scopeExposure: list[ScopeExposureOut]
     benchmark: BenchmarkOut
+    actions24h: int = 0
+    anomalies24h: int = 0
+    avgPerHour: int = 0
 
 
 # ---------- Compliance ----------

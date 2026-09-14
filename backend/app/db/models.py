@@ -1,8 +1,8 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import List, Optional
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text, inspect, text
+from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, String, Text, inspect, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -42,6 +42,7 @@ class Agent(Base):
     source: Mapped[str] = mapped_column(String(20), default="manual")  # manual | scan
     first_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
     last_active_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    scored_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_by: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id"), nullable=True)
     # Canonical AI Asset fields (Phase 0). platform/owner/scopes stay as UI aliases.
     asset_type: Mapped[str] = mapped_column(String(32), default="AI_AGENT")
@@ -96,6 +97,32 @@ class Approval(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
 
 
+class AgentEvent(Base):
+    """Hourly (or per-action) telemetry that powers dashboard charts."""
+
+    __tablename__ = "agent_events"
+
+    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=_id)
+    agent_id: Mapped[Optional[str]] = mapped_column(String(32), nullable=True, index=True)
+    occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True, default=_now)
+    kind: Mapped[str] = mapped_column(String(20), default="action")  # action | anomaly
+    count: Mapped[int] = mapped_column(Integer, default=1)
+
+
+class InventorySnapshot(Base):
+    """One row per day — KPI deltas and the 30-day inventory line."""
+
+    __tablename__ = "inventory_snapshots"
+
+    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=_id)
+    captured_on: Mapped[date] = mapped_column(Date, unique=True, index=True)
+    total_agents: Mapped[int] = mapped_column(Integer, default=0)
+    orphaned: Mapped[int] = mapped_column(Integer, default=0)
+    high_risk: Mapped[int] = mapped_column(Integer, default=0)
+    avg_risk: Mapped[int] = mapped_column(Integer, default=0)
+    scored: Mapped[int] = mapped_column(Integer, default=0)
+
+
 def ensure_asset_columns(sync_conn) -> None:
     """Add Phase 0 columns on existing SQLite files. create_all won't alter."""
     tables = inspect(sync_conn).get_table_names()
@@ -108,6 +135,7 @@ def ensure_asset_columns(sync_conn) -> None:
         "device": "VARCHAR(120) DEFAULT ''",
         "connections": "JSON DEFAULT '[]'",
         "data_access": "JSON DEFAULT '[]'",
+        "scored_at": "DATETIME",
     }.items():
         if name not in cols:
             sync_conn.execute(text(f"ALTER TABLE agents ADD COLUMN {name} {ddl}"))

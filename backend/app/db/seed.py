@@ -4,13 +4,14 @@ SEED_DEMO_DATA is true.
 
 Demo login: prabhhav@zintellix.com / orbita-demo-123
 """
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
+from random import Random
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import hash_password
-from app.db.models import Agent, Alert, Approval, Connector, Notification, User
+from app.db.models import Agent, AgentEvent, Alert, Approval, Connector, InventorySnapshot, Notification, User
 from app.domain.asset import infer_asset_type, infer_vendor
 
 
@@ -80,11 +81,149 @@ APPROVALS = [
 ]
 
 
+EXTRA_PLATFORMS = [
+    ("Zapier", ["Gmail", "Sheets"], 18),
+    ("n8n", ["Slack", "Notion"], 16),
+    ("Make", ["Gmail", "HubSpot"], 14),
+    ("Custom GPT", ["Gmail"], 20),
+    ("Claude", ["Drive"], 10),
+    ("MCP", ["Postgres"], 12),
+    ("GitHub App", ["GitHub"], 8),
+    ("ChatGPT", ["Web"], 22),
+    ("Copilot", ["Workspace"], 10),
+    ("Cursor", ["Editor"], 8),
+]
+
+
+def _hour_weight(hour: int) -> float:
+    if 9 <= hour <= 16:
+        return 1.45
+    if 7 <= hour <= 18:
+        return 1.0
+    if hour in (11, 12, 13):
+        return 1.7
+    return 0.42
+
+
+async def _seed_named_agents(session: AsyncSession) -> None:
+    for name, platform, owner, owner_role, scopes, risk, status, last_active in AGENTS:
+        scored = last_active - timedelta(days=3) if status != "pending" else None
+        session.add(
+            Agent(
+                name=name,
+                platform=platform,
+                owner_name=owner,
+                owner_role=owner_role,
+                scopes=scopes,
+                risk=risk,
+                status=status,
+                source="scan",
+                first_seen_at=last_active - timedelta(days=14),
+                last_active_at=last_active,
+                scored_at=scored,
+                asset_type=infer_asset_type(platform),
+                vendor=infer_vendor(platform),
+                connections=scopes,
+                data_access=scopes,
+            )
+        )
+
+
+async def _seed_extra_agents(session: AsyncSession, rng: Random) -> None:
+    owners = [
+        ("Riya Sharma", "Finance Ops"),
+        ("Arjun Mehta", "Sales Lead"),
+        ("Priya Nair", "HR Manager"),
+        ("Dev Patel", "Eng Manager"),
+        ("Kabir Singh", "Support Head"),
+        ("Unassigned", "-"),
+        ("Sneha Rao", "Marketing"),
+        ("Anshu Nishad", "Founder"),
+    ]
+    for i in range(128):
+        platform, scopes, base_risk = EXTRA_PLATFORMS[i % len(EXTRA_PLATFORMS)]
+        owner, role = owners[i % len(owners)]
+        risk = max(12, min(96, base_risk + rng.randint(-12, 28)))
+        if owner == "Unassigned":
+            status = "orphaned"
+            risk = min(96, risk + 20)
+        elif risk >= 70 and rng.random() < 0.2:
+            status = "pending"
+        else:
+            status = "active"
+        last_active = _ago(hours=rng.randint(1, 240))
+        session.add(
+            Agent(
+                name=f"{platform} worker {i + 1:03d}",
+                platform=platform,
+                owner_name=owner,
+                owner_role=role,
+                scopes=list(scopes),
+                risk=risk,
+                status=status,
+                source="scan",
+                first_seen_at=last_active - timedelta(days=rng.randint(4, 40)),
+                last_active_at=last_active,
+                scored_at=None if status == "pending" else last_active - timedelta(days=rng.randint(0, 10)),
+                asset_type=infer_asset_type(platform),
+                vendor=infer_vendor(platform),
+                connections=list(scopes),
+                data_access=list(scopes),
+            )
+        )
+
+
+async def seed_telemetry(session: AsyncSession) -> bool:
+    """Fill events + snapshots when those tables are empty (safe to call on every boot)."""
+    event_count = (await session.execute(select(func.count()).select_from(AgentEvent))).scalar_one()
+    if event_count:
+        return False
+
+    agents = list((await session.scalars(select(Agent))).all())
+    total = len(agents) or 1
+    orphaned = sum(1 for a in agents if a.status == "orphaned")
+    high_risk = sum(1 for a in agents if a.risk >= 75)
+    scored = sum(1 for a in agents if a.scored_at is not None)
+    avg_risk = int(round(sum(a.risk for a in agents) / total)) if agents else 0
+
+    rng = Random(42)
+    now = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+    for hours_ago in range(8 * 24):
+        occurred = now - timedelta(hours=hours_ago)
+        weight = _hour_weight(occurred.hour)
+        weekend = 0.55 if occurred.weekday() >= 5 else 1.0
+        actions = max(4, int(28 * weight * weekend + rng.randint(-6, 10)))
+        anomalies = max(0, int(rng.random() * 4 * weight))
+        session.add(AgentEvent(occurred_at=occurred, kind="action", count=actions))
+        if anomalies:
+            session.add(AgentEvent(occurred_at=occurred, kind="anomaly", count=anomalies))
+
+    today = date.today()
+    for days_ago in range(30, -1, -1):
+        captured = today - timedelta(days=days_ago)
+        progress = (30 - days_ago) / 30
+        session.add(
+            InventorySnapshot(
+                captured_on=captured,
+                total_agents=max(90, int(90 + (total - 90) * progress)),
+                orphaned=max(3, int(orphaned + (1 - progress) * 4)),
+                high_risk=max(10, int(high_risk - (1 - progress) * 6)),
+                avg_risk=max(40, int(avg_risk + (1 - progress) * 8)),
+                scored=max(70, int(70 + (scored - 70) * progress)),
+            )
+        )
+
+    await session.commit()
+    return True
+
+
 async def seed_if_empty(session: AsyncSession) -> bool:
     count = (await session.execute(select(func.count()).select_from(User))).scalar_one()
     if count:
+        await seed_telemetry(session)
         return False
 
+    rng = Random(42)
     session.add(
         User(
             email="prabhhav@zintellix.com",
@@ -93,24 +232,42 @@ async def seed_if_empty(session: AsyncSession) -> bool:
             role="owner",
         )
     )
-    for name, platform, owner, owner_role, scopes, risk, status, last_active in AGENTS:
+    await _seed_named_agents(session)
+    await _seed_extra_agents(session, rng)
+    for type_, severity, agent_name, detail, resolved, created in ALERTS:
         session.add(
-            Agent(
-                name=name, platform=platform, owner_name=owner, owner_role=owner_role,
-                scopes=scopes, risk=risk, status=status, source="scan",
-                first_seen_at=last_active - timedelta(days=14), last_active_at=last_active,
-                asset_type=infer_asset_type(platform), vendor=infer_vendor(platform),
-                connections=scopes, data_access=scopes,
+            Alert(
+                type=type_,
+                severity=severity,
+                agent_name=agent_name,
+                detail=detail,
+                resolved=resolved,
+                created_at=created,
             )
         )
-    for type_, severity, agent_name, detail, resolved, created in ALERTS:
-        session.add(Alert(type=type_, severity=severity, agent_name=agent_name, detail=detail, resolved=resolved, created_at=created))
     for name, category, status, agents_count, last_sync in CONNECTORS:
-        session.add(Connector(name=name, category=category, status=status, agents_count=agents_count, last_sync_at=last_sync))
+        session.add(
+            Connector(
+                name=name,
+                category=category,
+                status=status,
+                agents_count=agents_count,
+                last_sync_at=last_sync,
+            )
+        )
     for title, detail, severity, unread, created in NOTIFICATIONS:
-        session.add(Notification(title=title, detail=detail, severity=severity, unread=unread, created_at=created))
+        session.add(
+            Notification(
+                title=title,
+                detail=detail,
+                severity=severity,
+                unread=unread,
+                created_at=created,
+            )
+        )
     for title, detail, risk in APPROVALS:
         session.add(Approval(title=title, detail=detail, risk=risk))
 
     await session.commit()
+    await seed_telemetry(session)
     return True
