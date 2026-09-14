@@ -14,6 +14,7 @@ import {
   ShieldAlert,
   Wrench,
   Landmark,
+  Search,
 } from 'lucide-react'
 import BrandMark from './BrandMark.jsx'
 
@@ -42,24 +43,22 @@ function NavItem({ to, label, icon: Icon, badge, end, onNavigate }) {
       end={end}
       onClick={onNavigate}
       className={({ isActive }) =>
-        `group flex items-center gap-3 rounded-btn px-4 py-2.5 text-sm font-medium transition-colors duration-200 ${
-          isActive
-            ? 'bg-brand-soft text-ink'
-            : 'text-sub hover:bg-card/60 hover:text-ink'
+        `group flex items-center gap-3 rounded-[12px] px-3 py-2 text-[13px] font-medium transition-colors duration-200 ${
+          isActive ? 'bg-white/[0.07] text-ink' : 'text-sub hover:bg-white/[0.04] hover:text-ink'
         }`
       }
     >
       {({ isActive }) => (
         <>
           <Icon
-            size={20}
-            strokeWidth={1.8}
-            className={isActive ? 'text-brand' : 'text-sub group-hover:text-brand'}
+            size={18}
+            strokeWidth={1.7}
+            className={isActive ? 'text-ink' : 'text-sub group-hover:text-ink'}
             aria-hidden="true"
           />
           <span className="flex-1">{label}</span>
           {badge ? (
-            <span className="rounded-full bg-danger px-2 py-0.5 text-[11px] font-semibold text-white">
+            <span className="rounded-full bg-danger px-1.5 py-0.5 text-[10px] font-semibold text-white">
               {badge}
             </span>
           ) : null}
@@ -69,77 +68,72 @@ function NavItem({ to, label, icon: Icon, badge, end, onNavigate }) {
   )
 }
 
-export default function Sidebar({ open, onClose }) {
+export default function Sidebar({ open, onClose, onSearchClick }) {
   return (
     <>
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-canvas transition-transform duration-300 lg:sticky lg:top-0 lg:h-dvh lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-[248px] flex-col bg-canvas transition-transform duration-300 lg:sticky lg:top-0 lg:h-dvh lg:translate-x-0 ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
         aria-label="Primary navigation"
       >
-        <div className="flex h-full flex-col border-r border-line px-4 py-6">
+        <div className="flex h-full flex-col border-r border-white/[0.06] px-3 py-4">
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-2.5">
-              <BrandMark size={36} />
-              <span className="text-lg font-semibold tracking-tight">
-                Orb<span className="text-forest">ita</span>
-              </span>
+              <BrandMark size={28} />
+              <span className="text-[15px] font-semibold tracking-tight">Orbita</span>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer rounded-lg p-1.5 text-sub hover:bg-card hover:text-ink lg:hidden"
+              className="cursor-pointer rounded-lg p-1.5 text-sub hover:bg-white/6 hover:text-ink lg:hidden"
               aria-label="Close menu"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
           </div>
 
           <button
             type="button"
-            className="mt-6 flex w-full cursor-pointer items-center gap-3 rounded-card bg-card p-3 text-left shadow-soft transition-shadow hover:shadow-lift"
+            className="mt-4 flex w-full cursor-pointer items-center gap-2.5 rounded-[12px] border border-white/[0.06] bg-white/[0.03] px-3 py-2 text-left"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-sm font-semibold text-forest">
-              AN
-            </span>
+            <span className="h-2 w-2 rounded-full bg-[#3ddc8a]" aria-hidden="true" />
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-semibold">Anshu</span>
-              <span className="block text-xs text-sub">Security Admin</span>
+              <span className="block truncate text-[13px] font-medium">Anshu · Orbita</span>
             </span>
-            <ChevronDown size={16} className="text-sub" aria-hidden="true" />
+            <ChevronDown size={14} className="text-sub" aria-hidden="true" />
           </button>
 
-          <nav className="mt-8 flex flex-1 flex-col gap-1.5">
-            <p className="ox-label px-4 pb-2 text-sub">Main</p>
+          <button
+            type="button"
+            onClick={onSearchClick}
+            className="mt-3 flex w-full cursor-pointer items-center gap-2 rounded-[12px] border border-white/[0.06] bg-white/[0.03] px-3 py-2 text-[13px] text-sub"
+          >
+            <Search size={14} aria-hidden="true" />
+            <span className="flex-1 text-left">Search…</span>
+            <kbd className="rounded-md border border-white/10 px-1.5 py-0.5 text-[10px]">⌘K</kbd>
+          </button>
+
+          <nav className="mt-5 flex flex-1 flex-col gap-0.5">
+            <p className="px-3 pb-2 text-[11px] tracking-wide text-sub">Platform</p>
             {mainNav.map((item) => (
               <NavItem key={item.to} {...item} onNavigate={onClose} />
             ))}
 
-            <div className="mt-auto flex flex-col gap-1.5 border-t border-line pt-4">
+            <div className="mt-auto flex flex-col gap-0.5 border-t border-white/[0.06] pt-3">
               {bottomNav.map((item) => (
                 <NavItem key={item.to} {...item} onNavigate={onClose} />
               ))}
             </div>
           </nav>
-
-          <div className="ox-plate mt-6 rounded-card p-4">
-            <p className="text-sm font-semibold text-white">Weekly scan ready</p>
-            <p className="mt-1 text-xs leading-relaxed text-white/60">
-              12 sources connected. Run a fresh discovery sweep.
-            </p>
-            <button type="button" className="ox-btn ox-btn-primary mt-3 w-full cursor-pointer">
-              Run scan
-            </button>
-          </div>
         </div>
       </aside>
     </>

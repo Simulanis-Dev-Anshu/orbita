@@ -3,3 +3,8 @@
 .gstack
 backend/venv
 .cursor
+.env
+backend/.env
+frontend/.env
+*.db
+backend/orbita.db

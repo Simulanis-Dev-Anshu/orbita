@@ -37,7 +37,7 @@ function StatusDot(props) {
 }
 
 const navLinks = [
-  { to: '/#how-it-works', label: 'How it works' },
+  { to: '/home#how-it-works', label: 'How it works' },
   { to: '/pricing', label: 'Pricing' },
   { to: '/blog', label: 'Blog' },
   { to: '/security', label: 'Security' },
@@ -94,7 +94,7 @@ export default function MarketingLayout() {
     <div className="min-h-dvh bg-canvas">
       <header className="sticky top-0 z-40 border-b border-[rgba(31,30,28,0.11)] bg-[#fffaf8]/88 backdrop-blur-[14px]">
         <nav className="relative mx-auto flex h-14 max-w-[1200px] items-center px-4 sm:px-8" aria-label="Main">
-          <Link to="/" className="relative z-10 flex items-center gap-2.5" onClick={() => setOpen(false)}>
+          <Link to="/home" className="relative flex items-center gap-2.5" onClick={() => setOpen(false)}>
             <BrandMark size={32} />
             <span className="text-[15px] font-medium tracking-[-0.01em]">Orbita</span>
           </Link>

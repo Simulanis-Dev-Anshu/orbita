@@ -577,3 +577,70 @@ export const copilotSignals = [
   { id: 'cs-3', label: 'Behavioral classifications', value: '147', trend: '3 flagged' },
   { id: 'cs-4', label: 'Policy checks tonight', value: '96', trend: '2 failed' },
 ]
+
+export const dashKpis = [
+  { id: 'active', label: 'Active agents', value: '147', delta: '12.4%', up: true, hint: 'since last month' },
+  { id: 'published', label: 'Agents scored', value: '96', delta: '7.8%', up: true, hint: 'since last month' },
+  { id: 'reach', label: 'Actions / 24h', value: '6.4k', delta: '4.3%', up: true, hint: 'since last month' },
+  { id: 'risk', label: 'Avg. risk score', value: '62', delta: '0.6%', up: false, hint: 'since last month' },
+]
+
+export const hourlyActions = [
+  { t: '19:00', today: 38, yesterday: 28 },
+  { t: '21:00', today: 44, yesterday: 31 },
+  { t: '23:00', today: 36, yesterday: 24 },
+  { t: '01:00', today: 22, yesterday: 18 },
+  { t: '03:00', today: 19, yesterday: 16 },
+  { t: '05:00', today: 41, yesterday: 27 },
+  { t: '07:00', today: 58, yesterday: 42 },
+  { t: '09:00', today: 81, yesterday: 54 },
+  { t: '11:00', today: 94, yesterday: 61 },
+  { t: '13:00', today: 76, yesterday: 58 },
+  { t: '15:00', today: 88, yesterday: 63 },
+  { t: '17:00', today: 71, yesterday: 49 },
+]
+
+export const peakHourBars = [8, 10, 9, 14, 18, 22, 28, 36, 42, 48, 44, 39, 31, 24, 18, 14, 11, 9]
+
+export const discoveryFunnel = [
+  { key: 'discovered', label: 'Discovered', value: 147, display: '147', pct: '100%' },
+  { key: 'inventoried', label: 'Inventoried', value: 128, display: '128', pct: '87%' },
+  { key: 'scored', label: 'Risk-scored', value: 96, display: '96', pct: '65%' },
+  { key: 'action', label: 'Needs action', value: 23, display: '23', pct: '16%' },
+]
+
+export const sourceMix = [
+  { name: 'Google Workspace', value: 61 },
+  { name: 'Microsoft 365', value: 34 },
+  { name: 'Slack', value: 18 },
+  { name: 'GitHub', value: 12 },
+  { name: 'Zapier / Make', value: 9 },
+  { name: 'DNS egress', value: 6 },
+]
+
+export const activityHeatmap = [
+  [1, 1, 2, 1, 2, 3, 5, 7, 8, 6, 4, 2],
+  [1, 2, 1, 2, 3, 5, 7, 9, 8, 7, 5, 3],
+  [2, 1, 2, 2, 4, 6, 8, 9, 10, 8, 6, 3],
+  [1, 1, 1, 2, 3, 5, 7, 8, 9, 7, 4, 2],
+  [1, 2, 2, 3, 4, 6, 8, 10, 9, 7, 5, 3],
+  [0, 1, 1, 2, 3, 4, 5, 6, 5, 4, 2, 1],
+  [0, 0, 1, 1, 2, 2, 3, 4, 3, 2, 1, 1],
+]
+
+export const heatmapHours = ['12a', '2a', '4a', '6a', '8a', '10a', '12p', '2p', '4p', '6p', '8p', '10p']
+export const heatmapDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+export const inventoryTrend = [
+  { d: 'Aug 16', agents: 118 },
+  { d: 'Aug 19', agents: 121 },
+  { d: 'Aug 22', agents: 124 },
+  { d: 'Aug 25', agents: 126 },
+  { d: 'Aug 28', agents: 131 },
+  { d: 'Aug 31', agents: 134 },
+  { d: 'Sep 3', agents: 136 },
+  { d: 'Sep 6', agents: 139 },
+  { d: 'Sep 9', agents: 142 },
+  { d: 'Sep 12', agents: 145 },
+  { d: 'Sep 14', agents: 147 },
+]

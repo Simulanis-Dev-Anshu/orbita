@@ -105,8 +105,8 @@ function AppShell() {
   }, [])
 
   return (
-    <div className="flex min-h-dvh bg-canvas">
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+    <div className="app-shell flex min-h-dvh bg-canvas">
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} onSearchClick={() => setPaletteOpen(true)} />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <Header
@@ -116,7 +116,7 @@ function AppShell() {
           onSearchClick={() => setPaletteOpen(true)}
         />
 
-        <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 pb-10 sm:px-6 lg:px-8">
+        <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 pb-10 sm:px-5 lg:px-6">
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<Dashboard />} />
@@ -165,8 +165,9 @@ function App() {
         }
       >
         <Routes>
+          <Route path="/" element={<Navigate to="/app" replace />} />
           <Route element={<MarketingLayout />}>
-            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />

@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Check, X, ShieldQuestion } from 'lucide-react'
-import { approvals, sourceHealth } from '../data/mock.js'
+import { approvals, sourceHealth as seedHealth } from '../data/mock.js'
+import { endpoints } from '../lib/api.js'
 
 const riskDot = {
   critical: 'bg-danger',
@@ -10,8 +11,27 @@ const riskDot = {
 
 export default function ApprovalsWidget() {
   const [items, setItems] = useState(approvals)
+  const [health, setHealth] = useState(seedHealth)
 
-  const resolve = (id) => setItems((prev) => prev.filter((i) => i.id !== id))
+  useEffect(() => {
+    endpoints
+      .approvals()
+      .then((rows) => {
+        if (Array.isArray(rows) && rows.length) setItems(rows)
+      })
+      .catch(() => {})
+    endpoints
+      .sourceHealth()
+      .then((rows) => {
+        if (Array.isArray(rows) && rows.length) setHealth(rows)
+      })
+      .catch(() => {})
+  }, [])
+
+  const resolve = (id, decision) => {
+    setItems((prev) => prev.filter((i) => i.id !== id))
+    endpoints.decideApproval(id, decision).catch(() => {})
+  }
 
   return (
     <section aria-label="Pending approvals" className="card-hover flex h-full flex-col rounded-card bg-card p-5 shadow-soft sm:p-6">
@@ -33,16 +53,14 @@ export default function ApprovalsWidget() {
             <div className="flex shrink-0 gap-1.5">
               <button
                 type="button"
-                onClick={() => resolve(item.id)}
-                className="cursor-pointer rounded-lg bg-brand-soft p-2 text-forest transition-opacity hover:opacity-80"
+                onClick={() => resolve(item.id, 'approve')}
                 aria-label={`Approve ${item.title}`}
               >
                 <Check size={16} />
               </button>
               <button
                 type="button"
-                onClick={() => resolve(item.id)}
-                className="cursor-pointer rounded-lg bg-danger-soft p-2 text-danger transition-opacity hover:opacity-80"
+                onClick={() => resolve(item.id, 'reject')}
                 aria-label={`Reject ${item.title}`}
               >
                 <X size={16} />
@@ -60,7 +78,7 @@ export default function ApprovalsWidget() {
 
       <h3 className="mt-auto pt-6 text-xs font-semibold tracking-wider text-sub uppercase">Source health</h3>
       <ul className="mt-3 space-y-2.5">
-        {sourceHealth.map((s) => (
+        {health.map((s) => (
           <li key={s.name} className="flex items-center gap-2.5 text-sm">
             <span
               className={`h-2 w-2 rounded-full ${s.status === 'healthy' ? 'bg-brand' : 'bg-warn'}`}

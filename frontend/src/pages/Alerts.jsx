@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { BellRing, Check } from 'lucide-react'
 import { alerts as seed } from '../data/mock.js'
+import { endpoints, mapAlert } from '../lib/api.js'
 
 const severities = ['All', 'Critical', 'High', 'Medium', 'Low']
 
@@ -16,6 +17,15 @@ export default function Alerts() {
   const [filter, setFilter] = useState('All')
   const [showResolved, setShowResolved] = useState(false)
 
+  useEffect(() => {
+    endpoints
+      .alerts()
+      .then((rows) => {
+        if (Array.isArray(rows) && rows.length) setItems(rows.map(mapAlert))
+      })
+      .catch(() => {})
+  }, [])
+
   const visible = useMemo(
     () =>
       items.filter(
@@ -26,8 +36,10 @@ export default function Alerts() {
     [items, filter, showResolved],
   )
 
-  const resolve = (id) =>
+  const resolve = (id) => {
     setItems((prev) => prev.map((a) => (a.id === id ? { ...a, resolved: true } : a)))
+    endpoints.resolveAlert(id).catch(() => {})
+  }
 
   const openCount = items.filter((a) => !a.resolved).length
 

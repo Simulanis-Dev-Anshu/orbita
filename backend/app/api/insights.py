@@ -1,10 +1,9 @@
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, require_role
 from app.db.base import get_session
-from app.db.models import Agent, Connector, User
+from app.db.models import User
 from app.schemas import (
     ComplianceOverviewOut,
     DashboardMetricsOut,
@@ -12,6 +11,7 @@ from app.schemas import (
     TeamMemberOut,
     TeamRolePatchIn,
 )
+from app.services.dashboard import build_dashboard
 
 router = APIRouter(tags=["insights"])
 
@@ -21,87 +21,7 @@ async def dashboard_metrics(
     _: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
-    total_agents = (await session.execute(select(func.count()).select_from(Agent))).scalar_one()
-    orphaned = (
-        await session.execute(select(func.count()).select_from(Agent).where(Agent.status == "orphaned"))
-    ).scalar_one()
-    high_risk = (
-        await session.execute(select(func.count()).select_from(Agent).where(Agent.risk >= 75))
-    ).scalar_one()
-    connected_sources = (
-        await session.execute(select(func.count()).select_from(Connector).where(Connector.status == "connected"))
-    ).scalar_one()
-    avg_risk = (await session.execute(select(func.avg(Agent.risk)))).scalar() or 0
-
-    # Lightweight MVP payloads aligned to frontend mock shape.
-    return {
-        "kpis": {
-            "totalAgents": int(total_agents),
-            "newThisWeek": max(1, int(total_agents * 0.08)),
-            "orphaned": int(orphaned),
-            "highRisk": int(high_risk),
-            "avgRiskScore": int(round(avg_risk)),
-            "connectedSources": int(connected_sources),
-        },
-        "kpiTrends": {
-            "totalAgents": [98, 104, 111, 118, 124, 131, 139, int(total_agents)],
-            "orphaned": [3, 4, 4, 6, 5, 7, 7, int(orphaned)],
-            "highRisk": [14, 15, 17, 16, 19, 20, 21, int(high_risk)],
-            "connectedSources": [7, 8, 8, 9, 10, 11, 12, int(connected_sources)],
-        },
-        "discoveryTrend": [
-            {"week": "W1", "discovered": 12, "highRisk": 2},
-            {"week": "W2", "discovered": 19, "highRisk": 4},
-            {"week": "W3", "discovered": 15, "highRisk": 3},
-            {"week": "W4", "discovered": 27, "highRisk": 6},
-            {"week": "W5", "discovered": 22, "highRisk": 4},
-            {"week": "W6", "discovered": 31, "highRisk": 7},
-            {"week": "W7", "discovered": 26, "highRisk": 5},
-            {"week": "W8", "discovered": 38, "highRisk": 9},
-        ],
-        "riskDistribution": [
-            {"name": "Critical", "value": max(1, int(high_risk * 0.35)), "color": "#E5484D"},
-            {"name": "High", "value": max(1, int(high_risk * 0.65)), "color": "#E8930C"},
-            {"name": "Medium", "value": max(1, int(total_agents * 0.28)), "color": "#86E64A"},
-            {"name": "Low", "value": max(1, int(total_agents * 0.56)), "color": "#103E2D"},
-        ],
-        "platformBreakdown": [
-            {"platform": "Zapier", "agents": 38, "highRisk": 7},
-            {"platform": "Custom GPT", "agents": 29, "highRisk": 4},
-            {"platform": "n8n", "agents": 24, "highRisk": 5},
-            {"platform": "Make", "agents": 19, "highRisk": 3},
-            {"platform": "MCP", "agents": 16, "highRisk": 2},
-            {"platform": "Claude", "agents": 12, "highRisk": 1},
-            {"platform": "GitHub", "agents": 9, "highRisk": 1},
-        ],
-        "fleetActivity": [
-            {"hour": "00", "actions": 410, "anomalies": 4},
-            {"hour": "02", "actions": 396, "anomalies": 6},
-            {"hour": "04", "actions": 388, "anomalies": 2},
-            {"hour": "06", "actions": 402, "anomalies": 1},
-            {"hour": "08", "actions": 545, "anomalies": 3},
-            {"hour": "10", "actions": 688, "anomalies": 5},
-            {"hour": "12", "actions": 654, "anomalies": 4},
-            {"hour": "14", "actions": 702, "anomalies": 9},
-            {"hour": "16", "actions": 671, "anomalies": 6},
-            {"hour": "18", "actions": 563, "anomalies": 3},
-            {"hour": "20", "actions": 471, "anomalies": 2},
-            {"hour": "22", "actions": 428, "anomalies": 3},
-        ],
-        "scopeExposure": [
-            {"scope": "Gmail", "agents": 41, "pii": True},
-            {"scope": "Google Sheets", "agents": 33, "pii": True},
-            {"scope": "Slack", "agents": 27, "pii": False},
-            {"scope": "Notion", "agents": 21, "pii": False},
-            {"scope": "Postgres", "agents": 14, "pii": True},
-            {"scope": "Zoho Payroll", "agents": 6, "pii": True},
-        ],
-        "benchmark": {
-            "orphanedVsPeers": 2.1,
-            "riskPercentile": 68,
-            "peerGroup": "Indian mid-market SaaS · 200–500 employees",
-        },
-    }
+    return await build_dashboard(session)
 
 
 @router.get("/compliance/overview", response_model=ComplianceOverviewOut)

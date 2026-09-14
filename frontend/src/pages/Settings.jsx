@@ -1,5 +1,7 @@
 import { Building2, Users, CreditCard, MapPin, UserPlus, Landmark, Smartphone, Plus } from 'lucide-react'
-import { teamMembers } from '../data/mock.js'
+import { useEffect, useState } from 'react'
+import { teamMembers as seedTeam } from '../data/mock.js'
+import { endpoints } from '../lib/api.js'
 
 const subscription = {
   plan: 'Growth',
@@ -54,6 +56,20 @@ function methodSub(m) {
 }
 
 export default function Settings() {
+  const [teamMembers, setTeamMembers] = useState(seedTeam)
+  const [company, setCompany] = useState('Acme Inc.')
+  const [residency, setResidency] = useState('India, AWS Mumbai (DPDP-aligned)')
+
+  useEffect(() => {
+    endpoints
+      .settings()
+      .then((row) => {
+        if (row?.workspace?.companyName) setCompany(row.workspace.companyName)
+        if (row?.workspace?.dataResidency) setResidency(row.workspace.dataResidency)
+        if (row?.teamMembers?.length) setTeamMembers(row.teamMembers)
+      })
+      .catch(() => {})
+  }, [])
   return (
     <div className="mt-6 space-y-4">
       {/* Workspace */}
@@ -71,7 +87,8 @@ export default function Settings() {
           <label className="block">
             <span className="text-xs font-semibold text-sub">Company name</span>
             <input
-              defaultValue="Acme Inc."
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
               className="mt-1.5 w-full rounded-btn border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-brand"
             />
           </label>
@@ -83,7 +100,11 @@ export default function Settings() {
                 className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sub"
                 aria-hidden="true"
               />
-              <select className="w-full cursor-pointer rounded-btn border border-line bg-canvas py-2.5 pr-3 pl-9 text-sm outline-none focus:border-brand">
+              <select
+                value={residency}
+                onChange={(e) => setResidency(e.target.value)}
+                className="w-full cursor-pointer rounded-btn border border-line bg-canvas py-2.5 pr-3 pl-9 text-sm outline-none focus:border-brand"
+              >
                 <option>India, AWS Mumbai (DPDP-aligned)</option>
                 <option>EU, Frankfurt</option>
                 <option>US, Virginia</option>
