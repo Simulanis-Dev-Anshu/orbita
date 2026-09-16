@@ -91,6 +91,8 @@ class AgentOut(BaseModel):
     device: str = ""
     connections: List[str] = []
     data_access: List[str] = []
+    discovery_kind: str = ""
+    external_key: Optional[str] = None
 
 
 # ---------- Alerts / notifications / approvals ----------
@@ -142,6 +144,8 @@ class ConnectorOut(BaseModel):
     status: str
     agents_count: int
     last_sync_at: Optional[datetime]
+    kind: str = ""
+    last_error: str = ""
 
 
 # Connector registration (MCP/API URL)

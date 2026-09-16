@@ -45,20 +45,20 @@ async function parseError(res) {
   }
 }
 
-async function raw(path, { method = 'GET', body, token, retry = true } = {}) {
+async function raw(path, { method = 'GET', body, token, retry = true, timeoutMs = 6000, form } = {}) {
   const headers = { Accept: 'application/json' }
-  if (body !== undefined) headers['Content-Type'] = 'application/json'
+  if (body !== undefined && !form) headers['Content-Type'] = 'application/json'
   const access = token ?? getAccessToken()
   if (access) headers.Authorization = `Bearer ${access}`
 
   const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), 6000)
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
   let res
   try {
     res = await fetch(`${API_URL}/api${path}`, {
       method,
       headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: form ? form : body !== undefined ? JSON.stringify(body) : undefined,
       signal: controller.signal,
     })
   } catch (err) {
@@ -77,7 +77,7 @@ async function raw(path, { method = 'GET', body, token, retry = true } = {}) {
     if (refreshed.ok) {
       const pair = await refreshed.json()
       setTokens(pair)
-      return raw(path, { method, body, token: pair.access_token, retry: false })
+      return raw(path, { method, body, token: pair.access_token, retry: false, timeoutMs, form })
     }
     clearTokens()
   }
@@ -117,6 +117,7 @@ export function mapAgent(row) {
     dataAccess: row.data_access || row.scopes || [],
     user: row.owner_name,
     permissions: row.scopes || [],
+    discoveryKind: row.discovery_kind || '',
   }
 }
 
@@ -157,6 +158,39 @@ export const endpoints = {
   decideApproval: (id, decision) => api.post(`/approvals/${id}/${decision}`),
   connectors: () => api.get('/connectors'),
   sourceHealth: () => api.get('/connectors/source-health'),
+  discoveryStatus: () => api.get('/discovery/status'),
+  discoveryOAuthStart: (kind) => api.get(`/discovery/oauth/${kind}/start`),
+  discoveryImport: (kind, body) => raw(`/discovery/import/${kind}`, { method: 'POST', body, timeoutMs: 20000 }),
+  discoveryUpload: (kind, file) => {
+    const form = new FormData()
+    form.append('file', file)
+    return raw(`/discovery/upload/${kind}`, { method: 'POST', form, timeoutMs: 20000 })
+  },
+  discoveryDemo: (kind) => raw(`/discovery/demo/${kind}`, { method: 'POST', timeoutMs: 4000 }),
+  discoveryCollector: (body) => raw('/discovery/collector', { method: 'POST', body, timeoutMs: 20000 }),
+  downloadDiscovery: async (path, filename) => {
+    const access = getAccessToken()
+    const headers = { Accept: '*/*' }
+    if (access) headers.Authorization = `Bearer ${access}`
+    let res
+    try {
+      res = await fetch(`${API_URL}/api${path}`, { headers })
+    } catch {
+      res = null
+    }
+    if (!res?.ok) {
+      if (path.includes('collector')) throw new Error('Start the API to download the collector, or copy backend/scripts/orbita_collect.py')
+      res = await fetch(`/samples/${filename}`)
+    }
+    if (!res.ok) throw new Error('Download failed')
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(url)
+  },
   settings: () => api.get('/settings/overview'),
   login: (body) => api.post('/auth/login', body),
   signup: (body) => api.post('/auth/signup', body),

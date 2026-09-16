@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Cpu, Search, Server } from 'lucide-react'
 import { localAiRuntimes } from '../data/platform.js'
+import { useLiveFindings } from '../lib/liveDiscovery.js'
 
 const RUNTIMES = ['All', 'Ollama', 'LM Studio', 'GPT4All', 'vLLM', 'Jan', 'Llama', 'Mistral', 'Qwen']
 
@@ -19,10 +21,12 @@ function riskTone(risk) {
 export default function LocalAi() {
   const [runtime, setRuntime] = useState('All')
   const [query, setQuery] = useState('')
+  const { local: liveLocal, mergeByName } = useLiveFindings()
+  const catalog = useMemo(() => mergeByName(liveLocal, localAiRuntimes), [liveLocal, mergeByName])
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return localAiRuntimes.filter((r) => {
+    return catalog.filter((r) => {
       if (runtime !== 'All' && r.runtime !== runtime) return false
       if (!q) return true
       return (
@@ -32,11 +36,11 @@ export default function LocalAi() {
         r.models.some((m) => m.toLowerCase().includes(q))
       )
     })
-  }, [runtime, query])
+  }, [runtime, query, catalog])
 
-  const running = localAiRuntimes.filter((r) => r.status === 'running').length
-  const orphaned = localAiRuntimes.filter((r) => r.status === 'orphaned').length
-  const modelCount = localAiRuntimes.reduce((n, r) => n + r.models.length, 0)
+  const running = catalog.filter((r) => r.status === 'running').length
+  const orphaned = catalog.filter((r) => r.status === 'orphaned').length
+  const modelCount = catalog.reduce((n, r) => n + r.models.length, 0)
 
   return (
     <div className="mt-4 space-y-4">
@@ -52,11 +56,15 @@ export default function LocalAi() {
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-sub">
               Ollama, LM Studio, GPT4All, vLLM, Jan, Llama, Mistral, Qwen. Endpoint-layer visibility
-              for locally running models (Netskope-class coverage, Orbita inventory).
+              for locally running models (Netskope-class coverage, Orbita inventory).{' '}
+              <Link to="/app/discovery?tab=sources" className="font-semibold text-brand hover:underline">
+                Run a collector sample
+              </Link>
+              .
             </p>
           </div>
           <div className="flex flex-wrap gap-2 text-xs font-semibold">
-            <span className="rounded-full bg-muted px-3 py-1.5">{localAiRuntimes.length} hosts</span>
+            <span className="rounded-full bg-muted px-3 py-1.5">{catalog.length} hosts</span>
             <span className="rounded-full bg-muted px-3 py-1.5">{modelCount} models</span>
             <span className="rounded-full bg-brand-soft px-3 py-1.5 text-forest">{running} running</span>
             <span className="rounded-full bg-danger-soft px-3 py-1.5 text-danger">{orphaned} orphaned</span>

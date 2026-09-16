@@ -1,6 +1,5 @@
-# Optional production-shaped services. The API runs on SQLite without these.
 # API: docker compose up --build api
-# DB extras: docker compose up -d postgres valkey
+# Atlas is the database. Set MONGODB_URI / MONGODB_PASSWORD in .env.
 services:
   api:
     build: .
@@ -9,31 +8,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: sqlite+aiosqlite:///./orbita.db
       CORS_ORIGINS: http://localhost:5173,http://localhost:5174
     volumes:
       - .:/app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-
-  postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: orbita
-      POSTGRES_PASSWORD: orbita
-      POSTGRES_DB: orbita
-    ports:
-      - '5432:5432'
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U orbita']
-      interval: 5s
-      retries: 10
-
-  valkey:
-    image: valkey/valkey:8-alpine
-    ports:
-      - '6379:6379'
-
-volumes:
-  pgdata:

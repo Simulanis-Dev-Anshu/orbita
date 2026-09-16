@@ -4,9 +4,7 @@ from __future__ import annotations
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from app.db import mongo as db
 from app.db.models import Agent, AgentEvent, Connector, InventorySnapshot
 
 PII_SCOPES = {
@@ -69,18 +67,16 @@ def _risk_band(score: int) -> str:
     return "Low"
 
 
-async def build_dashboard(session: AsyncSession) -> dict:
-    agents: list[Agent] = list((await session.scalars(select(Agent))).all())
-    connectors: list[Connector] = list((await session.scalars(select(Connector))).all())
-    snapshots: list[InventorySnapshot] = list(
-        (await session.scalars(select(InventorySnapshot).order_by(InventorySnapshot.captured_on))).all()
+async def build_dashboard() -> dict:
+    agents: list[Agent] = await db.find_many("agents")
+    connectors: list[Connector] = await db.find_many("connectors")
+    snapshots: list[InventorySnapshot] = await db.find_many(
+        "inventory_snapshots", sort=[("captured_on", 1)]
     )
 
     now = _now()
     since = now - timedelta(days=8)
-    events: list[AgentEvent] = list(
-        (await session.scalars(select(AgentEvent).where(AgentEvent.occurred_at >= since))).all()
-    )
+    events: list[AgentEvent] = await db.find_many("agent_events", {"occurred_at": {"$gte": since}})
 
     total = len(agents)
     orphaned = sum(1 for a in agents if a.status == "orphaned")

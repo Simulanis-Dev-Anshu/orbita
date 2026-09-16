@@ -1,11 +1,9 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.security import decode_token
-from app.db.base import get_session
+from app.db import mongo as db
 from app.db.models import User
 
 bearer = HTTPBearer(auto_error=False)
@@ -15,18 +13,17 @@ ROLE_RANK = {"viewer": 0, "admin": 1, "owner": 2}
 
 async def get_current_user(
     creds: HTTPAuthorizationCredentials = Depends(bearer),
-    session: AsyncSession = Depends(get_session),
 ) -> User:
     if creds is None:
         if settings.allow_public_read:
-            user = await session.scalar(select(User).where(User.is_active.is_(True)).limit(1))
+            user = await db.find_one("users", {"is_active": True})
             if user is not None:
                 return user
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Not authenticated")
     payload = decode_token(creds.credentials, expected_type="access")
     if payload is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid or expired token")
-    user = await session.get(User, payload["sub"])
+    user = await db.find_id("users", payload["sub"])
     if user is None or not user.is_active:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "User not found or disabled")
     return user

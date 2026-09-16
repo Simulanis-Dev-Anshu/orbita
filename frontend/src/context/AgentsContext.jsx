@@ -2,13 +2,40 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import { agents as seed } from '../data/mock.js'
 import { asAsset } from '../data/asset.js'
 import { endpoints, mapAgent } from '../lib/api.js'
+import { getDemoAgents, isDemoMode, mergeDemoAgents } from '../lib/demoSession.js'
 
 const AgentsContext = createContext(null)
 
 export function AgentsProvider({ children }) {
   const [agents, setAgents] = useState(seed)
 
-  useEffect(() => {
+  const ingestAgents = useCallback((rows) => {
+    if (!Array.isArray(rows) || !rows.length) return
+    setAgents((prev) => {
+      const byId = new Map(prev.map((a) => [a.id, a]))
+      const mappedRows = []
+      for (const row of rows) {
+        const mapped = row.owner_name != null ? asAsset(mapAgent(row)) : asAsset(row)
+        byId.set(mapped.id, mapped)
+        mappedRows.push(mapped)
+      }
+      if (isDemoMode()) mergeDemoAgents(mappedRows)
+      return [...byId.values()]
+    })
+  }, [])
+
+  const reload = useCallback(() => {
+    if (isDemoMode()) {
+      const extra = getDemoAgents()
+      if (extra.length) {
+        setAgents((prev) => {
+          const byId = new Map(prev.map((a) => [a.id, a]))
+          for (const row of extra) byId.set(row.id, asAsset(row))
+          return [...byId.values()]
+        })
+      }
+      return
+    }
     endpoints
       .agents()
       .then((rows) => {
@@ -17,9 +44,20 @@ export function AgentsProvider({ children }) {
         }
       })
       .catch(() => {
-        /* keep mock seed if API is down */
+        const extra = getDemoAgents()
+        if (extra.length) {
+          setAgents((prev) => {
+            const byId = new Map(prev.map((a) => [a.id, a]))
+            for (const row of extra) byId.set(row.id, asAsset(row))
+            return [...byId.values()]
+          })
+        }
       })
   }, [])
+
+  useEffect(() => {
+    reload()
+  }, [reload])
 
   const addAgent = useCallback(async (agent) => {
     try {
@@ -68,7 +106,7 @@ export function AgentsProvider({ children }) {
   }, [])
 
   return (
-    <AgentsContext.Provider value={{ agents, addAgent, updateAgent, deleteAgent }}>
+    <AgentsContext.Provider value={{ agents, addAgent, updateAgent, deleteAgent, reload, ingestAgents }}>
       {children}
     </AgentsContext.Provider>
   )

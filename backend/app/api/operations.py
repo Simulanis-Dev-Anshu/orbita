@@ -1,13 +1,19 @@
 from fastapi import APIRouter
 
 from app.core.config import settings
+from app.db.mongo import ping
 
 router = APIRouter(tags=["operations"])
 
 
 @router.get("/health")
 async def health():
-    return {"status": "ok", "service": settings.app_name}
+    ok = await ping()
+    return {
+        "status": "ok" if ok else "degraded",
+        "service": settings.app_name,
+        "database": "mongodb",
+    }
 
 
 @router.get("")

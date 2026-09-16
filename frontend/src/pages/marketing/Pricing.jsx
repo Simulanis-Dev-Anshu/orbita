@@ -2,14 +2,13 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Check, ArrowRight } from 'lucide-react'
 import { plans } from '../../data/mock.js'
-import useReveal from '../../hooks/useReveal.js'
+import Reveal from '../../components/motion/Reveal.jsx'
 import useSeo from '../../hooks/useSeo.js'
 import SeoFaq from '../../components/marketing/SeoFaq.jsx'
 import { faqSchema, pricingFaqs, SITE } from '../../data/seo.js'
 
 export default function Pricing() {
   const [currency, setCurrency] = useState('inr')
-  const headRef = useReveal()
   useSeo({
     title: 'Orbita pricing — flat, no per-agent tax',
     description:
@@ -36,10 +35,10 @@ export default function Pricing() {
 
   return (
     <main className="mx-auto max-w-[1200px] px-4 py-16 sm:px-8">
-      <div ref={headRef} className="reveal text-center">
+      <Reveal className="text-center">
         <p className="ox-label">Pricing</p>
-        <h1 className="font-display mt-3.5 text-[clamp(38px,4.3vw,58px)] tracking-[-0.038em]">
-          Flat pricing. <span className="text-brand">No per-agent tax.</span>
+        <h1 className="font-display mt-3.5 text-[clamp(40px,4.8vw,64px)] tracking-[-0.03em]">
+          Flat pricing. <em className="font-accent text-brand">No per-agent tax.</em>
         </h1>
         <p className="ox-lead mx-auto mt-[18px] text-center">
           Global platforms charge $50-200K a year for this. We built Orbita for the mid-market.
@@ -47,7 +46,7 @@ export default function Pricing() {
         </p>
 
         <div
-          className="mx-auto mt-8 flex w-fit border border-[rgba(31,30,28,0.18)] bg-card p-1 text-[13.5px] font-medium"
+          className="mx-auto mt-8 flex w-fit border border-line bg-card p-1 text-[13.5px] font-medium"
           role="group"
           aria-label="Currency"
         >
@@ -67,7 +66,7 @@ export default function Pricing() {
             </button>
           ))}
         </div>
-      </div>
+      </Reveal>
 
       <div className="mt-10 grid gap-5 md:grid-cols-3">
         {plans.map((p) => (

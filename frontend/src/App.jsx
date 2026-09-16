@@ -1,17 +1,22 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
 import Sidebar from './components/Sidebar.jsx'
 import Header from './components/Header.jsx'
 import CommandPalette from './components/CommandPalette.jsx'
 import { AgentsProvider } from './context/AgentsContext.jsx'
+import { ThemeProvider } from './context/ThemeContext.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import ComingSoon from './pages/ComingSoon.jsx'
 import MarketingLayout from './components/marketing/MarketingLayout.jsx'
 import Home from './pages/marketing/Home.jsx'
 import RadarLoader from './components/RadarLoader.jsx'
 import PolicyBar from './components/PolicyBar.jsx'
+import BootScreen from './components/motion/BootScreen.jsx'
+import RouteFade from './components/motion/RouteFade.jsx'
 import useSeo from './hooks/useSeo.js'
+import { isDemoMode } from './lib/demoSession.js'
 
+const DemoOauth = lazy(() => import('./pages/DemoOauth.jsx'))
 const Identity = lazy(() => import('./pages/Identity.jsx'))
 const Assets = lazy(() => import('./pages/Assets.jsx'))
 const Discovery = lazy(() => import('./pages/Discovery.jsx'))
@@ -50,7 +55,7 @@ const pageMeta = {
   },
   '/app/discovery': {
     title: 'Discovery',
-    subtitle: 'AI apps, extensions, local runtimes and MCP',
+    subtitle: 'Connect sources, then inventory AI apps, extensions, local runtimes and MCP',
   },
   '/app/assets': {
     title: 'Assets',
@@ -105,7 +110,7 @@ function AppShell() {
   }, [])
 
   return (
-    <div className="app-shell flex min-h-dvh bg-canvas">
+    <div className="flex min-h-dvh bg-canvas text-ink">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} onSearchClick={() => setPaletteOpen(true)} />
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -116,35 +121,17 @@ function AppShell() {
           onSearchClick={() => setPaletteOpen(true)}
         />
 
+        {isDemoMode() ? (
+          <p className="border-b border-line bg-muted px-4 py-1.5 text-center text-[11px] font-semibold text-sub sm:px-5 lg:px-6">
+            Demo workspace · Acme Inc. · Connect Google/Microsoft/GitHub without a backend
+          </p>
+        ) : null}
+
         <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 pb-10 sm:px-5 lg:px-6">
           <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/identity" element={<Identity />} />
-              <Route path="/discovery" element={<Discovery />} />
-              <Route path="/assets" element={<Assets />} />
-              <Route path="/relationships" element={<RelationshipGraph />} />
-              <Route path="/risk" element={<Risk />} />
-              <Route path="/intelligence" element={<Intelligence />} />
-              <Route path="/remediation" element={<Remediation />} />
-              <Route path="/governance" element={<Governance />} />
-              <Route path="/alerts" element={<Alerts />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/help" element={<ComingSoon name="Help Center" />} />
-
-              {/* Legacy paths → consolidated hubs */}
-              <Route path="/organization" element={<Navigate to="/app/identity?tab=organization" replace />} />
-              <Route path="/oauth" element={<Navigate to="/app/identity?tab=oauth" replace />} />
-              <Route path="/accounts" element={<Navigate to="/app/identity?tab=accounts" replace />} />
-              <Route path="/correlation" element={<Navigate to="/app/identity?tab=correlation" replace />} />
-              <Route path="/extensions" element={<Navigate to="/app/discovery?tab=extensions" replace />} />
-              <Route path="/local-ai" element={<Navigate to="/app/discovery?tab=local" replace />} />
-              <Route path="/inventory" element={<Navigate to="/app/assets?tab=inventory" replace />} />
-              <Route path="/connectors" element={<Navigate to="/app" replace />} />
-              <Route path="/copilot" element={<Navigate to="/app/intelligence?tab=analyst" replace />} />
-              <Route path="/compliance" element={<Navigate to="/app/governance?tab=compliance" replace />} />
-              <Route path="/graph" element={<Navigate to="/app/relationships" replace />} />
-            </Routes>
+            <RouteFade>
+              <Outlet />
+            </RouteFade>
           </Suspense>
         </main>
       </div>
@@ -156,36 +143,66 @@ function AppShell() {
 
 function App() {
   return (
-    <AgentsProvider>
-      <Suspense
-        fallback={
-          <div className="flex min-h-dvh items-center justify-center bg-canvas">
-            <RadarLoader />
-          </div>
-        }
-      >
-        <Routes>
-          <Route path="/" element={<Navigate to="/app" replace />} />
-          <Route element={<MarketingLayout />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/cookies" element={<Cookies />} />
-            <Route path="/security" element={<Security />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-          <Route path="/login" element={<AuthPage mode="login" />} />
-          <Route path="/signup" element={<AuthPage mode="signup" />} />
-          <Route path="/app/*" element={<AppShell />} />
-        </Routes>
-      </Suspense>
-      <PolicyBar />
-    </AgentsProvider>
+    <ThemeProvider>
+      <AgentsProvider>
+        <BootScreen />
+        <Suspense
+          fallback={
+            <div className="flex min-h-dvh items-center justify-center bg-canvas">
+              <RadarLoader />
+            </div>
+          }
+        >
+          <Routes>
+            <Route path="app" element={<AppShell />}>
+              <Route index element={<Dashboard />} />
+              <Route path="identity" element={<Identity />} />
+              <Route path="discovery" element={<Discovery />} />
+              <Route path="assets" element={<Assets />} />
+              <Route path="relationships" element={<RelationshipGraph />} />
+              <Route path="risk" element={<Risk />} />
+              <Route path="intelligence" element={<Intelligence />} />
+              <Route path="remediation" element={<Remediation />} />
+              <Route path="governance" element={<Governance />} />
+              <Route path="alerts" element={<Alerts />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="help" element={<ComingSoon name="Help Center" />} />
+              <Route path="organization" element={<Navigate to="/app/identity?tab=organization" replace />} />
+              <Route path="oauth" element={<Navigate to="/app/identity?tab=oauth" replace />} />
+              <Route path="accounts" element={<Navigate to="/app/identity?tab=accounts" replace />} />
+              <Route path="correlation" element={<Navigate to="/app/identity?tab=correlation" replace />} />
+              <Route path="extensions" element={<Navigate to="/app/discovery?tab=extensions" replace />} />
+              <Route path="local-ai" element={<Navigate to="/app/discovery?tab=local" replace />} />
+              <Route path="inventory" element={<Navigate to="/app/assets?tab=inventory" replace />} />
+              <Route path="connectors" element={<Navigate to="/app/discovery?tab=sources" replace />} />
+              <Route path="copilot" element={<Navigate to="/app/intelligence?tab=analyst" replace />} />
+              <Route path="compliance" element={<Navigate to="/app/governance?tab=compliance" replace />} />
+              <Route path="graph" element={<Navigate to="/app/relationships" replace />} />
+            </Route>
+            <Route path="login" element={<AuthPage mode="login" />} />
+            <Route path="signup" element={<AuthPage mode="signup" />} />
+            <Route path="oauth-demo/:kind" element={<DemoOauth />} />
+            <Route path="home" element={<Navigate to="/" replace />} />
+            <Route element={<MarketingLayout />}>
+              <Route index element={<Home />} />
+              <Route path="pricing" element={<Pricing />} />
+              <Route path="blog" element={<Blog />} />
+              <Route path="blog/:slug" element={<BlogPost />} />
+              <Route path="about" element={<About />} />
+              <Route path="privacy" element={<Privacy />} />
+              <Route path="terms" element={<Terms />} />
+              <Route path="cookies" element={<Cookies />} />
+              <Route path="security" element={<Security />} />
+              <Route path="contact" element={<Contact />} />
+            </Route>
+            <Route element={<MarketingLayout />}>
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </Suspense>
+        <PolicyBar />
+      </AgentsProvider>
+    </ThemeProvider>
   )
 }
 

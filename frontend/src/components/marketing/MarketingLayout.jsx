@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import BrandMark from '../BrandMark.jsx'
+import ThemeToggle from '../ThemeToggle.jsx'
 import { COOKIE_PREFS_EVENT } from '../PolicyBar.jsx'
+import RouteFade from '../motion/RouteFade.jsx'
 
 function LinkedInIcon(props) {
   return (
@@ -37,7 +39,7 @@ function StatusDot(props) {
 }
 
 const navLinks = [
-  { to: '/home#how-it-works', label: 'How it works' },
+  { to: '/#how-it-works', label: 'How it works' },
   { to: '/pricing', label: 'Pricing' },
   { to: '/blog', label: 'Blog' },
   { to: '/security', label: 'Security' },
@@ -92,11 +94,11 @@ export default function MarketingLayout() {
 
   return (
     <div className="min-h-dvh bg-canvas">
-      <header className="sticky top-0 z-40 border-b border-[rgba(31,30,28,0.11)] bg-[#fffaf8]/88 backdrop-blur-[14px]">
+      <header className="sticky top-0 z-40 border-b border-line bg-canvas/88 backdrop-blur-[14px]">
         <nav className="relative mx-auto flex h-14 max-w-[1200px] items-center px-4 sm:px-8" aria-label="Main">
-          <Link to="/home" className="relative flex items-center gap-2.5" onClick={() => setOpen(false)}>
+          <Link to="/" className="relative z-10 flex items-center gap-2.5" onClick={() => setOpen(false)}>
             <BrandMark size={32} />
-            <span className="text-[15px] font-medium tracking-[-0.01em]">Orbita</span>
+            <span className="font-display text-[18px] tracking-[-0.03em]">Orbita</span>
           </Link>
 
           <div className="absolute inset-x-0 hidden items-center justify-center gap-7 md:flex">
@@ -124,6 +126,7 @@ export default function MarketingLayout() {
           </div>
 
           <div className="relative z-10 ml-auto hidden items-center gap-2 md:flex">
+            <ThemeToggle className="rounded-lg p-2" />
             <Link
               to="/login"
               className="px-3 py-2 text-[13.5px] font-medium tracking-[-0.01em] text-ink-2 transition-colors hover:text-ink"
@@ -138,19 +141,22 @@ export default function MarketingLayout() {
             </Link>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            className="relative z-10 ml-auto cursor-pointer border border-[rgba(31,30,28,0.18)] bg-card p-2 md:hidden"
-            aria-label={open ? 'Close menu' : 'Open menu'}
-            aria-expanded={open}
-          >
-            {open ? <X size={18} /> : <Menu size={18} />}
-          </button>
+          <div className="relative z-10 ml-auto flex items-center gap-2 md:hidden">
+            <ThemeToggle className="rounded-lg p-2" />
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              className="cursor-pointer border border-line bg-card p-2"
+              aria-label={open ? 'Close menu' : 'Open menu'}
+              aria-expanded={open}
+            >
+              {open ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
         </nav>
 
         {open && (
-          <div className="border-t border-[rgba(31,30,28,0.11)] bg-canvas px-4 py-4 md:hidden">
+          <div className="border-t border-line bg-canvas px-4 py-4 md:hidden">
             <div className="flex flex-col gap-1">
               {navLinks.map((l) => (
                 <Link
@@ -184,9 +190,11 @@ export default function MarketingLayout() {
         )}
       </header>
 
-      <Outlet />
+      <RouteFade>
+        <Outlet />
+      </RouteFade>
 
-      <section className="border-t border-[rgba(31,30,28,0.11)] py-16" aria-label="Newsletter">
+      <section className="border-t border-line py-16" aria-label="Newsletter">
         <div className="mx-auto flex max-w-xl flex-col items-center gap-5 px-4 text-center sm:px-8">
           <h2 className="font-display text-[clamp(28px,3vw,40px)] text-ink">The Shadow Ledger</h2>
           <p className="ox-lead text-center">
@@ -205,7 +213,7 @@ export default function MarketingLayout() {
                 type="email"
                 required
                 placeholder="you@company.com"
-                className="w-full border border-[rgba(31,30,28,0.18)] bg-card px-5 py-3 text-[15px] outline-none transition-colors placeholder:text-sub/60 focus:border-ink"
+                className="w-full border border-line bg-card px-5 py-3 text-[15px] outline-none transition-colors placeholder:text-sub/60 focus:border-ink"
               />
             </label>
             <button type="submit" className="ox-btn ox-btn-primary shrink-0 cursor-pointer">
@@ -215,13 +223,13 @@ export default function MarketingLayout() {
         </div>
       </section>
 
-      <footer className="border-t border-[rgba(31,30,28,0.11)] bg-canvas">
+      <footer className="border-t border-line bg-canvas">
         <div className="mx-auto max-w-[1200px] px-4 pt-14 sm:px-8 sm:pt-16">
           {/* Link columns */}
           <div className="grid grid-cols-2 gap-10 md:grid-cols-4 md:gap-8">
             <div className="col-span-2 md:col-span-1">
               <p className="ox-label text-ink">Orbita</p>
-              <p className="mt-4 max-w-[28ch] text-[14.5px] leading-relaxed text-ink-2">
+              <p className="mt-4 max-w-[28ch] text-[15px] leading-relaxed text-ink-2">
                 Every AI agent in your company: discovered, owned, risk-scored, and kill-switch ready.
               </p>
               <p className="ox-label mt-7 text-sub">Get updated on</p>
@@ -233,7 +241,7 @@ export default function MarketingLayout() {
                     target={href.startsWith('http') ? '_blank' : undefined}
                     rel={href.startsWith('http') ? 'noreferrer' : undefined}
                     aria-label={label}
-                    className="flex h-8 w-8 items-center justify-center text-ink-2 transition-colors hover:bg-white hover:text-ink"
+                    className="flex h-8 w-8 items-center justify-center text-ink-2 transition-colors hover:bg-muted hover:text-ink"
                   >
                     <Icon />
                   </a>
@@ -250,7 +258,7 @@ export default function MarketingLayout() {
                       {to ? (
                         <Link
                           to={to}
-                          className="text-[14.5px] text-ink-2 transition-colors hover:text-ink"
+                          className="text-[15px] text-ink-2 transition-colors hover:text-ink"
                         >
                           {label}
                         </Link>
@@ -258,7 +266,7 @@ export default function MarketingLayout() {
                         <button
                           type="button"
                           onClick={() => window.dispatchEvent(new Event(COOKIE_PREFS_EVENT))}
-                          className="cursor-pointer text-[14.5px] text-ink-2 transition-colors hover:text-ink"
+                          className="cursor-pointer text-[15px] text-ink-2 transition-colors hover:text-ink"
                         >
                           {label}
                         </button>
@@ -278,7 +286,7 @@ export default function MarketingLayout() {
         </div>
 
         {/* Bottom meta */}
-        <div className="border-t border-[rgba(31,30,28,0.1)]">
+        <div className="border-t border-line">
           <div className="mx-auto flex max-w-[1200px] flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-5">
             <p className="text-[12.5px] text-sub">© 2026 Orbita, Inc. All rights reserved.</p>
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] text-sub">

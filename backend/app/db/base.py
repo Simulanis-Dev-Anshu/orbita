@@ -1,17 +1,4 @@
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase
+"""Kept so old imports of get_session still resolve to the Mongo database."""
+from app.db.mongo import get_db as get_session
 
-from app.core.config import settings
-
-
-class Base(DeclarativeBase):
-    pass
-
-
-engine = create_async_engine(settings.database_url, echo=False)
-SessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-
-
-async def get_session():
-    async with SessionLocal() as session:
-        yield session
+__all__ = ["get_session"]

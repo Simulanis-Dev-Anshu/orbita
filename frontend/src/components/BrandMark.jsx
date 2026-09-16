@@ -1,6 +1,6 @@
 /** Orbita mark: orbital arc + two hollow circles. Compact so it holds at 16-32px. */
 export default function BrandMark({ size = 32, invert = false, className = '' }) {
-  const ink = invert ? '#fffaf8' : '#FF4D00'
+  const ink = invert ? '#fff6ee' : '#E24A12'
 
   return (
     <svg

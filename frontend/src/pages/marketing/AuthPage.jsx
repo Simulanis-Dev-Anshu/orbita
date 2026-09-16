@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, ArrowRight } from 'lucide-react'
 import BrandMark from '../../components/BrandMark.jsx'
+import ThemeToggle from '../../components/ThemeToggle.jsx'
 import useSeo from '../../hooks/useSeo.js'
 import { endpoints, setTokens } from '../../lib/api.js'
+import { DEMO_ACCOUNT, enterDemoMode, matchesDemoAccount } from '../../lib/demoSession.js'
 
 function GoogleIcon() {
   return (
@@ -23,8 +25,8 @@ export default function AuthPage({ mode }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [name, setName] = useState('')
-  const [email, setEmail] = useState(isSignup ? '' : 'prabhhav@zintellix.com')
-  const [password, setPassword] = useState(isSignup ? '' : 'orbita-demo-123')
+  const [email, setEmail] = useState(isSignup ? '' : DEMO_ACCOUNT.email)
+  const [password, setPassword] = useState(isSignup ? '' : DEMO_ACCOUNT.password)
   useSeo({
     title: isSignup ? 'Sign up — Orbita' : 'Log in — Orbita',
     description: isSignup
@@ -34,10 +36,20 @@ export default function AuthPage({ mode }) {
     noindex: true,
   })
 
+  const enterDemo = () => {
+    enterDemoMode()
+    navigate('/app')
+  }
+
   const submit = async (e) => {
     e.preventDefault()
     setError('')
     setLoading(true)
+    if (!isSignup && matchesDemoAccount(email, password)) {
+      enterDemo()
+      setLoading(false)
+      return
+    }
     try {
       const pair = isSignup
         ? await endpoints.signup({ email, password, name: name || email.split('@')[0] })
@@ -45,7 +57,11 @@ export default function AuthPage({ mode }) {
       setTokens(pair)
       navigate('/app')
     } catch (err) {
-      setError(err.message || 'Could not sign in')
+      if (matchesDemoAccount(email, password) || (!isSignup && password === DEMO_ACCOUNT.password)) {
+        enterDemo()
+      } else {
+        setError(err.message || 'Could not sign in. Use the demo account below to try the product offline.')
+      }
     } finally {
       setLoading(false)
     }
@@ -58,14 +74,14 @@ export default function AuthPage({ mode }) {
         <div className="absolute -top-20 -right-16 h-72 w-72 rounded-full bg-brand/15 blur-3xl" aria-hidden="true" />
         <Link to="/" className="relative flex w-fit items-center gap-2.5">
           <BrandMark size={36} invert />
-          <span className="text-lg font-semibold">Orbita</span>
+          <span className="font-display text-lg tracking-tight">Orbita</span>
         </Link>
 
         <div className="relative">
           <p className="font-display text-3xl leading-snug">
             "The first scan found 31 agents we didn't know existed."
           </p>
-          <p className="mt-4 text-sm text-white/60">CISO, Indian fintech · 400 employees</p>
+          <p className="mt-4 text-[15px] text-white/78">CISO, Indian fintech · 400 employees</p>
         </div>
 
         <div className="relative flex gap-8 text-sm">
@@ -76,24 +92,27 @@ export default function AuthPage({ mode }) {
           ].map(([a, b]) => (
             <div key={b}>
               <p className="font-bold text-brand">{a}</p>
-              <p className="text-white/60">{b}</p>
+              <p className="text-white/75">{b}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Form */}
-      <div className="flex items-center justify-center px-4 py-12 sm:px-8">
+      <div className="relative flex items-center justify-center px-4 py-12 sm:px-8">
+        <div className="absolute top-4 right-4">
+          <ThemeToggle className="rounded-lg p-2" />
+        </div>
         <div className="w-full max-w-sm">
           <Link to="/" className="flex w-fit items-center gap-2.5 lg:hidden">
             <BrandMark size={36} />
-            <span className="text-lg font-semibold">Orbita</span>
+            <span className="font-display text-lg tracking-tight">Orbita</span>
           </Link>
 
           <h1 className="font-display mt-8 text-3xl tracking-tight lg:mt-0">
             {isSignup ? 'Start your free discovery scan' : 'Welcome back'}
           </h1>
-          <p className="mt-2 text-sm text-sub">
+          <p className="mt-2 text-[15.5px] leading-relaxed text-ink-2">
             {isSignup
               ? 'No credit card. See every agent in 24 hours.'
               : 'Log in to your agent inventory.'}
@@ -101,12 +120,26 @@ export default function AuthPage({ mode }) {
 
           <button
             type="button"
-            onClick={() => setError('Google SSO is not enabled in this workspace yet. Use email login.')}
+            onClick={() => navigate('/oauth-demo/login')}
             className="mt-7 flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-btn border border-line bg-card px-4 py-3 text-sm font-semibold shadow-soft transition-colors hover:border-brand"
           >
             <GoogleIcon />
             Continue with Google
           </button>
+          <p className="mt-3 rounded-btn bg-muted px-3 py-2 text-xs leading-relaxed text-sub">
+            Demo workspace (no backend): <span className="font-semibold text-ink">{DEMO_ACCOUNT.email}</span>
+            {' · '}
+            <span className="font-semibold text-ink">{DEMO_ACCOUNT.password}</span>
+          </p>
+          {!isSignup ? (
+            <button
+              type="button"
+              onClick={enterDemo}
+              className="mt-2 w-full cursor-pointer text-xs font-semibold text-brand hover:underline"
+            >
+              Skip login · enter demo workspace
+            </button>
+          ) : null}
 
           <div className="my-6 flex items-center gap-3 text-xs text-sub">
             <span className="h-px flex-1 bg-line" aria-hidden="true" />

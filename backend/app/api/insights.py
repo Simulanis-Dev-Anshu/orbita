@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, require_role
-from app.db.base import get_session
 from app.db.models import User
 from app.schemas import (
     ComplianceOverviewOut,
@@ -17,11 +15,8 @@ router = APIRouter(tags=["insights"])
 
 
 @router.get("/dashboard/metrics", response_model=DashboardMetricsOut)
-async def dashboard_metrics(
-    _: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_session),
-):
-    return await build_dashboard(session)
+async def dashboard_metrics(_: User = Depends(get_current_user)):
+    return await build_dashboard()
 
 
 @router.get("/compliance/overview", response_model=ComplianceOverviewOut)

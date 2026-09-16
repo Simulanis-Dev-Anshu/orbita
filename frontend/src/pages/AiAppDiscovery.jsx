@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Globe, Network, KeyRound, Monitor, Radar, Search } from 'lucide-react'
 import { discoveredApps, DISCOVERY_SOURCES } from '../data/platform.js'
+import { useLiveFindings } from '../lib/liveDiscovery.js'
 
 const SOURCE_META = {
   Browser: { icon: Globe, tone: 'bg-brand-soft text-forest' },
@@ -24,18 +26,20 @@ function riskTone(risk) {
 export default function Discovery() {
   const [source, setSource] = useState('ALL')
   const [query, setQuery] = useState('')
+  const { apps: liveApps, liveCount, mergeByName } = useLiveFindings()
+  const catalog = useMemo(() => mergeByName(liveApps, discoveredApps), [liveApps, mergeByName])
 
   const sourceCounts = useMemo(() => {
     const map = Object.fromEntries(DISCOVERY_SOURCES.map((s) => [s, 0]))
-    for (const app of discoveredApps) {
+    for (const app of catalog) {
       for (const s of app.sources) map[s] = (map[s] || 0) + 1
     }
     return map
-  }, [])
+  }, [catalog])
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return discoveredApps.filter((a) => {
+    return catalog.filter((a) => {
       if (source !== 'ALL' && !a.sources.includes(source)) return false
       if (!q) return true
       return (
@@ -44,10 +48,10 @@ export default function Discovery() {
         a.category.toLowerCase().includes(q)
       )
     })
-  }, [source, query])
+  }, [source, query, catalog])
 
-  const shadow = discoveredApps.filter((a) => a.status === 'shadow').length
-  const neu = discoveredApps.filter((a) => a.status === 'new').length
+  const shadow = catalog.filter((a) => a.status === 'shadow').length
+  const neu = catalog.filter((a) => a.status === 'new').length
 
   return (
     <div className="mt-4 space-y-4">
@@ -62,11 +66,15 @@ export default function Discovery() {
               Detect ChatGPT, Claude, Cursor, and more
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-sub">
-              Signals from browser, network, OAuth grants, and endpoints. No agent SDKs required.
+              Signals from browser, network, OAuth grants, and endpoints. No agent SDKs required.{' '}
+              <Link to="/app/discovery?tab=sources" className="font-semibold text-brand hover:underline">
+                Connect sources
+              </Link>
+              {liveCount ? ` · ${liveCount} live findings in inventory` : ''}.
             </p>
           </div>
           <div className="flex flex-wrap gap-2 text-xs font-semibold">
-            <span className="rounded-full bg-muted px-3 py-1.5">{discoveredApps.length} apps</span>
+            <span className="rounded-full bg-muted px-3 py-1.5">{catalog.length} apps</span>
             <span className="rounded-full bg-warn-soft px-3 py-1.5 text-warn">{neu} new</span>
             <span className="rounded-full bg-danger-soft px-3 py-1.5 text-danger">{shadow} shadow</span>
           </div>

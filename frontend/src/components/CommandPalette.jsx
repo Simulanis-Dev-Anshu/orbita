@@ -20,6 +20,7 @@ const pages = [
   { label: 'Dashboard', to: '/app', icon: LayoutDashboard },
   { label: 'Identity', to: '/app/identity', icon: Fingerprint },
   { label: 'Discovery', to: '/app/discovery', icon: Radar },
+  { label: 'Discovery sources', to: '/app/discovery?tab=sources', icon: Radar },
   { label: 'Assets', to: '/app/assets', icon: Boxes },
   { label: 'Relationships', to: '/app/relationships', icon: Share2 },
   { label: 'Risk', to: '/app/risk', icon: ShieldAlert },
