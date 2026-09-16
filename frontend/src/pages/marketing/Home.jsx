@@ -8,9 +8,6 @@ import {
   ServerCog,
   Radar,
   FileText,
-  Link2,
-  ScanSearch,
-  Ban,
   ChevronDown,
 } from 'lucide-react'
 import gsap from 'gsap'
@@ -18,6 +15,7 @@ import Reveal from '../../components/motion/Reveal.jsx'
 import useSeo from '../../hooks/useSeo.js'
 import { posts } from '../../data/blog.js'
 import HeroAsciiBackground from '../../components/hero/HeroAsciiBackground.jsx'
+import CinematicCta, { CinematicInterlude } from '../../components/marketing/CinematicMoment.jsx'
 import DiscoveryRoomStage from '../../components/marketing/DiscoveryRoomStage.jsx'
 import SeoFaq from '../../components/marketing/SeoFaq.jsx'
 import { comparison, faqSchema, homeFaqs, softwareApp } from '../../data/seo.js'
@@ -828,20 +826,17 @@ function LogoMarquee() {
 
 const HOW_STEPS = [
   {
-    n: '01',
-    Icon: Link2,
+    n: '1',
     title: 'Connect what you already use',
     text: 'Read-only OAuth into Google, Slack, GitHub, and Zapier. About 15 minutes. Nothing is installed on the agents themselves.',
   },
   {
-    n: '02',
-    Icon: ScanSearch,
+    n: '2',
     title: 'See every agent, with an owner',
     text: 'Orbita lists bots, custom GPTs, and MCP servers, names who owns them, and scores risk. Typical first scan finishes in under 24 hours.',
   },
   {
-    n: '03',
-    Icon: Ban,
+    n: '3',
     title: 'Shut down what should not run',
     text: 'Revoke grants for orphaned bots, export auditor evidence, and keep a live inventory so new shadow AI cannot hide.',
   },
@@ -1051,7 +1046,7 @@ export default function Home() {
             Orbita is an AI agent discovery and governance platform that finds, inventories and
             risk-scores every AI agent, automation, custom GPT and MCP server running in a company.
             Security teams use it to assign a human owner, revoke orphaned agents, and export DPDP,
-            SOC 2 and ISO 27001 evidence — without installing an SDK.
+            SOC 2 and ISO 27001 evidence without installing an SDK.
           </p>
         </div>
       </section>
@@ -1078,6 +1073,8 @@ export default function Home() {
         </div>
       </section>
 
+      <CinematicInterlude />
+
       <section id="how-it-works" className="border-b border-line" aria-labelledby="how-heading">
         <div className="mx-auto max-w-[1200px] px-4 py-16 sm:px-8 sm:py-20">
           <Reveal>
@@ -1089,11 +1086,10 @@ export default function Home() {
           <ol className="mt-12 grid gap-8 md:grid-cols-3 md:gap-10">
             {HOW_STEPS.map((step) => (
               <li key={step.n}>
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-forest">
-                  <step.Icon size={18} aria-hidden="true" />
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted font-display text-lg text-forest">
+                  {step.n}
                 </span>
-                <p className="ox-label mt-4">{step.n}</p>
-                <h3 className="mt-2 text-[18px] font-medium tracking-tight text-ink">{step.title}</h3>
+                <h3 className="mt-4 text-[18px] font-medium tracking-tight text-ink">{step.title}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed text-ink-2">{step.text}</p>
               </li>
             ))}
@@ -1393,23 +1389,7 @@ export default function Home() {
       {/* Final CTA */}
       <Reveal>
         <section className="mx-auto max-w-[1200px] px-4 pb-24 sm:px-8">
-          <div className="ox-plate relative overflow-hidden px-8 py-16 text-center sm:px-12 sm:py-20">
-            <h2 className="font-display relative text-[clamp(28px,3vw,40px)] leading-[1.05] tracking-[-0.03em]">
-              Get a live inventory of every AI agent you already run.
-            </h2>
-            <p className="relative mx-auto mt-4 max-w-md text-[15px] text-white/[0.84]">
-              Free discovery scan · read-only access · data stays in India
-            </p>
-            <div className="relative mt-7 flex flex-wrap items-center justify-center gap-2.5">
-              <Link to="/signup" className="ox-btn ox-btn-primary">
-                Start a free scan
-                <ArrowRight size={15} aria-hidden="true" />
-              </Link>
-              <Link to="/pricing" className="ox-btn ox-btn-ghost">
-                See pricing
-              </Link>
-            </div>
-          </div>
+          <CinematicCta />
         </section>
       </Reveal>
     </main>

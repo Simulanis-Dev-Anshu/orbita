@@ -16,6 +16,7 @@ import { notifications as seed } from '../data/mock.js'
 import { endpoints, mapNotification } from '../lib/api.js'
 import { DEMO_ACCOUNT, exitDemoMode, isDemoMode } from '../lib/demoSession.js'
 import ThemeToggle from './ThemeToggle.jsx'
+import { clearAuth } from '../auth.js'
 
 const severityDot = {
   critical: 'bg-danger',
@@ -136,6 +137,7 @@ function ProfileMenu({ onClose }) {
           type="button"
           onClick={() => {
             exitDemoMode()
+            clearAuth()
             go('/login')
           }}
           className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-danger transition-colors hover:bg-danger-soft"

@@ -15,6 +15,7 @@ import BootScreen from './components/motion/BootScreen.jsx'
 import RouteFade from './components/motion/RouteFade.jsx'
 import useSeo from './hooks/useSeo.js'
 import { isDemoMode } from './lib/demoSession.js'
+import { isAuthed } from './auth.js'
 
 const DemoOauth = lazy(() => import('./pages/DemoOauth.jsx'))
 const Identity = lazy(() => import('./pages/Identity.jsx'))
@@ -86,6 +87,14 @@ const pageMeta = {
   '/app/help': { title: 'Help Center', subtitle: 'Guides, docs and support' },
 }
 
+function RequireAuth({ children }) {
+  const location = useLocation()
+  if (!isAuthed() && !isDemoMode()) {
+    return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />
+  }
+  return children
+}
+
 function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [paletteOpen, setPaletteOpen] = useState(false)
@@ -154,7 +163,7 @@ function App() {
           }
         >
           <Routes>
-            <Route path="app" element={<AppShell />}>
+            <Route path="app" element={<RequireAuth><AppShell /></RequireAuth>}>
               <Route index element={<Dashboard />} />
               <Route path="identity" element={<Identity />} />
               <Route path="discovery" element={<Discovery />} />
