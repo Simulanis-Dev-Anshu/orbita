@@ -14,6 +14,9 @@ import {
 } from 'lucide-react'
 import { notifications as seed } from '../data/mock.js'
 import { endpoints, mapNotification } from '../lib/api.js'
+import { DEMO_ACCOUNT, exitDemoMode, isDemoMode } from '../lib/demoSession.js'
+import ThemeToggle from './ThemeToggle.jsx'
+import { clearAuth } from '../auth.js'
 
 const severityDot = {
   critical: 'bg-danger',
@@ -108,8 +111,10 @@ function ProfileMenu({ onClose }) {
           AN
         </span>
         <span className="min-w-0">
-          <span className="block truncate text-sm font-semibold">Anshu</span>
-          <span className="block truncate text-xs text-sub">anshu@orbita.com</span>
+          <span className="block truncate text-sm font-semibold">{DEMO_ACCOUNT.name.split(' ')[0]}</span>
+          <span className="block truncate text-xs text-sub">
+            {isDemoMode() ? `${DEMO_ACCOUNT.email} · demo` : DEMO_ACCOUNT.email}
+          </span>
         </span>
       </div>
 
@@ -130,7 +135,11 @@ function ProfileMenu({ onClose }) {
       <div className="border-t border-line p-1.5">
         <button
           type="button"
-          onClick={() => go('/login')}
+          onClick={() => {
+            exitDemoMode()
+            clearAuth()
+            go('/login')
+          }}
           className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-danger transition-colors hover:bg-danger-soft"
         >
           <LogOut size={16} aria-hidden="true" />
@@ -188,8 +197,8 @@ export default function Header({ title, subtitle, onMenuClick, onSearchClick }) 
         </button>
 
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-[17px] font-semibold tracking-tight">{title}</h1>
-          {subtitle && <p className="mt-0.5 hidden truncate text-xs text-sub sm:block">{subtitle}</p>}
+          <h1 className="truncate font-display text-[22px] tracking-tight">{title}</h1>
+          {subtitle && <p className="mt-0.5 hidden truncate text-[13px] text-ink-2 sm:block">{subtitle}</p>}
         </div>
 
         {/* Search: opens the command palette */}
@@ -216,6 +225,7 @@ export default function Header({ title, subtitle, onMenuClick, onSearchClick }) 
         </button>
 
         <div ref={menusRef} className="flex items-center gap-3">
+          <ThemeToggle />
           {/* Notifications */}
           <div className="relative">
             <button

@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ArrowDown, Search, Server } from 'lucide-react'
 import { mcpDiscoveries } from '../data/platform.js'
+import { useLiveFindings } from '../lib/liveDiscovery.js'
 
 function statusTone(status) {
   if (status === 'shadow' || status === 'orphaned') return 'bg-danger-soft text-danger'
@@ -16,17 +18,19 @@ function riskTone(risk) {
 
 export default function McpDiscovery() {
   const [query, setQuery] = useState('')
+  const { mcp: liveMcp, mergeByName } = useLiveFindings()
+  const catalog = useMemo(() => mergeByName(liveMcp, mcpDiscoveries, 'mcp'), [liveMcp, mergeByName])
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return mcpDiscoveries
-    return mcpDiscoveries.filter(
+    if (!q) return catalog
+    return catalog.filter(
       (m) =>
         m.app.toLowerCase().includes(q) ||
         m.mcp.toLowerCase().includes(q) ||
         m.target.toLowerCase().includes(q) ||
         m.owner.toLowerCase().includes(q),
     )
-  }, [query])
+  }, [query, catalog])
 
   return (
     <div className="mt-4 space-y-4">
@@ -42,11 +46,15 @@ export default function McpDiscovery() {
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-sub">
               Claude → GitHub MCP → GitHub. Cursor → Postgres MCP → Database. MCP is first-class
-              visibility, not an afterthought.
+              visibility, not an afterthought.{' '}
+              <Link to="/app/discovery?tab=sources" className="font-semibold text-brand hover:underline">
+                Connect sources
+              </Link>
+              .
             </p>
           </div>
           <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-semibold">
-            {mcpDiscoveries.length} chains
+            {catalog.length} chains
           </span>
         </div>
       </section>

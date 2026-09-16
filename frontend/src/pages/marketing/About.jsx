@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Eye, ShieldCheck, Handshake, MapPin, ArrowRight } from 'lucide-react'
 import BrandMark from '../../components/BrandMark.jsx'
-import useReveal from '../../hooks/useReveal.js'
+import Reveal from '../../components/motion/Reveal.jsx'
 import useSeo from '../../hooks/useSeo.js'
 import { organization } from '../../data/seo.js'
 
@@ -37,10 +37,9 @@ const stats = [
 ]
 
 function Section({ children, className = '' }) {
-  const ref = useReveal()
   return (
-    <section ref={ref} className={`reveal ${className}`}>
-      {children}
+    <section className={className}>
+      <Reveal y={32}>{children}</Reveal>
     </section>
   )
 }
@@ -68,9 +67,9 @@ export default function About() {
       {/* Hero */}
       <Section className="mx-auto max-w-4xl px-4 pt-16 pb-12 text-center sm:px-8">
         <p className="ox-label">About Orbita</p>
-        <h1 className="font-display mt-3.5 text-[clamp(38px,4.3vw,58px)] tracking-[-0.038em]">
+          <h1 className="font-display mt-3.5 text-[clamp(40px,4.8vw,64px)] tracking-[-0.03em]">
           Every company just hired an{' '}
-          <span className="text-brand">invisible workforce.</span>
+          <em className="font-accent text-brand">invisible workforce.</em>
           <br />
           We make it visible.
         </h1>
@@ -150,7 +149,7 @@ export default function About() {
 
       {/* CTA */}
       <Section className="mx-auto max-w-4xl px-4 pb-20 text-center sm:px-8">
-        <div className="border border-[rgba(31,30,28,0.11)] bg-card p-8 sm:p-12">
+        <div className="border border-line bg-card p-8 sm:p-12">
           <h2 className="font-display text-[clamp(28px,3vw,40px)]">
             See your invisible workforce in 24 hours
           </h2>

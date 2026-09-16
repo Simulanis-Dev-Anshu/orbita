@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "user": "riya@acme.com",
+      "displayText": "Zapier",
+      "clientId": "zapier-demo",
+      "scopes": ["gmail", "spreadsheets"]
+    },
+    {
+      "user": "arjun@acme.com",
+      "displayText": "ChatGPT",
+      "clientId": "openai-demo",
+      "scopes": ["openid", "email"]
+    },
+    {
+      "user": "unassigned",
+      "displayText": "Payroll Sync (Make)",
+      "clientId": "make-payroll",
+      "scopes": ["payroll.rw"]
+    }
+  ]
+}

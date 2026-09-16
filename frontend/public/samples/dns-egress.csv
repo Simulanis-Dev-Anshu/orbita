@@ -1,0 +1,7 @@
+host,user,device
+api.openai.com,riya@acme.com,finance-laptop
+api.anthropic.com,dev@acme.com,dev-workstation
+api2.cursor.sh,anshu@acme.com,anshu-macbook
+generativelanguage.googleapis.com,priya@acme.com,hr-desktop
+chatgpt.com,arjun@acme.com,sales-laptop
+api.perplexity.ai,kabir@acme.com,support-desktop

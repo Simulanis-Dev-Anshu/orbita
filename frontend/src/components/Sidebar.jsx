@@ -44,7 +44,7 @@ function NavItem({ to, label, icon: Icon, badge, end, onNavigate }) {
       onClick={onNavigate}
       className={({ isActive }) =>
         `group flex items-center gap-3 rounded-[12px] px-3 py-2 text-[13px] font-medium transition-colors duration-200 ${
-          isActive ? 'bg-white/[0.07] text-ink' : 'text-sub hover:bg-white/[0.04] hover:text-ink'
+          isActive ? 'bg-muted text-ink' : 'text-ink-2 hover:bg-muted/70 hover:text-ink'
         }`
       }
     >
@@ -53,7 +53,7 @@ function NavItem({ to, label, icon: Icon, badge, end, onNavigate }) {
           <Icon
             size={18}
             strokeWidth={1.7}
-            className={isActive ? 'text-ink' : 'text-sub group-hover:text-ink'}
+            className={isActive ? 'text-ink' : 'text-ink-2 group-hover:text-ink'}
             aria-hidden="true"
           />
           <span className="flex-1">{label}</span>
@@ -85,16 +85,16 @@ export default function Sidebar({ open, onClose, onSearchClick }) {
         }`}
         aria-label="Primary navigation"
       >
-        <div className="flex h-full flex-col border-r border-white/[0.06] px-3 py-4">
+        <div className="flex h-full flex-col border-r border-line px-3 py-4">
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-2.5">
               <BrandMark size={28} />
-              <span className="text-[15px] font-semibold tracking-tight">Orbita</span>
+              <span className="font-display text-[18px] tracking-tight">Orbita</span>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer rounded-lg p-1.5 text-sub hover:bg-white/6 hover:text-ink lg:hidden"
+              className="cursor-pointer rounded-lg p-1.5 text-sub hover:bg-muted hover:text-ink lg:hidden"
               aria-label="Close menu"
             >
               <X size={18} />
@@ -103,11 +103,11 @@ export default function Sidebar({ open, onClose, onSearchClick }) {
 
           <button
             type="button"
-            className="mt-4 flex w-full cursor-pointer items-center gap-2.5 rounded-[12px] border border-white/[0.06] bg-white/[0.03] px-3 py-2 text-left"
+            className="mt-4 flex w-full cursor-pointer items-center gap-2.5 rounded-[12px] border border-line bg-card px-3 py-2 text-left"
           >
             <span className="h-2 w-2 rounded-full bg-[#3ddc8a]" aria-hidden="true" />
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-[13px] font-medium">Anshu · Orbita</span>
+              <span className="block truncate text-[13px] font-medium">Anshu · Orbita demo</span>
             </span>
             <ChevronDown size={14} className="text-sub" aria-hidden="true" />
           </button>
@@ -115,11 +115,11 @@ export default function Sidebar({ open, onClose, onSearchClick }) {
           <button
             type="button"
             onClick={onSearchClick}
-            className="mt-3 flex w-full cursor-pointer items-center gap-2 rounded-[12px] border border-white/[0.06] bg-white/[0.03] px-3 py-2 text-[13px] text-sub"
+            className="mt-3 flex w-full cursor-pointer items-center gap-2 rounded-[12px] border border-line bg-card px-3 py-2 text-[13px] text-sub"
           >
             <Search size={14} aria-hidden="true" />
             <span className="flex-1 text-left">Search…</span>
-            <kbd className="rounded-md border border-white/10 px-1.5 py-0.5 text-[10px]">⌘K</kbd>
+            <kbd className="rounded-md border border-line px-1.5 py-0.5 text-[10px]">⌘K</kbd>
           </button>
 
           <nav className="mt-5 flex flex-1 flex-col gap-0.5">
@@ -128,7 +128,7 @@ export default function Sidebar({ open, onClose, onSearchClick }) {
               <NavItem key={item.to} {...item} onNavigate={onClose} />
             ))}
 
-            <div className="mt-auto flex flex-col gap-0.5 border-t border-white/[0.06] pt-3">
+            <div className="mt-auto flex flex-col gap-0.5 border-t border-line pt-3">
               {bottomNav.map((item) => (
                 <NavItem key={item.to} {...item} onNavigate={onClose} />
               ))}

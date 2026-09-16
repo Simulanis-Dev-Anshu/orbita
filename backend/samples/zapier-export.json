@@ -1,0 +1,16 @@
+{
+  "zaps": [
+    {
+      "id": "zap-invoice",
+      "title": "Invoice bot",
+      "owner": "Riya Sharma",
+      "nodes": [{ "app": "Gmail" }, { "app": "Sheets" }, { "app": "Tally" }]
+    },
+    {
+      "id": "zap-outreach",
+      "title": "Sales outreach GPT",
+      "owner": "Arjun Mehta",
+      "nodes": [{ "app": "HubSpot" }, { "app": "Gmail" }]
+    }
+  ]
+}

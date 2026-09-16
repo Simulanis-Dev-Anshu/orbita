@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useLayoutEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight,
@@ -8,43 +8,27 @@ import {
   ServerCog,
   Radar,
   FileText,
-  Link2,
-  ScanSearch,
-  Ban,
   ChevronDown,
 } from 'lucide-react'
-import useReveal from '../../hooks/useReveal.js'
+import gsap from 'gsap'
+import Reveal from '../../components/motion/Reveal.jsx'
 import useSeo from '../../hooks/useSeo.js'
 import { posts } from '../../data/blog.js'
 import HeroAsciiBackground from '../../components/hero/HeroAsciiBackground.jsx'
+import CinematicCta, { CinematicInterlude } from '../../components/marketing/CinematicMoment.jsx'
 import DiscoveryRoomStage from '../../components/marketing/DiscoveryRoomStage.jsx'
 import SeoFaq from '../../components/marketing/SeoFaq.jsx'
 import { comparison, faqSchema, homeFaqs, softwareApp } from '../../data/seo.js'
 
-function Reveal({ children, className = '', delay = 0 }) {
-  const ref = useReveal()
-  return (
-    <div
-      ref={ref}
-      className={`reveal ${className}`}
-      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
-    >
-      {children}
-    </div>
-  )
-}
-
-/* ---------- Timbal-style bento section helpers ---------- */
-
 const TB = {
-  ink: '#1f1e1c',
-  sub: '#7d756d',
-  tertiary: '#a89f96',
-  border: '#efe8e1',
-  dark: '#170702',
-  accent: '#ff4d00',
+  ink: 'var(--color-ink)',
+  sub: 'var(--color-ink-2)',
+  tertiary: 'var(--color-sub)',
+  border: 'var(--color-line)',
+  dark: 'var(--color-forest)',
+  accent: 'var(--color-brand)',
   accentSoft: '#ffb199',
-  forest: '#170702',
+  forest: 'var(--color-forest)',
 }
 
 function TbCodeCard({ filename, lines, className = '', style }) {
@@ -160,9 +144,9 @@ function TbAceStats() {
       {stats.map((s) => (
         <div key={s.label} className="flex flex-1 flex-col items-center">
           <div className="text-center">
-            <p className="text-[26px] leading-none font-medium tracking-tight text-[#1f1e1c] tabular-nums sm:text-[30px]">{s.value}</p>
-            <p className="mt-2 text-[12px] leading-snug font-medium text-[#4a4d52]">{s.label}</p>
-            <p className="mt-1 text-[11px] leading-none text-[#a8a8ac]">{s.sub}</p>
+            <p className="text-[26px] leading-none font-medium tracking-tight text-ink tabular-nums sm:text-[30px]">{s.value}</p>
+            <p className="mt-2 text-[12px] leading-snug font-medium text-ink-2">{s.label}</p>
+            <p className="mt-1 text-[11px] leading-none text-sub">{s.sub}</p>
           </div>
           <div aria-hidden="true" className="mt-5 flex w-full max-w-[88px] flex-1 flex-col justify-end overflow-hidden rounded-t-lg bg-muted">
             <div
@@ -842,20 +826,17 @@ function LogoMarquee() {
 
 const HOW_STEPS = [
   {
-    n: '01',
-    Icon: Link2,
+    n: '1',
     title: 'Connect what you already use',
     text: 'Read-only OAuth into Google, Slack, GitHub, and Zapier. About 15 minutes. Nothing is installed on the agents themselves.',
   },
   {
-    n: '02',
-    Icon: ScanSearch,
+    n: '2',
     title: 'See every agent, with an owner',
     text: 'Orbita lists bots, custom GPTs, and MCP servers, names who owns them, and scores risk. Typical first scan finishes in under 24 hours.',
   },
   {
-    n: '03',
-    Icon: Ban,
+    n: '3',
     title: 'Shut down what should not run',
     text: 'Revoke grants for orphaned bots, export auditor evidence, and keep a live inventory so new shadow AI cannot hide.',
   },
@@ -925,6 +906,8 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState(0)
   const heroMouse = useRef({ x: 0, y: 0 })
 
+  const heroIntro = useRef(null)
+
   useSeo({
     title: 'Orbita | Discover every AI agent your company already runs',
     description:
@@ -942,6 +925,29 @@ export default function Home() {
     go()
     window.addEventListener('hashchange', go)
     return () => window.removeEventListener('hashchange', go)
+  }, [])
+
+  useLayoutEffect(() => {
+    const root = heroIntro.current
+    if (!root || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+    let booted = false
+    try {
+      booted = sessionStorage.getItem('orbita-booted') === '1'
+    } catch {
+      /* ignore */
+    }
+    const ctx = gsap.context(() => {
+      gsap.from(root.children, {
+        y: 26,
+        opacity: 0,
+        filter: 'blur(8px)',
+        duration: 0.85,
+        stagger: 0.1,
+        ease: 'power3.out',
+        delay: booted ? 0.08 : 1.45,
+      })
+    }, root)
+    return () => ctx.revert()
   }, [])
 
   const strideOf = (el) => {
@@ -992,12 +998,12 @@ export default function Home() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#170702] via-[#170702]/55 to-transparent"
         />
-        <div className="ox-hero-in relative z-10 mx-auto max-w-[1200px]">
-          <p className="ox-label !text-white/55">AI agent discovery</p>
-          <h1 className="mt-3.5 max-w-[18ch] text-[clamp(38px,4.3vw,58px)] font-normal leading-[1.03] tracking-[-0.038em] text-balance text-white">
-            Find every AI agent your company already runs.
+        <div ref={heroIntro} className="relative z-10 mx-auto max-w-[1200px]">
+          <p className="ox-label !text-white/72">AI agent discovery</p>
+          <h1 className="font-display mt-3.5 max-w-[18ch] text-[clamp(40px,4.8vw,64px)] font-normal leading-[1.06] tracking-[-0.03em] text-balance text-[#fff6ee]">
+            Find every AI agent your company <em className="font-accent text-[#ffb799]">already runs</em>.
           </h1>
-          <p className="mt-[18px] max-w-[52ch] text-[15px] leading-[1.65] text-white/[0.84]">
+          <p className="mt-[18px] max-w-[52ch] text-[16px] leading-[1.7] text-white/[0.9]">
             Zapier bots, custom GPTs, and shadow MCP servers keep working after people leave.
             Orbita lists them in 24 hours, names an owner, and scores the risk, with no SDK to install.
           </p>
@@ -1010,14 +1016,14 @@ export default function Home() {
               Watch a live demo
             </Link>
           </div>
-          <p className="mt-4 text-[12.5px] text-white/50">
+          <p className="mt-4 text-[13px] text-white/68">
             Read-only access · no credit card · data hosted in India by default
           </p>
         </div>
       </section>
 
       {/* Ledger */}
-      <section className="border-b border-[rgba(31,30,28,0.11)] bg-canvas" aria-label="Orbita in numbers">
+      <section className="border-b border-line bg-canvas" aria-label="Orbita in numbers">
         <div className="mx-auto grid max-w-[1200px] gap-8 px-4 py-10 sm:grid-cols-3 sm:px-8 sm:py-12">
           {[
             ['147', 'agents on a typical first scan'],
@@ -1032,21 +1038,21 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-b border-[rgba(31,30,28,0.11)]" aria-label="What Orbita is">
+      <section className="border-b border-line" aria-label="What Orbita is">
         <div className="mx-auto max-w-[1200px] px-4 py-16 sm:px-8 sm:py-20">
           <p className="ox-label">Definition</p>
           <h2 className="font-display mt-3.5 text-[clamp(28px,3vw,40px)] text-ink">What is Orbita?</h2>
-          <p className="mt-5 max-w-[62ch] text-[15px] leading-[1.65] text-ink-2">
+          <p className="mt-5 max-w-[62ch] text-[16.5px] leading-[1.75] text-ink-2">
             Orbita is an AI agent discovery and governance platform that finds, inventories and
             risk-scores every AI agent, automation, custom GPT and MCP server running in a company.
             Security teams use it to assign a human owner, revoke orphaned agents, and export DPDP,
-            SOC 2 and ISO 27001 evidence — without installing an SDK.
+            SOC 2 and ISO 27001 evidence without installing an SDK.
           </p>
         </div>
       </section>
 
       {/* Thesis */}
-      <section className="border-b border-[rgba(31,30,28,0.11)]">
+      <section className="border-b border-line">
         <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-16 sm:px-8 sm:py-20 md:grid-cols-2 md:gap-16">
           <div>
             <p className="ox-label">The problem</p>
@@ -1054,7 +1060,7 @@ export default function Home() {
               Shadow AI is already inside your company.
             </h2>
           </div>
-          <div className="space-y-4 text-[15px] leading-[1.65] text-ink-2">
+          <div className="space-y-4 text-[16px] leading-[1.75] text-ink-2">
             <p>
               Employees connect ChatGPT, Cursor, Zapier, and MCP servers to real systems: payroll,
               GitHub, customer data, without telling security. When someone leaves, the bot often stays.
@@ -1067,7 +1073,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="how-it-works" className="border-b border-[rgba(31,30,28,0.11)]" aria-labelledby="how-heading">
+      <CinematicInterlude />
+
+      <section id="how-it-works" className="border-b border-line" aria-labelledby="how-heading">
         <div className="mx-auto max-w-[1200px] px-4 py-16 sm:px-8 sm:py-20">
           <Reveal>
             <p className="ox-label">How it works</p>
@@ -1078,11 +1086,10 @@ export default function Home() {
           <ol className="mt-12 grid gap-8 md:grid-cols-3 md:gap-10">
             {HOW_STEPS.map((step) => (
               <li key={step.n}>
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-forest">
-                  <step.Icon size={18} aria-hidden="true" />
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted font-display text-lg text-forest">
+                  {step.n}
                 </span>
-                <p className="ox-label mt-4">{step.n}</p>
-                <h3 className="mt-2 text-[18px] font-medium tracking-tight text-ink">{step.title}</h3>
+                <h3 className="mt-4 text-[18px] font-medium tracking-tight text-ink">{step.title}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed text-ink-2">{step.text}</p>
               </li>
             ))}
@@ -1177,7 +1184,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-y border-[rgba(31,30,28,0.11)] bg-canvas py-20" aria-label="Orbita compared">
+      <section className="border-y border-line bg-canvas py-20" aria-label="Orbita compared">
         <div className="mx-auto max-w-[1200px] px-4 sm:px-8">
           <Reveal>
             <header className="mx-auto max-w-3xl text-center">
@@ -1382,23 +1389,7 @@ export default function Home() {
       {/* Final CTA */}
       <Reveal>
         <section className="mx-auto max-w-[1200px] px-4 pb-24 sm:px-8">
-          <div className="ox-plate relative overflow-hidden px-8 py-16 text-center sm:px-12 sm:py-20">
-            <h2 className="font-display relative text-[clamp(28px,3vw,40px)] leading-[1.05] tracking-[-0.03em]">
-              Get a live inventory of every AI agent you already run.
-            </h2>
-            <p className="relative mx-auto mt-4 max-w-md text-[15px] text-white/[0.84]">
-              Free discovery scan · read-only access · data stays in India
-            </p>
-            <div className="relative mt-7 flex flex-wrap items-center justify-center gap-2.5">
-              <Link to="/signup" className="ox-btn ox-btn-primary">
-                Start a free scan
-                <ArrowRight size={15} aria-hidden="true" />
-              </Link>
-              <Link to="/pricing" className="ox-btn ox-btn-ghost">
-                See pricing
-              </Link>
-            </div>
-          </div>
+          <CinematicCta />
         </section>
       </Reveal>
     </main>

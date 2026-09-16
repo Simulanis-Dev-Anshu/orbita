@@ -41,17 +41,17 @@ export default function BlogPost() {
     <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
       <Link
         to="/blog"
-        className="inline-flex items-center gap-1.5 text-sm font-semibold text-sub transition-colors hover:text-forest"
+        className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-2 transition-colors hover:text-forest"
       >
         <ArrowLeft size={15} aria-hidden="true" />
         All articles
       </Link>
 
       <header className="mt-6">
-        <p className="text-xs font-semibold text-sub">
+        <p className="text-xs font-semibold text-ink-2">
           {post.tag} · {post.date} · {post.readTime} read · {post.author}
         </p>
-        <h1 className="mt-3 text-3xl leading-tight font-bold tracking-tight sm:text-4xl">
+        <h1 className="font-display mt-3 text-[clamp(32px,4vw,46px)] leading-[1.12] tracking-tight">
           {post.title}
         </h1>
       </header>
@@ -68,7 +68,7 @@ export default function BlogPost() {
             return (
               <ul key={i} className="space-y-2 pl-1">
                 {block.v.map((li) => (
-                  <li key={li} className="flex items-start gap-2.5 text-[15px] leading-relaxed text-sub">
+                  <li key={li} className="flex items-start gap-2.5 text-[16px] leading-relaxed text-ink-2">
                     <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" aria-hidden="true" />
                     {li}
                   </li>
@@ -76,7 +76,7 @@ export default function BlogPost() {
               </ul>
             )
           return (
-            <p key={i} className="text-[15px] leading-relaxed text-sub">
+            <p key={i} className="text-[16px] leading-relaxed text-ink-2">
               {block.v}
             </p>
           )

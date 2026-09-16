@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { AppWindow, Puzzle, Search, ShieldAlert } from 'lucide-react'
 import { browserExtensions, BROWSERS } from '../data/platform.js'
+import { useLiveFindings } from '../lib/liveDiscovery.js'
 
 function statusTone(status) {
   if (status === 'shadow') return 'bg-danger-soft text-danger'
@@ -23,18 +25,20 @@ function browserTone(browser) {
 export default function BrowserExtensions() {
   const [browser, setBrowser] = useState('ALL')
   const [query, setQuery] = useState('')
+  const { extensions: liveExt, mergeByName } = useLiveFindings()
+  const catalog = useMemo(() => mergeByName(liveExt, browserExtensions), [liveExt, mergeByName])
 
   const browserCounts = useMemo(() => {
     const map = Object.fromEntries(BROWSERS.map((b) => [b, 0]))
-    for (const ext of browserExtensions) {
+    for (const ext of catalog) {
       for (const b of ext.browsers) map[b] = (map[b] || 0) + 1
     }
     return map
-  }, [])
+  }, [catalog])
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return browserExtensions.filter((ext) => {
+    return catalog.filter((ext) => {
       if (browser !== 'ALL' && !ext.browsers.includes(browser)) return false
       if (!q) return true
       return (
@@ -43,10 +47,10 @@ export default function BrowserExtensions() {
         ext.users.some((u) => u.toLowerCase().includes(q))
       )
     })
-  }, [browser, query])
+  }, [browser, query, catalog])
 
-  const shadow = browserExtensions.filter((e) => e.status === 'shadow').length
-  const devices = browserExtensions.reduce((n, e) => n + e.devices, 0)
+  const shadow = catalog.filter((e) => e.status === 'shadow').length
+  const devices = catalog.reduce((n, e) => n + e.devices, 0)
 
   return (
     <div className="mt-4 space-y-4">
@@ -62,11 +66,15 @@ export default function BrowserExtensions() {
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-sub">
               Detect ChatGPT, Claude, Grammarly, Perplexity, Monica, Sider and other AI extensions,
-              the same class of coverage Netskope provides for browser endpoints.
+              the same class of coverage Netskope provides for browser endpoints.{' '}
+              <Link to="/app/discovery?tab=sources" className="font-semibold text-brand hover:underline">
+                Upload a collector JSON
+              </Link>
+              .
             </p>
           </div>
           <div className="flex flex-wrap gap-2 text-xs font-semibold">
-            <span className="rounded-full bg-muted px-3 py-1.5">{browserExtensions.length} extensions</span>
+            <span className="rounded-full bg-muted px-3 py-1.5">{catalog.length} extensions</span>
             <span className="rounded-full bg-muted px-3 py-1.5">{devices} devices</span>
             <span className="rounded-full bg-danger-soft px-3 py-1.5 text-danger">{shadow} shadow</span>
           </div>

@@ -36,7 +36,10 @@ import {
   riskDistribution as mockRisk,
   sourceMix as mockSources,
 } from '../data/mock.js'
+import { Link } from 'react-router-dom'
 import { useDashboard } from '../hooks/useDashboard.js'
+import { motion, useReducedMotion } from 'framer-motion'
+import { easeOut } from '../lib/motion.js'
 
 const tipStyle = {
   background: '#1a1a1e',
@@ -76,26 +79,33 @@ function IconBtn({ label }) {
 }
 
 function KpiRow({ items }) {
+  const reduce = useReducedMotion()
   return (
     <section aria-label="Key metrics" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {(items || mockKpis).map((k, i) => {
         const Icon = kpiIcons[k.id] ?? Activity
         return (
-          <article key={k.id} className="card-in dash-kpi p-4" style={{ '--i': i }}>
+          <motion.article
+            key={k.id}
+            className="dash-kpi p-4"
+            initial={reduce ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: i * 0.07, ease: easeOut }}
+          >
             <div className="flex items-center justify-between">
-              <p className="flex items-center gap-1.5 text-[12px] text-sub">
+              <p className="flex items-center gap-1.5 text-[13px] text-ink-2">
                 <Icon size={13} strokeWidth={1.8} aria-hidden="true" />
                 {k.label}
               </p>
               <IconBtn label={`${k.label} menu`} />
             </div>
-            <p className="mt-5 font-display text-[32px] leading-none tracking-tight tabular-nums">{k.value}</p>
+            <p className="mt-5 font-display text-[34px] leading-none tracking-tight tabular-nums">{k.value}</p>
             <p className="mt-3">
               <Delta up={k.up}>
                 {k.delta} {k.hint}
               </Delta>
             </p>
-          </article>
+          </motion.article>
         )
       })}
     </section>
@@ -478,6 +488,9 @@ export default function Dashboard() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-[22px] font-semibold tracking-tight">Today</h2>
         <div className="flex flex-wrap items-center gap-2">
+          <Link to="/app/discovery?tab=sources" className="dash-chip cursor-pointer hover:border-brand">
+            Connect sources
+          </Link>
           {error ? (
             <span className="dash-chip dash-dot-down">Using local demo data · {error}</span>
           ) : null}

@@ -1,39 +1,23 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import func, select
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, HTTPException, status
+from pymongo.errors import DuplicateKeyError
 
 from app.api.deps import get_current_user, require_role
-from app.db.base import get_session
-from app.db.models import Agent, Alert, Approval, Connector, Notification, User
+from app.db import mongo as db
+from app.db.models import User, make_connector
 from app.schemas import AlertOut, ApprovalOut, ConnectorOut, ConnectorRegisterIn, NotificationOut
 
 router = APIRouter(tags=["telemetry"])
 
 
 @router.get("/dashboard/summary")
-async def dashboard_summary(
-    _: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_session),
-):
-    total_agents = (await session.execute(select(func.count()).select_from(Agent))).scalar_one()
-    orphaned_agents = (
-        await session.execute(select(func.count()).select_from(Agent).where(Agent.status == "orphaned"))
-    ).scalar_one()
-    high_risk_agents = (
-        await session.execute(select(func.count()).select_from(Agent).where(Agent.risk >= 75))
-    ).scalar_one()
-    unresolved_alerts = (
-        await session.execute(select(func.count()).select_from(Alert).where(Alert.resolved.is_(False)))
-    ).scalar_one()
-
+async def dashboard_summary(_: User = Depends(get_current_user)):
     return {
-        "total_agents": total_agents,
-        "orphaned_agents": orphaned_agents,
-        "high_risk_agents": high_risk_agents,
-        "unresolved_alerts": unresolved_alerts,
+        "total_agents": await db.count("agents"),
+        "orphaned_agents": await db.count("agents", {"status": "orphaned"}),
+        "high_risk_agents": await db.count("agents", {"risk": {"$gte": 75}}),
+        "unresolved_alerts": await db.count("alerts", {"resolved": False}),
     }
 
 
@@ -42,53 +26,44 @@ async def list_alerts(
     severity: str | None = None,
     resolved: bool | None = None,
     _: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_session),
 ):
-    stmt = select(Alert).order_by(Alert.created_at.desc())
+    query: dict = {}
     if severity:
-        stmt = stmt.where(Alert.severity == severity)
+        query["severity"] = severity
     if resolved is not None:
-        stmt = stmt.where(Alert.resolved == resolved)
-    return (await session.scalars(stmt)).all()
+        query["resolved"] = resolved
+    return await db.find_many("alerts", query, sort=[("created_at", -1)])
 
 
 @router.post("/alerts/{alert_id}/resolve", response_model=AlertOut)
 async def resolve_alert(
     alert_id: str,
     _: User = Depends(require_role("admin")),
-    session: AsyncSession = Depends(get_session),
 ):
-    alert = await session.get(Alert, alert_id)
+    alert = await db.find_id("alerts", alert_id)
     if alert is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Alert not found")
     alert.resolved = True
-    await session.commit()
-    await session.refresh(alert)
+    await db.save("alerts", alert)
     return alert
 
 
 @router.get("/connectors", response_model=list[ConnectorOut])
-async def list_connectors(
-    _: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_session),
-):
-    stmt = select(Connector).order_by(Connector.status.asc(), Connector.name.asc())
-    return (await session.scalars(stmt)).all()
+async def list_connectors(_: User = Depends(get_current_user)):
+    return await db.find_many("connectors", sort=[("status", 1), ("name", 1)])
 
 
 @router.post("/connectors/{connector_id}/toggle", response_model=ConnectorOut)
 async def toggle_connector(
     connector_id: str,
     _: User = Depends(require_role("admin")),
-    session: AsyncSession = Depends(get_session),
 ):
-    connector = await session.get(Connector, connector_id)
+    connector = await db.find_id("connectors", connector_id)
     if connector is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Connector not found")
     connector.status = "available" if connector.status == "connected" else "connected"
     connector.last_sync_at = datetime.now(timezone.utc) if connector.status == "connected" else None
-    await session.commit()
-    await session.refresh(connector)
+    await db.save("connectors", connector)
     return connector
 
 
@@ -96,23 +71,18 @@ async def toggle_connector(
 async def register_connector(
     body: ConnectorRegisterIn,
     _: User = Depends(require_role("admin")),
-    session: AsyncSession = Depends(get_session),
 ):
-    # MVP keeps URL off-table; name/category/status are persisted in Connector.
-    connector = Connector(
+    connector = make_connector(
         name=body.name.strip(),
         category=body.category,
         status="connected",
         agents_count=0,
         last_sync_at=datetime.now(timezone.utc),
     )
-    session.add(connector)
     try:
-        await session.commit()
-    except IntegrityError:
-        await session.rollback()
-        raise HTTPException(status.HTTP_409_CONFLICT, "Connector with this name already exists")
-    await session.refresh(connector)
+        await db.insert("connectors", connector)
+    except DuplicateKeyError as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, "Connector with this name already exists") from exc
     return connector
 
 
@@ -120,49 +90,38 @@ async def register_connector(
 async def delete_connector(
     connector_id: str,
     _: User = Depends(require_role("admin")),
-    session: AsyncSession = Depends(get_session),
 ):
-    connector = await session.get(Connector, connector_id)
+    connector = await db.find_id("connectors", connector_id)
     if connector is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Connector not found")
-    await session.delete(connector)
-    await session.commit()
+    await db.delete_id("connectors", connector_id)
 
 
 @router.get("/notifications", response_model=list[NotificationOut])
 async def list_notifications(
     unread_only: bool = False,
     _: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_session),
 ):
-    stmt = select(Notification).order_by(Notification.created_at.desc())
-    if unread_only:
-        stmt = stmt.where(Notification.unread.is_(True))
-    return (await session.scalars(stmt)).all()
+    query = {"unread": True} if unread_only else {}
+    return await db.find_many("notifications", query, sort=[("created_at", -1)])
 
 
 @router.post("/notifications/{notification_id}/read", response_model=NotificationOut)
 async def mark_notification_read(
     notification_id: str,
     _: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_session),
 ):
-    notification = await session.get(Notification, notification_id)
+    notification = await db.find_id("notifications", notification_id)
     if notification is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Notification not found")
     notification.unread = False
-    await session.commit()
-    await session.refresh(notification)
+    await db.save("notifications", notification)
     return notification
 
 
 @router.get("/approvals", response_model=list[ApprovalOut])
-async def list_approvals(
-    _: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_session),
-):
-    stmt = select(Approval).order_by(Approval.created_at.desc())
-    return (await session.scalars(stmt)).all()
+async def list_approvals(_: User = Depends(get_current_user)):
+    return await db.find_many("approvals", sort=[("created_at", -1)])
 
 
 @router.post("/approvals/{approval_id}/{decision}", response_model=ApprovalOut)
@@ -170,14 +129,12 @@ async def decide_approval(
     approval_id: str,
     decision: str,
     _: User = Depends(require_role("admin")),
-    session: AsyncSession = Depends(get_session),
 ):
     if decision not in {"approve", "reject"}:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Decision must be approve or reject")
-    approval = await session.get(Approval, approval_id)
+    approval = await db.find_id("approvals", approval_id)
     if approval is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Approval not found")
     approval.status = "approved" if decision == "approve" else "rejected"
-    await session.commit()
-    await session.refresh(approval)
+    await db.save("approvals", approval)
     return approval

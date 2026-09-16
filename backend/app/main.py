@@ -3,24 +3,19 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import agents, auth, copilot, insights, operations, telemetry
+from app.api import agents, auth, copilot, discovery, insights, operations, telemetry
 from app.core.config import settings
-from app.db.base import SessionLocal, engine
-from app.db.models import Base, ensure_asset_columns
+from app.db.mongo import close_mongo, connect_mongo
 from app.db.seed import seed_if_empty
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-        await conn.run_sync(ensure_asset_columns)
-
+    await connect_mongo()
     if settings.seed_demo_data:
-        async with SessionLocal() as session:
-            await seed_if_empty(session)
-
+        await seed_if_empty()
     yield
+    await close_mongo()
 
 
 app = FastAPI(title=settings.app_name, lifespan=lifespan)
@@ -39,3 +34,4 @@ app.include_router(agents.router, prefix="/api")
 app.include_router(telemetry.router, prefix="/api")
 app.include_router(copilot.router, prefix="/api")
 app.include_router(insights.router, prefix="/api")
+app.include_router(discovery.router, prefix="/api")

@@ -1,141 +1,197 @@
+"""Mongo documents as attribute objects so existing Pydantic schemas keep working."""
+from __future__ import annotations
+
 import uuid
-from datetime import date, datetime, timezone
-from typing import List, Optional
-
-from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, String, Text, inspect, text
-from sqlalchemy.orm import Mapped, mapped_column
-
-from app.db.base import Base
+from datetime import datetime, timezone
+from typing import Any
 
 
-def _id() -> str:
+def new_id() -> str:
     return uuid.uuid4().hex
 
 
-def _now() -> datetime:
+def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
-class User(Base):
-    __tablename__ = "users"
+class Obj:
+    """Thin wrapper: obj.field reads/writes the underlying dict."""
 
-    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=_id)
-    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
-    name: Mapped[str] = mapped_column(String(120))
-    hashed_password: Mapped[str] = mapped_column(String(128))
-    role: Mapped[str] = mapped_column(String(20), default="viewer")  # owner | admin | viewer
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    __slots__ = ("_d",)
 
+    def __init__(self, data: dict[str, Any] | None = None, **extra: Any):
+        payload = dict(data or {})
+        payload.update(extra)
+        ident = payload.get("id") or payload.get("_id") or new_id()
+        payload["_id"] = ident
+        payload["id"] = ident
+        if not payload.get("external_key"):
+            payload.pop("external_key", None)
+        object.__setattr__(self, "_d", payload)
 
-class Agent(Base):
-    __tablename__ = "agents"
+    def __getattr__(self, name: str) -> Any:
+        data = object.__getattribute__(self, "_d")
+        try:
+            return data[name]
+        except KeyError as exc:
+            raise AttributeError(name) from exc
 
-    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=_id)
-    name: Mapped[str] = mapped_column(String(200), index=True)
-    platform: Mapped[str] = mapped_column(String(60))
-    owner_name: Mapped[str] = mapped_column(String(120), default="Unassigned")
-    owner_role: Mapped[str] = mapped_column(String(120), default="-")
-    scopes: Mapped[List[str]] = mapped_column(JSON, default=list)
-    risk: Mapped[int] = mapped_column(Integer, default=50)
-    status: Mapped[str] = mapped_column(String(20), default="pending")  # active | pending | orphaned
-    source: Mapped[str] = mapped_column(String(20), default="manual")  # manual | scan
-    first_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
-    last_active_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
-    scored_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
-    created_by: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id"), nullable=True)
-    # Canonical AI Asset fields (Phase 0). platform/owner/scopes stay as UI aliases.
-    asset_type: Mapped[str] = mapped_column(String(32), default="AI_AGENT")
-    vendor: Mapped[str] = mapped_column(String(80), default="")
-    device: Mapped[str] = mapped_column(String(120), default="")
-    connections: Mapped[List[str]] = mapped_column(JSON, default=list)
-    data_access: Mapped[List[str]] = mapped_column(JSON, default=list)
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name == "_d":
+            object.__setattr__(self, name, value)
+            return
+        self._d[name] = value
 
-
-class Alert(Base):
-    __tablename__ = "alerts"
-
-    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=_id)
-    type: Mapped[str] = mapped_column(String(60))
-    severity: Mapped[str] = mapped_column(String(20))  # critical | high | medium | low
-    agent_name: Mapped[str] = mapped_column(String(200))
-    detail: Mapped[str] = mapped_column(Text)
-    resolved: Mapped[bool] = mapped_column(Boolean, default=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    def to_mongo(self) -> dict[str, Any]:
+        data = dict(self._d)
+        data["_id"] = data.get("_id") or data.get("id") or new_id()
+        data["id"] = data["_id"]
+        if not data.get("external_key"):
+            data.pop("external_key", None)
+        return data
 
 
-class Connector(Base):
-    __tablename__ = "connectors"
-
-    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=_id)
-    name: Mapped[str] = mapped_column(String(120), unique=True)
-    category: Mapped[str] = mapped_column(String(60))
-    status: Mapped[str] = mapped_column(String(20), default="available")  # connected | available
-    agents_count: Mapped[int] = mapped_column(Integer, default=0)
-    last_sync_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+def as_obj(raw: dict[str, Any] | None) -> Obj | None:
+    if raw is None:
+        return None
+    return Obj(raw)
 
 
-class Notification(Base):
-    __tablename__ = "notifications"
-
-    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=_id)
-    title: Mapped[str] = mapped_column(String(200))
-    detail: Mapped[str] = mapped_column(Text)
-    severity: Mapped[str] = mapped_column(String(20), default="info")  # critical | high | info
-    unread: Mapped[bool] = mapped_column(Boolean, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
-
-
-class Approval(Base):
-    __tablename__ = "approvals"
-
-    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=_id)
-    title: Mapped[str] = mapped_column(String(200))
-    detail: Mapped[str] = mapped_column(Text)
-    risk: Mapped[str] = mapped_column(String(20), default="medium")  # critical | high | medium
-    status: Mapped[str] = mapped_column(String(20), default="pending")  # pending | approved | rejected
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+User = Obj
+Agent = Obj
+Alert = Obj
+Connector = Obj
+ConnectorToken = Obj
+Notification = Obj
+Approval = Obj
+AgentEvent = Obj
+InventorySnapshot = Obj
 
 
-class AgentEvent(Base):
-    """Hourly (or per-action) telemetry that powers dashboard charts."""
-
-    __tablename__ = "agent_events"
-
-    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=_id)
-    agent_id: Mapped[Optional[str]] = mapped_column(String(32), nullable=True, index=True)
-    occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True, default=_now)
-    kind: Mapped[str] = mapped_column(String(20), default="action")  # action | anomaly
-    count: Mapped[int] = mapped_column(Integer, default=1)
-
-
-class InventorySnapshot(Base):
-    """One row per day — KPI deltas and the 30-day inventory line."""
-
-    __tablename__ = "inventory_snapshots"
-
-    id: Mapped[str] = mapped_column(String(32), primary_key=True, default=_id)
-    captured_on: Mapped[date] = mapped_column(Date, unique=True, index=True)
-    total_agents: Mapped[int] = mapped_column(Integer, default=0)
-    orphaned: Mapped[int] = mapped_column(Integer, default=0)
-    high_risk: Mapped[int] = mapped_column(Integer, default=0)
-    avg_risk: Mapped[int] = mapped_column(Integer, default=0)
-    scored: Mapped[int] = mapped_column(Integer, default=0)
+def make_user(**kwargs: Any) -> Obj:
+    now = utcnow()
+    return Obj(
+        {
+            "email": kwargs.get("email", ""),
+            "name": kwargs.get("name", ""),
+            "hashed_password": kwargs.get("hashed_password", ""),
+            "role": kwargs.get("role", "viewer"),
+            "is_active": kwargs.get("is_active", True),
+            "created_at": kwargs.get("created_at", now),
+        }
+    )
 
 
-def ensure_asset_columns(sync_conn) -> None:
-    """Add Phase 0 columns on existing SQLite files. create_all won't alter."""
-    tables = inspect(sync_conn).get_table_names()
-    if "agents" not in tables:
-        return
-    cols = {c["name"] for c in inspect(sync_conn).get_columns("agents")}
-    for name, ddl in {
-        "asset_type": "VARCHAR(32) DEFAULT 'AI_AGENT'",
-        "vendor": "VARCHAR(80) DEFAULT ''",
-        "device": "VARCHAR(120) DEFAULT ''",
-        "connections": "JSON DEFAULT '[]'",
-        "data_access": "JSON DEFAULT '[]'",
-        "scored_at": "DATETIME",
-    }.items():
-        if name not in cols:
-            sync_conn.execute(text(f"ALTER TABLE agents ADD COLUMN {name} {ddl}"))
+def make_agent(**kwargs: Any) -> Obj:
+    now = utcnow()
+    return Obj(
+        {
+            "name": kwargs.get("name", ""),
+            "platform": kwargs.get("platform", "Other"),
+            "owner_name": kwargs.get("owner_name", "Unassigned"),
+            "owner_role": kwargs.get("owner_role", "-"),
+            "scopes": list(kwargs.get("scopes") or []),
+            "risk": kwargs.get("risk", 50),
+            "status": kwargs.get("status", "pending"),
+            "source": kwargs.get("source", "manual"),
+            "first_seen_at": kwargs.get("first_seen_at", now),
+            "last_active_at": kwargs.get("last_active_at", now),
+            "scored_at": kwargs.get("scored_at"),
+            "created_by": kwargs.get("created_by"),
+            "external_key": kwargs.get("external_key"),
+            "discovery_kind": kwargs.get("discovery_kind", ""),
+            "asset_type": kwargs.get("asset_type", "AI_AGENT"),
+            "vendor": kwargs.get("vendor", ""),
+            "device": kwargs.get("device", ""),
+            "connections": list(kwargs.get("connections") or []),
+            "data_access": list(kwargs.get("data_access") or []),
+        }
+    )
+
+
+def make_alert(**kwargs: Any) -> Obj:
+    return Obj(
+        {
+            "type": kwargs.get("type", ""),
+            "severity": kwargs.get("severity", "medium"),
+            "agent_name": kwargs.get("agent_name", ""),
+            "detail": kwargs.get("detail", ""),
+            "resolved": kwargs.get("resolved", False),
+            "created_at": kwargs.get("created_at", utcnow()),
+        }
+    )
+
+
+def make_connector(**kwargs: Any) -> Obj:
+    return Obj(
+        {
+            "name": kwargs.get("name", ""),
+            "category": kwargs.get("category", ""),
+            "status": kwargs.get("status", "available"),
+            "agents_count": kwargs.get("agents_count", 0),
+            "last_sync_at": kwargs.get("last_sync_at"),
+            "kind": kwargs.get("kind", ""),
+            "last_error": kwargs.get("last_error", ""),
+            "meta": dict(kwargs.get("meta") or {}),
+        }
+    )
+
+
+def make_connector_token(**kwargs: Any) -> Obj:
+    return Obj(
+        {
+            "connector_id": kwargs.get("connector_id", ""),
+            "access_token": kwargs.get("access_token", ""),
+            "refresh_token": kwargs.get("refresh_token", ""),
+            "expires_at": kwargs.get("expires_at"),
+            "extra": dict(kwargs.get("extra") or {}),
+        }
+    )
+
+
+def make_notification(**kwargs: Any) -> Obj:
+    return Obj(
+        {
+            "title": kwargs.get("title", ""),
+            "detail": kwargs.get("detail", ""),
+            "severity": kwargs.get("severity", "info"),
+            "unread": kwargs.get("unread", True),
+            "created_at": kwargs.get("created_at", utcnow()),
+        }
+    )
+
+
+def make_approval(**kwargs: Any) -> Obj:
+    return Obj(
+        {
+            "title": kwargs.get("title", ""),
+            "detail": kwargs.get("detail", ""),
+            "risk": kwargs.get("risk", "medium"),
+            "status": kwargs.get("status", "pending"),
+            "created_at": kwargs.get("created_at", utcnow()),
+        }
+    )
+
+
+def make_event(**kwargs: Any) -> Obj:
+    return Obj(
+        {
+            "agent_id": kwargs.get("agent_id"),
+            "occurred_at": kwargs.get("occurred_at", utcnow()),
+            "kind": kwargs.get("kind", "action"),
+            "count": kwargs.get("count", 1),
+        }
+    )
+
+
+def make_snapshot(**kwargs: Any) -> Obj:
+    return Obj(
+        {
+            "captured_on": kwargs.get("captured_on"),
+            "total_agents": kwargs.get("total_agents", 0),
+            "orphaned": kwargs.get("orphaned", 0),
+            "high_risk": kwargs.get("high_risk", 0),
+            "avg_risk": kwargs.get("avg_risk", 0),
+            "scored": kwargs.get("scored", 0),
+        }
+    )

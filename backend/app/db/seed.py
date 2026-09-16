@@ -1,5 +1,5 @@
 """Demo workspace seed: mirrors the frontend mock data so the dashboard
-lights up on first boot. Runs only when the users table is empty and
+lights up on first boot. Runs only when the users collection is empty and
 SEED_DEMO_DATA is true.
 
 Demo login: prabhhav@zintellix.com / orbita-demo-123
@@ -7,11 +7,19 @@ Demo login: prabhhav@zintellix.com / orbita-demo-123
 from datetime import date, datetime, timedelta, timezone
 from random import Random
 
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from app.core.config import settings
 from app.core.security import hash_password
-from app.db.models import Agent, AgentEvent, Alert, Approval, Connector, InventorySnapshot, Notification, User
+from app.db import mongo as db
+from app.db.models import (
+    make_agent,
+    make_alert,
+    make_approval,
+    make_connector,
+    make_event,
+    make_notification,
+    make_snapshot,
+    make_user,
+)
 from app.domain.asset import infer_asset_type, infer_vendor
 
 
@@ -105,11 +113,12 @@ def _hour_weight(hour: int) -> float:
     return 0.42
 
 
-async def _seed_named_agents(session: AsyncSession) -> None:
+async def _seed_named_agents() -> None:
+    rows = []
     for name, platform, owner, owner_role, scopes, risk, status, last_active in AGENTS:
         scored = last_active - timedelta(days=3) if status != "pending" else None
-        session.add(
-            Agent(
+        rows.append(
+            make_agent(
                 name=name,
                 platform=platform,
                 owner_name=owner,
@@ -125,11 +134,12 @@ async def _seed_named_agents(session: AsyncSession) -> None:
                 vendor=infer_vendor(platform),
                 connections=scopes,
                 data_access=scopes,
-            )
+            ).to_mongo()
         )
+    await db.insert_many("agents", rows)
 
 
-async def _seed_extra_agents(session: AsyncSession, rng: Random) -> None:
+async def _seed_extra_agents(rng: Random) -> None:
     owners = [
         ("Riya Sharma", "Finance Ops"),
         ("Arjun Mehta", "Sales Lead"),
@@ -140,6 +150,7 @@ async def _seed_extra_agents(session: AsyncSession, rng: Random) -> None:
         ("Sneha Rao", "Marketing"),
         ("Anshu Nishad", "Founder"),
     ]
+    rows = []
     for i in range(128):
         platform, scopes, base_risk = EXTRA_PLATFORMS[i % len(EXTRA_PLATFORMS)]
         owner, role = owners[i % len(owners)]
@@ -152,8 +163,8 @@ async def _seed_extra_agents(session: AsyncSession, rng: Random) -> None:
         else:
             status = "active"
         last_active = _ago(hours=rng.randint(1, 240))
-        session.add(
-            Agent(
+        rows.append(
+            make_agent(
                 name=f"{platform} worker {i + 1:03d}",
                 platform=platform,
                 owner_name=owner,
@@ -169,17 +180,17 @@ async def _seed_extra_agents(session: AsyncSession, rng: Random) -> None:
                 vendor=infer_vendor(platform),
                 connections=list(scopes),
                 data_access=list(scopes),
-            )
+            ).to_mongo()
         )
+    await db.insert_many("agents", rows)
 
 
-async def seed_telemetry(session: AsyncSession) -> bool:
-    """Fill events + snapshots when those tables are empty (safe to call on every boot)."""
-    event_count = (await session.execute(select(func.count()).select_from(AgentEvent))).scalar_one()
-    if event_count:
+async def seed_telemetry() -> bool:
+    """Fill events + snapshots when those collections are empty (safe to call on every boot)."""
+    if await db.count("agent_events"):
         return False
 
-    agents = list((await session.scalars(select(Agent))).all())
+    agents = await db.find_many("agents")
     total = len(agents) or 1
     orphaned = sum(1 for a in agents if a.status == "orphaned")
     high_risk = sum(1 for a in agents if a.risk >= 75)
@@ -188,86 +199,106 @@ async def seed_telemetry(session: AsyncSession) -> bool:
 
     rng = Random(42)
     now = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+    events = []
     for hours_ago in range(8 * 24):
         occurred = now - timedelta(hours=hours_ago)
         weight = _hour_weight(occurred.hour)
         weekend = 0.55 if occurred.weekday() >= 5 else 1.0
         actions = max(4, int(28 * weight * weekend + rng.randint(-6, 10)))
         anomalies = max(0, int(rng.random() * 4 * weight))
-        session.add(AgentEvent(occurred_at=occurred, kind="action", count=actions))
+        events.append(make_event(occurred_at=occurred, kind="action", count=actions).to_mongo())
         if anomalies:
-            session.add(AgentEvent(occurred_at=occurred, kind="anomaly", count=anomalies))
+            events.append(make_event(occurred_at=occurred, kind="anomaly", count=anomalies).to_mongo())
+    await db.insert_many("agent_events", events)
 
     today = date.today()
+    snapshots = []
     for days_ago in range(30, -1, -1):
-        captured = today - timedelta(days=days_ago)
+        captured = datetime.combine(today - timedelta(days=days_ago), datetime.min.time(), tzinfo=timezone.utc)
         progress = (30 - days_ago) / 30
-        session.add(
-            InventorySnapshot(
+        snapshots.append(
+            make_snapshot(
                 captured_on=captured,
                 total_agents=max(90, int(90 + (total - 90) * progress)),
                 orphaned=max(3, int(orphaned + (1 - progress) * 4)),
                 high_risk=max(10, int(high_risk - (1 - progress) * 6)),
                 avg_risk=max(40, int(avg_risk + (1 - progress) * 8)),
                 scored=max(70, int(70 + (scored - 70) * progress)),
-            )
+            ).to_mongo()
         )
-
-    await session.commit()
+    await db.insert_many("inventory_snapshots", snapshots)
     return True
 
 
-async def seed_if_empty(session: AsyncSession) -> bool:
-    count = (await session.execute(select(func.count()).select_from(User))).scalar_one()
-    if count:
-        await seed_telemetry(session)
+async def seed_if_empty() -> bool:
+    if await db.count("users"):
+        await seed_telemetry()
         return False
 
     rng = Random(42)
-    session.add(
-        User(
-            email="prabhhav@zintellix.com",
+    await db.insert(
+        "users",
+        make_user(
+            email=settings.demo_email.lower(),
             name="Prabhhav",
-            hashed_password=hash_password("orbita-demo-123"),
+            hashed_password=hash_password(settings.demo_password),
             role="owner",
-        )
+        ),
     )
-    await _seed_named_agents(session)
-    await _seed_extra_agents(session, rng)
-    for type_, severity, agent_name, detail, resolved, created in ALERTS:
-        session.add(
-            Alert(
+    await _seed_named_agents()
+    await _seed_extra_agents(rng)
+    await db.insert_many(
+        "alerts",
+        [
+            make_alert(
                 type=type_,
                 severity=severity,
                 agent_name=agent_name,
                 detail=detail,
                 resolved=resolved,
                 created_at=created,
-            )
-        )
-    for name, category, status, agents_count, last_sync in CONNECTORS:
-        session.add(
-            Connector(
+            ).to_mongo()
+            for type_, severity, agent_name, detail, resolved, created in ALERTS
+        ],
+    )
+    kinds = {
+        "Google Workspace": "google",
+        "Microsoft 365": "microsoft",
+        "GitHub": "github",
+        "Zapier": "zapier",
+        "Make": "make",
+        "DNS Egress Sensor": "dns",
+    }
+    await db.insert_many(
+        "connectors",
+        [
+            make_connector(
                 name=name,
                 category=category,
                 status=status,
                 agents_count=agents_count,
                 last_sync_at=last_sync,
-            )
-        )
-    for title, detail, severity, unread, created in NOTIFICATIONS:
-        session.add(
-            Notification(
+                kind=kinds.get(name, ""),
+            ).to_mongo()
+            for name, category, status, agents_count, last_sync in CONNECTORS
+        ],
+    )
+    await db.insert_many(
+        "notifications",
+        [
+            make_notification(
                 title=title,
                 detail=detail,
                 severity=severity,
                 unread=unread,
                 created_at=created,
-            )
-        )
-    for title, detail, risk in APPROVALS:
-        session.add(Approval(title=title, detail=detail, risk=risk))
-
-    await session.commit()
-    await seed_telemetry(session)
+            ).to_mongo()
+            for title, detail, severity, unread, created in NOTIFICATIONS
+        ],
+    )
+    await db.insert_many(
+        "approvals",
+        [make_approval(title=title, detail=detail, risk=risk).to_mongo() for title, detail, risk in APPROVALS],
+    )
+    await seed_telemetry()
     return True
