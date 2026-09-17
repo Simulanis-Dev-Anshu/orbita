@@ -34,14 +34,11 @@ const TB = {
 function TbCodeCard({ filename, lines, className = '', style }) {
   return (
     <div
-      className={className}
+      className={`tb-code ${className}`}
       style={{
-        background: '#f5f5f5',
         borderRadius: 12,
-        border: '1px solid #e5e5e5',
-        boxShadow: 'rgba(0,0,0,0.07) 0px 4px 14px',
         padding: '10px 0 12px',
-        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+        fontFamily: 'var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace',
         fontSize: 12,
         lineHeight: 1.55,
         width: '100%',
@@ -58,14 +55,14 @@ function TbCodeCard({ filename, lines, className = '', style }) {
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#febc2e' }} />
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#28c840' }} />
         </div>
-        <span style={{ marginLeft: 'auto', fontSize: 10, letterSpacing: 0.2, color: '#999', fontWeight: 500 }}>
+        <span className="tb-code__meta" style={{ marginLeft: 'auto', fontSize: 10, letterSpacing: 0.2, fontWeight: 500 }}>
           {filename}
         </span>
       </div>
       <div style={{ flex: 1, minHeight: 0 }}>
         {lines.map((line, i) => (
           <div key={i} style={{ display: 'flex', padding: '0 12px', minHeight: 18 }}>
-            <span style={{ width: 20, textAlign: 'right', marginRight: 10, color: '#bbb', fontSize: 10, userSelect: 'none', flexShrink: 0 }}>
+            <span className="tb-code__meta" style={{ width: 20, textAlign: 'right', marginRight: 10, fontSize: 10, userSelect: 'none', flexShrink: 0 }}>
               {i + 1}
             </span>
             <span style={{ whiteSpace: 'pre', overflow: 'hidden' }}>
@@ -81,22 +78,22 @@ function TbCodeCard({ filename, lines, className = '', style }) {
 }
 
 const TB_CODE_FRONT = [
-  [{ t: '{', c: '#000' }],
-  [{ t: '  "trace_id"', c: '#0451a5' }, { t: ': ', c: '#000' }, { t: '"tr-88a2-99f1"', c: '#a31515' }, { t: ',', c: '#000' }],
-  [{ t: '  "agent"', c: '#0451a5' }, { t: ': ', c: '#000' }, { t: '"Zapier Invoice Bot"', c: '#a31515' }, { t: ',', c: '#000' }],
-  [{ t: '  "actions"', c: '#0451a5' }, { t: ': [', c: '#000' }, { t: '"read_invoices"', c: '#a31515' }, { t: '],', c: '#000' }],
-  [{ t: '  "drift_detected"', c: '#0451a5' }, { t: ': ', c: '#000' }, { t: 'false', c: '#0000ff' }, { t: ',', c: '#000' }],
-  [{ t: '  "verification"', c: '#0451a5' }, { t: ': ', c: '#000' }, { t: '"SHA-256 (Signed)"', c: '#a31515' }],
-  [{ t: '}', c: '#000' }],
+  [{ t: '{', c: 'var(--color-ink)' }],
+  [{ t: '  "trace_id"', c: 'var(--tb-code-key)' }, { t: ': ', c: 'var(--color-ink)' }, { t: '"tr-88a2-99f1"', c: 'var(--tb-code-str)' }, { t: ',', c: 'var(--color-ink)' }],
+  [{ t: '  "agent"', c: 'var(--tb-code-key)' }, { t: ': ', c: 'var(--color-ink)' }, { t: '"Zapier Invoice Bot"', c: 'var(--tb-code-str)' }, { t: ',', c: 'var(--color-ink)' }],
+  [{ t: '  "actions"', c: 'var(--tb-code-key)' }, { t: ': [', c: 'var(--color-ink)' }, { t: '"read_invoices"', c: 'var(--tb-code-str)' }, { t: '],', c: 'var(--color-ink)' }],
+  [{ t: '  "drift_detected"', c: 'var(--tb-code-key)' }, { t: ': ', c: 'var(--color-ink)' }, { t: 'false', c: 'var(--tb-code-bool)' }, { t: ',', c: 'var(--color-ink)' }],
+  [{ t: '  "verification"', c: 'var(--tb-code-key)' }, { t: ': ', c: 'var(--color-ink)' }, { t: '"SHA-256 (Signed)"', c: 'var(--tb-code-str)' }],
+  [{ t: '}', c: 'var(--color-ink)' }],
 ]
 
 const TB_CODE_BACK = [
-  [{ t: 'from', c: '#af00db' }, { t: ' orbita ', c: '#000' }, { t: 'import', c: '#af00db' }, { t: ' Auditor', c: '#267f99' }],
-  [{ t: '', c: '#000' }],
-  [{ t: 'audit', c: '#001080' }, { t: ' = ', c: '#000' }, { t: 'Auditor', c: '#267f99' }, { t: '(', c: '#000' }],
-  [{ t: '    scope', c: '#001080' }, { t: '=', c: '#000' }, { t: '"all-agents"', c: '#a31515' }, { t: ',', c: '#000' }],
-  [{ t: '    export', c: '#001080' }, { t: '=[', c: '#000' }, { t: '"json"', c: '#a31515' }, { t: ', ', c: '#000' }, { t: '"pdf"', c: '#a31515' }, { t: '],', c: '#000' }],
-  [{ t: ')', c: '#000' }],
+  [{ t: 'from', c: 'var(--tb-code-kw)' }, { t: ' orbita ', c: 'var(--color-ink)' }, { t: 'import', c: 'var(--tb-code-kw)' }, { t: ' Auditor', c: 'var(--tb-code-type)' }],
+  [{ t: '', c: 'var(--color-ink)' }],
+  [{ t: 'audit', c: 'var(--tb-code-key)' }, { t: ' = ', c: 'var(--color-ink)' }, { t: 'Auditor', c: 'var(--tb-code-type)' }, { t: '(', c: 'var(--color-ink)' }],
+  [{ t: '    scope', c: 'var(--tb-code-key)' }, { t: '=', c: 'var(--color-ink)' }, { t: '"all-agents"', c: 'var(--tb-code-str)' }, { t: ',', c: 'var(--color-ink)' }],
+  [{ t: '    export', c: 'var(--tb-code-key)' }, { t: '=[', c: 'var(--color-ink)' }, { t: '"json"', c: 'var(--tb-code-str)' }, { t: ', ', c: 'var(--color-ink)' }, { t: '"pdf"', c: 'var(--tb-code-str)' }, { t: '],', c: 'var(--color-ink)' }],
+  [{ t: ')', c: 'var(--color-ink)' }],
 ]
 
 function TbCodeStack() {
@@ -230,21 +227,23 @@ function TbIsoStack() {
         {TB_LAYERS.map((l, i) => (
           <div
             key={l.name}
-            className="absolute top-1/2 left-1/2 h-[140px] w-[140px] rounded-[4px] border transition-all duration-300"
+            className={`absolute top-1/2 left-1/2 h-[140px] w-[140px] rounded-[4px] border transition-all duration-300 ${hot === i ? '' : 'tb-iso-idle'}`}
             style={{
               transform: `translate(-50%, -50%) translateY(${(i - 1) * 36}px) rotateX(58deg) rotateZ(-45deg)`,
               background:
                 hot === i
                   ? `linear-gradient(135deg, ${TB.accentSoft} 0%, ${TB.accent} 100%)`
-                  : 'linear-gradient(135deg, #ffffff 0%, #f8f9fb 55%, #eef0f4 100%)',
-              borderColor: hot === i ? TB.accent : 'rgba(0,0,0,0.08)',
-              boxShadow: 'rgba(0,0,0,0.14) 0 16px 26px -14px, inset 0 1px 0 rgba(255,255,255,0.35)',
+                  : undefined,
+              borderColor: hot === i ? TB.accent : undefined,
+              boxShadow: hot === i
+                ? 'rgba(226,74,18,0.28) 0 16px 26px -14px, inset 0 1px 0 rgba(255,255,255,0.28)'
+                : 'rgba(22,19,15,0.14) 0 16px 26px -14px, inset 0 1px 0 rgba(255,255,255,0.08)',
               zIndex: 3 - i,
             }}
           />
         ))}
       </div>
-      <div className="flex w-full max-w-[240px] flex-col divide-y divide-[#efefef]">
+      <div className="flex w-full max-w-[240px] flex-col divide-y divide-line">
         {TB_LAYERS.map((l, i) => (
           <div
             key={l.name}
@@ -252,7 +251,7 @@ function TbIsoStack() {
             onMouseLeave={() => setHot(-1)}
             className="cursor-default py-3 first:pt-0 last:pb-0"
           >
-            <p className="text-[13px] font-medium transition-colors duration-200" style={{ color: hot === i ? TB.forest : TB.ink }}>
+            <p className="text-[13px] font-medium transition-colors duration-200" style={{ color: hot === i ? TB.accent : TB.ink }}>
               {l.name}
             </p>
             <p className="mt-0.5 text-[12px]" style={{ color: TB.sub }}>{l.items.join(' · ')}</p>
@@ -296,7 +295,7 @@ function TbDeployGrid() {
                 }}
               />
               <div
-                className="relative flex flex-col items-center justify-center gap-2 rounded-xl border bg-white px-2.5 py-4 transition-all duration-300"
+                className="relative flex flex-col items-center justify-center gap-2 rounded-xl border bg-card px-2.5 py-4 transition-all duration-300"
                 style={{
                   borderColor: on ? TB.accent : TB.border,
                   boxShadow: on
@@ -344,7 +343,7 @@ function TbLogoRow({ names, reverse, duration = 44 }) {
           <li
             key={`${n}-${i}`}
             title={n}
-            className="flex h-14 w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-[#efefef] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
+            className="flex h-14 w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line bg-muted shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
           >
             <span className="text-[13px] leading-none font-bold" style={{ color: TB.ink }}>{n.slice(0, 2)}</span>
             <span className="max-w-[52px] truncate px-1 text-[7px] leading-none font-medium" style={{ color: TB.tertiary }}>{n}</span>
@@ -529,7 +528,7 @@ function ModuleVisual({ kind }) {
           <span className="relative text-[13px] font-semibold text-sub/70 transition-colors duration-500 group-hover:text-ink">
             Scan agents
           </span>
-          <span className="mod-caret relative ml-0.5 inline-block h-4 w-[2px] bg-forest" />
+          <span className="mod-caret relative ml-0.5 inline-block h-4 w-[2px] bg-ink" />
         </div>
       </div>
     )
@@ -574,7 +573,7 @@ function ModuleVisual({ kind }) {
               <p className="text-[9px] text-sub/70">Last active 2m ago</p>
             </div>
           </div>
-          <span className="relative h-[18px] w-[34px] overflow-hidden rounded-full bg-forest/15 text-center text-[9px] font-semibold leading-[18px] text-forest">
+          <span className="relative h-[18px] w-[34px] overflow-hidden rounded-full bg-ink/10 text-center text-[9px] font-semibold leading-[18px] text-ink">
             <span className="absolute inset-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-full">Active</span>
             <span className="absolute inset-0 translate-y-full text-danger transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0">Orphan</span>
           </span>
@@ -596,16 +595,16 @@ function ModuleVisual({ kind }) {
     return (
       <div className="mt-auto w-full space-y-3.5 text-center">
         <div className={`${pill} mx-auto flex w-fit items-center gap-1.5 border border-line/40 px-3.5 py-2 text-[11px] font-semibold`}>
-          <FileText size={12} className="text-sub transition-colors duration-500 group-hover:text-forest" />
+          <FileText size={12} className="text-sub transition-colors duration-500 group-hover:text-ink" />
           evidence-pack.pdf
         </div>
         <div className={`relative overflow-hidden ${pill} flex items-center gap-2.5 border border-line/40 px-4 py-3`}>
           <span className="absolute inset-x-0 bottom-0 h-[2px] origin-left scale-x-0 bg-brand transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100" />
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-soft">
-            <ShieldCheck size={13} className="text-forest" />
+            <ShieldCheck size={13} className="text-brand" />
           </span>
           <span className="text-[13px] font-semibold text-sub/70 transition-colors duration-500 group-hover:text-ink">Ask evidence</span>
-          <span className="mod-caret ml-0.5 inline-block h-4 w-[2px] bg-forest" />
+          <span className="mod-caret ml-0.5 inline-block h-4 w-[2px] bg-ink" />
         </div>
         {items.map((label, i) => (
           <div key={label} className={`${pill} flex items-center gap-2.5 px-3 py-2`}>
@@ -639,7 +638,7 @@ function ModuleVisual({ kind }) {
         <div className="flex items-center justify-between text-[10px] font-bold tracking-wider text-sub uppercase">
           <span className="text-brand">Machine</span>
           <span className="text-sub/50">vs</span>
-          <span className="text-forest">Human</span>
+          <span className="text-ink">Human</span>
         </div>
         <div className="my-2.5 grid grid-cols-12 gap-1">
           {rowMachine.map((val, i) => (
@@ -652,7 +651,7 @@ function ModuleVisual({ kind }) {
           {rowHuman.map((val, i) => (
             <span
               key={`h1-${i}`}
-              className={`aspect-square w-full rounded-sm ${val ? 'bg-forest/80' : 'bg-line/25'}`}
+              className={`aspect-square w-full rounded-sm ${val ? 'bg-ink/80' : 'bg-line/25'}`}
             />
           ))}
           {rowMachine.map((val, i) => (
@@ -1086,7 +1085,7 @@ export default function Home() {
           <ol className="mt-12 grid gap-8 md:grid-cols-3 md:gap-10">
             {HOW_STEPS.map((step) => (
               <li key={step.n}>
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted font-display text-lg text-forest">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted font-display text-lg text-ink">
                   {step.n}
                 </span>
                 <h3 className="mt-4 text-[18px] font-medium tracking-tight text-ink">{step.title}</h3>
@@ -1176,7 +1175,7 @@ export default function Home() {
                 el.scrollTo({ left: idx * strideOf(el), behavior: 'smooth' })
               }}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                activeIndex === idx ? 'w-6 bg-forest' : 'w-1.5 bg-line'
+                activeIndex === idx ? 'w-6 bg-ink' : 'w-1.5 bg-line'
               }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
@@ -1201,18 +1200,18 @@ export default function Home() {
           <Reveal>
             <ul className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-12">
               {/* 1. Exportable code: draggable-style code stack */}
-              <li className="group relative isolate flex flex-col overflow-hidden rounded-2xl border border-[#efefef] bg-white p-6 sm:p-7 lg:col-span-6 lg:min-h-[440px]">
+              <li className="tb-bento group relative isolate flex flex-col overflow-hidden rounded-2xl p-6 sm:p-7 lg:col-span-6 lg:min-h-[440px]">
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover:opacity-100"
-                  style={{ background: 'radial-gradient(120% 80% at 50% 0%, rgba(255,77,0,0.12), transparent 60%)' }}
+                  style={{ background: 'radial-gradient(120% 80% at 50% 0%, rgba(226,74,18,0.12), transparent 60%)' }}
                 />
                 <div className="relative z-10 flex h-full flex-col">
                   <div>
-                    <h3 className="text-[20px] leading-snug font-medium tracking-tight text-[#1f1e1c] sm:text-[22px]">
+                    <h3 className="text-[20px] leading-snug font-medium tracking-tight text-ink sm:text-[22px]">
                       Exports you can read, not a black box.
                     </h3>
-                    <p className="mt-2 max-w-[52ch] text-[13px] leading-relaxed text-[#7d756d] sm:text-[14px]">
+                    <p className="mt-2 max-w-[52ch] text-[13px] leading-relaxed text-ink-2 sm:text-[14px]">
                       Every finding ships as JSON and signed PDFs. Your auditors can open them. You
                       can self-host. Nothing is locked inside Orbita.
                     </p>
@@ -1222,18 +1221,18 @@ export default function Home() {
               </li>
 
               {/* 2. ACE: rising stat bars */}
-              <li className="group relative isolate flex flex-col overflow-hidden rounded-2xl border border-[#efefef] bg-white p-6 sm:p-7 lg:col-span-6 lg:min-h-[440px]">
+              <li className="tb-bento group relative isolate flex flex-col overflow-hidden rounded-2xl p-6 sm:p-7 lg:col-span-6 lg:min-h-[440px]">
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover:opacity-100"
-                  style={{ background: 'radial-gradient(120% 80% at 50% 0%, rgba(255,77,0,0.12), transparent 60%)' }}
+                  style={{ background: 'radial-gradient(120% 80% at 50% 0%, rgba(226,74,18,0.12), transparent 60%)' }}
                 />
                 <div className="relative z-10 flex h-full flex-col">
                   <div>
-                    <h3 className="text-[20px] leading-snug font-medium tracking-tight text-[#1f1e1c] sm:text-[22px]">
+                    <h3 className="text-[20px] leading-snug font-medium tracking-tight text-ink sm:text-[22px]">
                       Stop bad agent actions in real time.
                     </h3>
-                    <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-[#7d756d] sm:text-[15px]">
+                    <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-ink-2 sm:text-[15px]">
                       The Action Control Engine (ACE) sits in front of any LLM and blocks moves that
                       break policy, without adding noticeable delay.
                     </p>
@@ -1243,18 +1242,18 @@ export default function Home() {
               </li>
 
               {/* 3. Proprietary tech: scramble text */}
-              <li className="group relative isolate flex flex-col overflow-hidden rounded-2xl border border-[#efefef] bg-white p-6 sm:p-7 lg:col-span-5 lg:min-h-[320px]">
+              <li className="tb-bento group relative isolate flex flex-col overflow-hidden rounded-2xl p-6 sm:p-7 lg:col-span-5 lg:min-h-[320px]">
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover:opacity-100"
-                  style={{ background: 'radial-gradient(120% 80% at 50% 0%, rgba(255,77,0,0.12), transparent 60%)' }}
+                  style={{ background: 'radial-gradient(120% 80% at 50% 0%, rgba(226,74,18,0.12), transparent 60%)' }}
                 />
                 <div className="relative z-10 flex h-full flex-col">
                   <div>
-                    <h3 className="text-[20px] leading-snug font-medium tracking-tight text-[#1f1e1c] sm:text-[22px]">
+                    <h3 className="text-[20px] leading-snug font-medium tracking-tight text-ink sm:text-[22px]">
                       Built for agents, not bolted onto chat.
                     </h3>
-                    <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-[#7d756d] sm:text-[15px]">
+                    <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-ink-2 sm:text-[15px]">
                       Discovery, identity graph, ACE, and evidence export are one product. Not a
                       chatbot wrapper around someone else’s logs.
                     </p>
@@ -1266,13 +1265,13 @@ export default function Home() {
               </li>
 
               {/* 4. Three layers: isometric stack */}
-              <li className="relative isolate flex flex-col overflow-hidden rounded-2xl border border-[#efefef] bg-white p-6 sm:p-7 lg:col-span-7 lg:min-h-[320px]">
+              <li className="tb-bento relative isolate flex flex-col overflow-hidden rounded-2xl p-6 sm:p-7 lg:col-span-7 lg:min-h-[320px]">
                 <div className="relative z-10 flex h-full flex-col justify-between">
                   <div>
-                    <h3 className="text-[20px] leading-snug font-medium tracking-tight text-[#1f1e1c] sm:text-[22px]">
+                    <h3 className="text-[20px] leading-snug font-medium tracking-tight text-ink sm:text-[22px]">
                       Three layers. One platform.
                     </h3>
-                    <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-[#7d756d] sm:text-[15px]">
+                    <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-ink-2 sm:text-[15px]">
                       Data, intelligence, and interface stay separate so you can start with one
                       team and grow to company-wide AI without ripping out the stack.
                     </p>
@@ -1282,13 +1281,13 @@ export default function Home() {
               </li>
 
               {/* 5. Deploy anywhere: cycling tiles */}
-              <li className="relative isolate flex flex-col overflow-hidden rounded-2xl border border-[#efefef] bg-white p-6 sm:p-7 lg:col-span-6 lg:min-h-[320px]">
+              <li className="tb-bento relative isolate flex flex-col overflow-hidden rounded-2xl p-6 sm:p-7 lg:col-span-6 lg:min-h-[320px]">
                 <div className="relative z-10 flex h-full flex-col">
                   <div>
-                    <h3 className="text-[20px] leading-snug font-medium tracking-tight text-[#1f1e1c] sm:text-[22px]">
+                    <h3 className="text-[20px] leading-snug font-medium tracking-tight text-ink sm:text-[22px]">
                       Run it in our cloud or yours.
                     </h3>
-                    <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-[#7d756d] sm:text-[15px]">
+                    <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-ink-2 sm:text-[15px]">
                       Multi-tenant SaaS, a dedicated VPC, or fully on-premise. Same product, same
                       kill switch, wherever your data has to live.
                     </p>
@@ -1298,13 +1297,13 @@ export default function Home() {
               </li>
 
               {/* 6. Integrations: masked logo marquee */}
-              <li className="relative isolate flex flex-col overflow-hidden rounded-2xl border border-[#efefef] bg-white p-6 sm:p-7 lg:col-span-6 lg:min-h-[320px]">
+              <li className="tb-bento relative isolate flex flex-col overflow-hidden rounded-2xl p-6 sm:p-7 lg:col-span-6 lg:min-h-[320px]">
                 <div className="relative z-10 flex h-full flex-col">
                   <div>
-                    <h3 className="text-[20px] leading-snug font-medium tracking-tight text-[#1f1e1c] sm:text-[22px]">
+                    <h3 className="text-[20px] leading-snug font-medium tracking-tight text-ink sm:text-[22px]">
                       Slack, GitHub, Zapier, and MCP, out of the box.
                     </h3>
-                    <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-[#7d756d] sm:text-[15px]">
+                    <p className="mt-2 max-w-[52ch] text-[14px] leading-relaxed text-ink-2 sm:text-[15px]">
                       Each connector is also a discovery surface. Plug in the stack you have, add
                       any MCP server, or ship a custom tool without a long integration project.
                     </p>

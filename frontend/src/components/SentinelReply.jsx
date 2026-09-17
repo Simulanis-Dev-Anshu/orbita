@@ -4,13 +4,13 @@ import useSentinelStream from '../hooks/useSentinelStream.js'
 export function riskTone(risk) {
   if (risk >= 85) return 'bg-danger-soft text-danger'
   if (risk >= 70) return 'bg-warn-soft text-warn'
-  return 'bg-brand-soft text-forest'
+  return 'bg-brand-soft text-ink'
 }
 
 function riskText(risk) {
   if (risk >= 85) return 'text-danger'
   if (risk >= 70) return 'text-warn'
-  return 'text-forest'
+  return 'text-ink'
 }
 
 export function ThoughtRow({ step, index, visible }) {
